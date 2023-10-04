@@ -9,14 +9,23 @@ const routes = [
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
-        path: '',
-        name: 'dashboard',
-        component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
+        path: '/',
+        component: () => import(/* webpackChunkName: "main" */ '@/views/Main.vue'),
         children: [
+          {
+            path: '/',
+            name: 'dashboard',
+            component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue')
+          },
           {
             path: '/project',
             name: 'project',
             component: () => import(/* webpackChunkName: "project" */ '@/views/Project.vue')
+          },
+          {
+            path: '/agent',
+            name: 'agent',
+            component: () => import(/* webpackChunkName: "agent" */ '@/views/Agent.vue')
           }
         ]
       },
@@ -60,7 +69,7 @@ async function handleRedirect() {
   const coreStore = useCoreStore();
   await coreStore.handleRedirect(window.location.href);
 
-  return { name: 'dashboard', query: { agent: coreStore.userId } };
+  return { name: 'agent', query: { agent: coreStore.userId } };
 }
 
 export default router;
