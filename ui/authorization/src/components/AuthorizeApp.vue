@@ -273,7 +273,7 @@ function buildRegistrationsIndex(data: typeof props.authorizationData.dataOwners
         id: registration.id,
         agent: agent.id,
         scope: 'all',
-        count: registration.count
+        count: registration.count!
       };
     }
   }
@@ -356,7 +356,7 @@ function registrationScopeChanged(agentId: string, registrationId: string, scope
 }
 
 async function loadDataInstances(agentId: string, registrationId: string, selected: boolean): Promise<void> {
-  await appStore.listDataInstances(registrationId);
+  await appStore.listDataInstances(agentId, registrationId);
   addDataInstancesToIndex(agentId, registrationId, appStore.loadedDataInstances[registrationId], selected);
 }
 

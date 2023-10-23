@@ -16,7 +16,7 @@ span.label {
           v-for="registration in registry.registrations" 
           :title="registration.label"
           :key="registration.id"
-          @click="appStore.listDataInstances(registration.id)"
+          @click="appStore.listDataInstances(route.query.agent as string, registration.id)"
           >
           <v-expansion-panel-text>
             <v-list v-if="appStore.loadedDataInstances[registration.id]">
@@ -41,9 +41,21 @@ span.label {
 <script lang="ts" setup>
 import { useCoreStore } from '@/store/core';
 import { useAppStore } from '@/store/app';
+import { useRoute } from 'vue-router';
+import { watch } from 'vue';
 
 const appStore = useAppStore()
 const coreStore = useCoreStore()
-appStore.listDataRegistries(coreStore.lang)
+const route = useRoute()
+
+watch(
+  () => route.query.agent,
+  async (agent) => {
+    if (agent) {
+      await appStore.listDataRegistries(coreStore.lang)
+    }
+  },
+  { immediate: true }
+);
 
 </script>
