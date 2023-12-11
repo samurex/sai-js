@@ -1,5 +1,6 @@
 <template>
   <v-main>
+    <v-btn @click="coreStore.enableNotifications()">Enable Notifications</v-btn>
     <router-view></router-view>
   </v-main>
   <v-bottom-navigation>
