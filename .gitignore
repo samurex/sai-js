@@ -34,3 +34,6 @@ packages/css-storage-fixture/.internal/accounts/cookies
 *.sw?
 
 .turbo
+
+# ldo
+examples/vuejectron/ldo/
