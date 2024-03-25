@@ -183,6 +183,9 @@ importers:
       '@ldo/ldo':
         specifier: 0.0.1-alpha.23
         version: 0.0.1-alpha.23
+      '@ldo/solid':
+        specifier: 0.0.1-alpha.23
+        version: 0.0.1-alpha.23
       '@mdi/font':
         specifier: 7.3.67
         version: 7.3.67
@@ -4842,6 +4845,18 @@ packages:
       jsonld2graphobject: 0.0.5
     transitivePeerDependencies:
       - encoding
+
+  /@ldo/solid@0.0.1-alpha.23:
+    resolution: {integrity: sha512-Ts/geXO8Ulnh9SiZ5X3CP7vkOnFi3z2uuo9MVzVQf2rjB5ZSrqFUn8FFfyTMj5sgi/t/tNKRzOoXWebNgi4AMQ==}
+    dependencies:
+      '@ldo/dataset': 0.0.1-alpha.24
+      '@ldo/ldo': 0.0.1-alpha.24
+      '@ldo/rdf-utils': 0.0.1-alpha.24
+      cross-fetch: 3.1.8
+      http-link-header: 1.1.1
+    transitivePeerDependencies:
+      - encoding
+    dev: false
 
   /@ldo/solid@0.0.1-alpha.24:
     resolution: {integrity: sha512-dMELYBGPrBHlKeKJB8icji78Tr+c5H1yFgnVyhCPqajIvnHKCWYOtkHNd4ctx1CJeTcJaYezsqOOOfU6LoZRBg==}
