@@ -481,6 +481,9 @@ importers:
       '@mdi/font':
         specifier: 7.3.67
         version: 7.3.67
+      '@sentry/vue':
+        specifier: ^8.0.0
+        version: 8.0.0(vue@3.3.4)
       fluent-vue:
         specifier: ^3.5.0
         version: 3.5.0(@fluent/bundle@0.18.0)(vue@3.3.4)
@@ -2674,6 +2677,26 @@ packages:
     resolution: {integrity: sha512-UW4OTIsOtJ5KSXo2Tchi4lhZqu+tlHrOAs4nNti7CrtB53kAZl3/hyrTi6HkMihxdbDM6m2Zc3swc/ZewEe1xw==}
     engines: {node: '>=v12.22.12'}
 
+  '@sentry-internal/browser-utils@8.0.0':
+    resolution: {integrity: sha512-dzmoDK7mzP7MvNt/jjs9a4OQ18H/8NyhDiKoJakVZnvk8ComGIv01vOOxDhrNmLyaJSq2KVNsiIJ+AkTmwcmyQ==}
+    engines: {node: '>=14.18'}
+
+  '@sentry-internal/feedback@8.0.0':
+    resolution: {integrity: sha512-2Jj0B5xn1y5kiOwso7EWQDlLGRt1tGcnglIYqCIpwNQM38yqn+5NMwH/Df7TkBlxBerKo4MYZZ2yHNUpkTXQ7Q==}
+    engines: {node: '>=14.18'}
+
+  '@sentry-internal/replay-canvas@8.0.0':
+    resolution: {integrity: sha512-jeE5YQ42groVRvbM41iL4rxvWuKOVnZ7UXacHDgWerR2S+C7OtN3Ydzr34rfRYTVagqFPDcDswFrxrcWuZD+Kw==}
+    engines: {node: '>=14.18'}
+
+  '@sentry-internal/replay@8.0.0':
+    resolution: {integrity: sha512-lh0opJuhvKFgLK0TxeN2FDhnCc9qNdgBOpjA69hwpKl10kMxDoZy+oLxE4hx8j5RYKtM2o7mCv2rf1n0wK22Kg==}
+    engines: {node: '>=14.18'}
+
+  '@sentry/browser@8.0.0':
+    resolution: {integrity: sha512-HZt5bjujxz2XJA1iUqD51gEz/h8Ij+BYLu6D+qh6WpVtCSS1cfKoxJj8mQef7j5tIVVofxRtRr9PvAoFnehO0A==}
+    engines: {node: '>=14.18'}
+
   '@sentry/core@8.0.0':
     resolution: {integrity: sha512-PgOqQPdlIbiLFOo0F6IBzMbvusiEQ86+yXd76pIsuqQ2tj+iFL5gdYOckF/FKVpAwhfzIx64GKin2C+535c1qQ==}
     engines: {node: '>=14.18'}
@@ -2699,6 +2722,12 @@ packages:
   '@sentry/utils@8.0.0':
     resolution: {integrity: sha512-oZex/dRKfkWHoK99W7QDQtr26IZrAD9EDd2+pwLmkFclApxVDGLLKNkmcbfj4LX1zMROxKWww/GTE7eo08tEKg==}
     engines: {node: '>=14.18'}
+
+  '@sentry/vue@8.0.0':
+    resolution: {integrity: sha512-4HkfqjTaiQFpGDo5qdiYwGp2TO4bm/Oz5IvfbHzAV9c+ogbHUQhCehpWjKlrXViy7Kf4wOajhT3T7W7QXZeQGQ==}
+    engines: {node: '>=14.18'}
+    peerDependencies:
+      vue: 2.x || 3.x
 
   '@shexjs/parser@1.0.0-alpha.28':
     resolution: {integrity: sha512-eeVeHq/2JG9X+3h7y+7EmuBSWWl2EMj/EQBLk5CTRx4W4hWDdjWczsY8RWwKjkIzLwUS1+G0aiAI1u5LHCZ2Rw==}
@@ -10702,6 +10731,42 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
+  '@sentry-internal/browser-utils@8.0.0':
+    dependencies:
+      '@sentry/core': 8.0.0
+      '@sentry/types': 8.0.0
+      '@sentry/utils': 8.0.0
+
+  '@sentry-internal/feedback@8.0.0':
+    dependencies:
+      '@sentry/core': 8.0.0
+      '@sentry/types': 8.0.0
+      '@sentry/utils': 8.0.0
+
+  '@sentry-internal/replay-canvas@8.0.0':
+    dependencies:
+      '@sentry-internal/replay': 8.0.0
+      '@sentry/core': 8.0.0
+      '@sentry/types': 8.0.0
+      '@sentry/utils': 8.0.0
+
+  '@sentry-internal/replay@8.0.0':
+    dependencies:
+      '@sentry-internal/browser-utils': 8.0.0
+      '@sentry/core': 8.0.0
+      '@sentry/types': 8.0.0
+      '@sentry/utils': 8.0.0
+
+  '@sentry/browser@8.0.0':
+    dependencies:
+      '@sentry-internal/browser-utils': 8.0.0
+      '@sentry-internal/feedback': 8.0.0
+      '@sentry-internal/replay': 8.0.0
+      '@sentry-internal/replay-canvas': 8.0.0
+      '@sentry/core': 8.0.0
+      '@sentry/types': 8.0.0
+      '@sentry/utils': 8.0.0
+
   '@sentry/core@8.0.0':
     dependencies:
       '@sentry/types': 8.0.0
@@ -10756,6 +10821,14 @@ snapshots:
   '@sentry/utils@8.0.0':
     dependencies:
       '@sentry/types': 8.0.0
+
+  '@sentry/vue@8.0.0(vue@3.3.4)':
+    dependencies:
+      '@sentry/browser': 8.0.0
+      '@sentry/core': 8.0.0
+      '@sentry/types': 8.0.0
+      '@sentry/utils': 8.0.0
+      vue: 3.3.4
 
   '@shexjs/parser@1.0.0-alpha.28':
     dependencies:
@@ -16182,7 +16255,7 @@ snapshots:
       vue: 3.3.4
     optionalDependencies:
       typescript: 5.2.2
-      vite-plugin-vuetify: 2.0.1(vite@5.1.4(@types/node@20.8.6)(sass@1.69.3)(terser@5.26.0))(vue@3.3.4)(vuetify@3.5.6)
+      vite-plugin-vuetify: 2.0.1(vite@5.1.4(@types/node@20.8.6)(sass@1.72.0)(terser@5.26.0))(vue@3.3.4)(vuetify@3.5.6)
 
   walker@1.0.8:
     dependencies:
