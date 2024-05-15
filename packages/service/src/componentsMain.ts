@@ -1,3 +1,4 @@
+import './instrument';
 import path from 'path';
 import yargs from 'yargs/yargs';
 import { ComponentsManager, IComponentsManagerBuilderOptions } from 'componentsjs';
