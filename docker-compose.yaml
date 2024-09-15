@@ -3,12 +3,12 @@ services:
     image: redis:7.2.4
     restart: on-failure
     networks:
-      - default
+      - sai
   sai:
     image: node:22-alpine
     restart: on-failure
     networks:
-      - default
+      - sai
     expose:
       - 4000
     ports:
@@ -16,7 +16,7 @@ services:
     working_dir: /sai/packages/service
     command: ["node", "--inspect", "dist/componentsMain.js"]
     dns:
-      - 172.100.61.253
+      - 172.28.61.253
     volumes:
       - ./:/sai
       - ${CAROOT}:/mkcert
@@ -42,9 +42,9 @@ services:
     image: node:22-alpine
     restart: on-failure
     networks:
-      - default
+      - sai
     dns:
-      - 172.100.61.253
+      - 172.28.61.253
     expose:
       - 3000
     working_dir: /sai/packages/css-storage-fixture
@@ -69,7 +69,7 @@ services:
     image: node:22-alpine
     restart: on-failure
     networks:
-      - default
+      - sai
     expose:
       - 4200
     working_dir: /sai/ui/authorization
@@ -86,7 +86,7 @@ services:
     image: node:22-alpine
     restart: on-failure
     networks:
-      - default
+      - sai
     expose:
       - 4500
     working_dir: /sai/examples/vuejectron
@@ -125,8 +125,8 @@ services:
       retries: 8
       start_period: 4s
     networks:
-      default:
-        ipv4_address: 172.100.61.250
+      sai:
+        ipv4_address: 172.28.61.250
 
   dns:
     image: drpsychick/dnsmasq:latest
@@ -146,12 +146,13 @@ services:
       retries: 8
       start_period: 4s
     networks:
-      default:
-        ipv4_address: 172.100.61.253
+      sai:
+        ipv4_address: 172.28.61.253
 
 networks:
-  default:
+  sai:
     name: network.${COMPOSE_PROJECT_NAME}
+    internal: false
     ipam:
       config:
-        - subnet: 172.100.61.0/24
+        - subnet: 172.28.61.0/24

@@ -42,6 +42,18 @@ corepack prepare pnpm@latest --activate
 - Modify `~/.npmrc` ([per-user config file](https://docs.npmjs.com/cli/v7/configuring-npm/npmrc#per-user-config-file))
   and add line `//npm.pkg.github.com/:_authToken=` and the generated token.
 
+### Local DNS
+
+#### macOS
+
+```bash
+sudo mkdir /etc/resolver/
+sudo sh -c 'echo "nameserver 127.0.0.1" > /etc/resolver/docker'
+sudo dscacheutil -flushcache
+sudo killall -HUP mDNSResponder
+./docker-mac-routes-add.sh
+```
+
 ### Bootstrapping
 
 ```bash
@@ -49,6 +61,12 @@ pnpm install
 pnpm build
 pnpm test
 ```
+
+To setup mkcert local CA
+```bash
+mkcert --install
+```
+
 To create local certificates
 ```bash
 make cert-install
