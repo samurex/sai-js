@@ -29,13 +29,18 @@
     "test": "test"
   },
   "scripts": {
-    "repl": "node --import=tsx ./repl.ts"
+    "repl": "tsx ./repl.ts",
+    "cli": "NODE_OPTIONS='--no-deprecation' tsx ./cli.ts"
   },
   "dependencies": {
+    "@janeirodigital/interop-utils": "^1.0.0-rc.24",
+    "@effect/cli": "^0.43.2",
+    "@effect/platform-node": "^0.59.0",
+    "effect": "^3.7.2"
   },
   "devDependencies": {
-    "@janeirodigital/interop-authorization-agent": "workspace:^1.0.0-rc.24",
     "@janeirodigital/css-test-utils": "^1.0.0-rc.24",
+    "@janeirodigital/interop-authorization-agent": "workspace:^1.0.0-rc.24",
     "@janeirodigital/interop-data-model": "workspace:^1.0.0-rc.24",
     "@paralleldrive/cuid2": "^2.2.2",
     "tsx": "^4.17.0"
