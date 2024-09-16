@@ -3,9 +3,9 @@ import { init } from '@paralleldrive/cuid2';
 import type { CRUDRegistrySet, CRUDRegistrySetData } from '@janeirodigital/interop-data-model';
 import { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent';
 
-import { type Account, accounts, createApp, SolidTestUtils } from '@janeirodigital/css-test-utils';
+import { type Account, accounts, shapeTree, createApp, SolidTestUtils } from '@janeirodigital/css-test-utils';
 
-global.shapeTrees = accounts.shapeTree;
+global.shapeTrees = shapeTree;
 
 global.cuid = init({ length: 6 });
 
