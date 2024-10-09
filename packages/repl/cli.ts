@@ -10,25 +10,18 @@
     - go back
 */
 
-import * as Command from '@effect/cli/Command';
 import * as Prompt from '@effect/cli/Prompt';
 import * as NodeContext from '@effect/platform-node/NodeContext';
 import * as Runtime from '@effect/platform-node/NodeRuntime';
-import { Context, Effect, Layer } from 'effect';
+import { Console, Context, Effect, Layer } from 'effect';
 
 import { type Account, accounts, shapeTree, createApp, SolidTestUtils } from '@janeirodigital/css-test-utils';
 import { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent';
-import { asyncIterableToArray } from '@janeirodigital/interop-utils';
 import { init } from '@paralleldrive/cuid2';
 
 const cuid = init({ length: 6 });
 
-console.log('Server starting');
-const server = await createApp();
-await server.start();
-console.log('Server started');
-
-class SessionManager extends Context.Tag('SessionManager')<
+export class SessionManager extends Context.Tag('SessionManager')<
   SessionManager,
   { readonly getSession: (account: Account) => Effect.Effect<AuthorizationAgent> }
 >() {}
@@ -70,8 +63,8 @@ enum Actions {
 const selectActionPrompt = Prompt.select({
   message: 'Select action',
   choices: [
-    { title: 'Create data registration', value: Actions.createDataRegistration },
-    { title: 'Create social agent registration', value: Actions.createSocialAgentRegistration }
+    { title: 'Create social agent registration', value: Actions.createSocialAgentRegistration },
+    { title: 'Create data registration', value: Actions.createDataRegistration }
   ]
 });
 
@@ -81,70 +74,57 @@ const getSession = Effect.gen(function* () {
   return yield* sessionManager.getSession(accounts[account]);
 });
 
-const mainPrompt = Effect.provide(
+const createDataRegistration = (session: AuthorizationAgent) =>
   Effect.gen(function* () {
-    const sessionManager = yield* SessionManager;
+    const registryId = yield* createSelectDataRegistryPrompt(session.registrySet.hasDataRegistry.map(({ iri }) => iri));
+    const registry = session.registrySet.hasDataRegistry.find(({ iri }) => iri === registryId)!;
+    const existingShapeTrees = yield* Effect.promise(async () =>
+      (await registry.registeredShapeTrees()).map(({ iri }) => iri)
+    );
+    const remainingShapeTrees = [...new Set(Object.values(shapeTree)).difference(new Set(existingShapeTrees))];
+    const shapeTreeId = yield* createSelectShapeTreePrompt(remainingShapeTrees);
 
-    const action = yield* selectActionPrompt;
+    yield* Effect.promise(async () => registry.createRegistration(shapeTreeId));
+  });
 
-    switch (action) {
-      case Actions.createDataRegistration:
-        yield* createDataRegistration.pipe(Effect.provideService(SessionManager, sessionManager));
-        break;
-      case Actions.createSocialAgentRegistration:
-        yield* createSocialAgentRegistration.pipe(Effect.provideService(SessionManager, sessionManager));
-        break;
-    }
-  }),
-  SessionManagerLive
-);
+const createSocialAgentRegistration = (session: AuthorizationAgent) =>
+  Effect.gen(function* () {
+    const webId = yield* Prompt.text({ message: 'Enter social agent webId' });
+    const label = yield* Prompt.text({ message: 'Enter social agent label' });
+    const note = yield* Prompt.text({ message: 'Enter social agent note (optional)' });
 
-const createDataRegistration = Effect.gen(function* () {
+    yield* Effect.promise(async () =>
+      session.registrySet.hasAgentRegistry.addSocialAgentRegistration(webId, label, note)
+    );
+  });
+
+export const mainPrompt = Effect.gen(function* () {
   const sessionManager = yield* SessionManager;
-
   const session = yield* getSession.pipe(Effect.provideService(SessionManager, sessionManager));
+  const action = yield* selectActionPrompt;
 
-  const registryId = yield* createSelectDataRegistryPrompt(session.registrySet.hasDataRegistry.map(({ iri }) => iri));
-
-  const registry = session.registrySet.hasDataRegistry.find(({ iri }) => iri === registryId)!;
-
-  const registrations = yield* Effect.promise(async () => asyncIterableToArray(registry.registrations));
-
-  const existingShapeTrees = registrations.map((registration) => registration.shapeTree.iri);
-
-  existingShapeTrees.forEach((iri) => console.log(iri));
-
-  const remainingShapeTrees = [...new Set(Object.values(shapeTree)).difference(new Set(existingShapeTrees))];
-
-  const shapeTreeId = yield* createSelectShapeTreePrompt(remainingShapeTrees);
-
-  yield* Effect.promise(async () => registry.createRegistration(shapeTreeId));
+  switch (action) {
+    case Actions.createDataRegistration:
+      yield* createDataRegistration(session);
+      break;
+    case Actions.createSocialAgentRegistration:
+      yield* createSocialAgentRegistration(session);
+      break;
+  }
 });
 
-const createSocialAgentRegistration = Effect.gen(function* () {
-  const sessionManager = yield* SessionManager;
+const program = Effect.gen(function* () {
+  yield* Console.log('Server starting');
+  const server = yield* Effect.promise(() => createApp());
+  yield* Effect.promise(() => server.start());
+  yield* Console.log('Server started');
+  yield* Effect.addFinalizer(() => Effect.promise(() => server.stop()));
+  yield* Effect.provide(mainPrompt, SessionManagerLive);
 
-  const account = yield* accountPrompt;
-
-  const session = yield* sessionManager.getSession(accounts[account]);
-
-  const webId = yield* Prompt.text({ message: 'Enter social agent name' });
-  const label = yield* Prompt.text({ message: 'Enter social agent label' });
-  const note = yield* Prompt.text({ message: 'Enter social agent note (optional)' });
-
-  yield* Effect.promise(async () =>
-    session.registrySet.hasAgentRegistry.addSocialAgentRegistration(webId, label, note)
-  );
+  return 1;
 });
 
-const command = Command.make('sai', {}, () => mainPrompt);
-
-const cli = Command.run(command, {
-  name: 'Prompt Examples',
-  version: '0.0.1'
-});
-
-Effect.suspend(() => cli(process.argv)).pipe(Effect.provide(NodeContext.layer), Runtime.runMain);
+Effect.suspend(() => Effect.scoped(program)).pipe(Effect.provide(NodeContext.layer), Runtime.runMain);
 
 async function buildSession(account: Account): Promise<AuthorizationAgent> {
   const stu = new SolidTestUtils(account);

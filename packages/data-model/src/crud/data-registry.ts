@@ -1,7 +1,14 @@
 import { DataFactory } from 'n3';
 import { DatasetCore } from '@rdfjs/types';
-import { INTEROP, RDF, SPACE, discoverStorageDescription, getOneMatchingQuad } from '@janeirodigital/interop-utils';
-import { ReadableDataRegistration } from '../readable';
+import {
+  INTEROP,
+  RDF,
+  SPACE,
+  asyncIterableToArray,
+  discoverStorageDescription,
+  getOneMatchingQuad
+} from '@janeirodigital/interop-utils';
+import { ReadableDataRegistration, ReadableShapeTree } from '../readable';
 import { AuthorizationAgentFactory } from '..';
 import type { CRUDData } from './resource';
 import { CRUDContainer, CRUDDataRegistration } from '.';
@@ -24,6 +31,11 @@ export class CRUDDataRegistry extends CRUDContainer {
         }
       }
     };
+  }
+
+  async registeredShapeTrees(): Promise<ReadableShapeTree[]> {
+    const registrations = await asyncIterableToArray(this.registrations);
+    return registrations.map((registration) => registration.shapeTree);
   }
 
   async createRegistration(registeredShapeTree: string): Promise<CRUDDataRegistration> {
