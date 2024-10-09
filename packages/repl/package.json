@@ -30,15 +30,17 @@
   },
   "scripts": {
     "repl": "tsx ./repl.ts",
-    "cli": "NODE_OPTIONS='--no-deprecation' tsx ./cli.ts"
+    "cli": "NODE_OPTIONS='--no-deprecation' tsx ./cli.ts",
+    "test": "NODE_ENV=vitest vitest run --coverage"
   },
   "dependencies": {
+    "@effect/cli": "^0.47.1",
+    "@effect/platform-node": "^0.63.1",
     "@janeirodigital/interop-utils": "^1.0.0-rc.24",
-    "@effect/cli": "^0.43.2",
-    "@effect/platform-node": "^0.59.0",
-    "effect": "^3.7.2"
+    "effect": "^3.9.1"
   },
   "devDependencies": {
+    "@effect/platform": "^0.68.1",
     "@janeirodigital/css-test-utils": "^1.0.0-rc.24",
     "@janeirodigital/interop-authorization-agent": "workspace:^1.0.0-rc.24",
     "@janeirodigital/interop-data-model": "workspace:^1.0.0-rc.24",
