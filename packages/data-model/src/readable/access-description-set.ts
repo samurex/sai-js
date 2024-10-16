@@ -4,7 +4,7 @@ import { AuthorizationAgentFactory, ReadableAccessNeedDescription, ReadableAcces
 import { ReadableResource } from './resource';
 
 export class ReadableAccessDescriptionSet extends ReadableResource {
-  factory: AuthorizationAgentFactory;
+  declare factory: AuthorizationAgentFactory;
 
   public accessNeedDescriptions: ReadableAccessNeedDescription[] = [];
 

@@ -5,7 +5,7 @@ import { CRUDContainer, CRUDApplicationRegistration, CRUDSocialAgentRegistration
 import { CRUDData } from './resource';
 
 export class CRUDAgentRegistry extends CRUDContainer {
-  factory: AuthorizationAgentFactory;
+  declare factory: AuthorizationAgentFactory;
 
   async bootstrap(): Promise<void> {
     await this.fetchData();

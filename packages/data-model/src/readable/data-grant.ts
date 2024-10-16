@@ -6,7 +6,7 @@ import { DataInstance, InteropFactory, DataGrant } from '..';
 import { ReadableResource } from '.';
 
 export abstract class AbstractDataGrant extends ReadableResource {
-  dataset: DatasetCore;
+  declare dataset: DatasetCore;
 
   public constructor(iri: string, factory: InteropFactory, dataset: DatasetCore) {
     super(iri, factory);

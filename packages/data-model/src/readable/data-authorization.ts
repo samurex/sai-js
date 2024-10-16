@@ -13,7 +13,7 @@ import {
 import { ReadableResource, SelectedFromRegistryDataGrant } from '.';
 
 export class ReadableDataAuthorization extends ReadableResource {
-  factory: AuthorizationAgentFactory;
+  declare factory: AuthorizationAgentFactory;
 
   hasInheritingAuthorization: ReadableDataAuthorization[];
 

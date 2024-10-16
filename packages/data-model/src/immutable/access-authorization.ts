@@ -19,9 +19,9 @@ export type AccessAuthorizationData = StringData & {
 export class ImmutableAccessAuthorization extends ImmutableResource {
   dataAuthorizations: ImmutableDataAuthorization[];
 
-  data: AccessAuthorizationData;
+  declare data: AccessAuthorizationData;
 
-  factory: AuthorizationAgentFactory;
+  declare factory: AuthorizationAgentFactory;
 
   public constructor(iri: string, factory: AuthorizationAgentFactory, data: AccessAuthorizationData) {
     super(iri, factory, data);

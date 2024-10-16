@@ -10,7 +10,7 @@ export type SocialAgentInvitationData = {
 };
 
 export class CRUDSocialAgentInvitation extends CRUDResource {
-  data?: SocialAgentInvitationData;
+  declare data?: SocialAgentInvitationData;
 
   public constructor(iri: string, factory: AuthorizationAgentFactory, data?: SocialAgentInvitationData) {
     super(iri, factory, data);

@@ -14,7 +14,7 @@ import type { CRUDData } from './resource';
 import { CRUDContainer, CRUDDataRegistration } from '.';
 
 export class CRUDDataRegistry extends CRUDContainer {
-  factory: AuthorizationAgentFactory;
+  declare factory: AuthorizationAgentFactory;
 
   get hasDataRegistration(): string[] {
     return this.getObjectsArray('hasDataRegistration').map((obj) => obj.value);
