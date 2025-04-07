@@ -55,7 +55,7 @@ async function findUserDataRegistrations(accessNeedGroup: ReadableAccessNeedGrou
       if (dataRegistration)
         dataRegistrations.push({
           id: IRI.make(dataRegistration.iri),
-          // dataRegistry: dataRegistry.iri,
+          dataRegistry: IRI.make(dataRegistry.iri),
           label: `${dataRegistration.iri.split('/').slice(0, 4).join('/')}/`, // TODO get proper label,
           shapeTree: accessNeed.shapeTree.iri,
           count: dataRegistration.contains.length
