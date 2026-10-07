@@ -77,10 +77,19 @@ if (!hardDisabled && (otlpEndpoint || dumpFile)) {
       'link',
     ]
     const responseHeaders = ['link', 'content-type', 'location', 'vary']
-    const headersToSpanAttributes = {
-      client: { requestHeaders, responseHeaders },
-      server: { requestHeaders, responseHeaders },
-    }
+    // DUMP-ONLY (file mode): authorization/cookie carry real session tokens —
+    // never attach them when exporting to OTLP (compose dev loop -> jaeger).
+    const headersToSpanAttributes = dumpFile
+      ? {
+          client: { requestHeaders, responseHeaders },
+          server: { requestHeaders, responseHeaders },
+        }
+      : undefined
+    // undici takes a DIFFERENT shape ({request,response}Headers) than http
+    // ({client,server}) — keep both gated on file mode the same way.
+    const undiciHeadersToSpanAttributes = dumpFile
+      ? { requestHeaders, responseHeaders }
+      : undefined
     // SimpleSpanProcessor (NOT batch): dagger kills the service right after
     // the test exec — batch would lose tail spans. Exporter precedence:
     // OTEL_TRACES_FILE (OUR var) wins — the dagger engine injects standard
@@ -114,7 +123,7 @@ if (!hardDisabled && (otlpEndpoint || dumpFile)) {
             skipSparqlStoreSpans && `${options.hostname ?? options.host ?? ''}`.includes('sparql'),
         }),
         new UndiciInstrumentation({
-          headersToSpanAttributes: { requestHeaders, responseHeaders },
+          headersToSpanAttributes: undiciHeadersToSpanAttributes,
           ignoreRequestHook: (request) => skipSparqlStoreSpans && request.origin.includes('sparql'),
         }),
       ],

@@ -11,8 +11,11 @@ Production is off by construction (no env vars → no-op, zero loaded OTel code)
 ```bash
 # collect (dagger test env — NDJSON dump per process, cached volume)
 dagger call otel-dump --testFile=invitation.test.ts export --path ./otel-dump
-# view (Jaeger v2 container on :16686/:4318)
+# view (Jaeger v2 on :16686/:4318 — compose no longer ships it, run your own:
+#   docker run -p 16686:16686 -p 4318:4318 jaegertracing/jaeger:2.10)
 devbox run jaeger        # converts ./otel-dump → OTLP/JSON → POST :4318/v1/traces
+# view (.NET Aspire dashboard 13.x — OTLP/HTTP on :18890, hex ids, int status)
+devbox run aspire        # POST http://localhost:18890/v1/traces (ASPIRE_OTLP_ENDPOINT to override)
 ```
 
 ## Env contract (each instrumented process)
@@ -20,7 +23,7 @@ devbox run jaeger        # converts ./otel-dump → OTLP/JSON → POST :4318/v1/
 | Var | Effect |
 |---|---|
 | `OTEL_TRACES_FILE` | NDJSON file dump (`/otel/<runId>/<service>.ndjson` in dagger; anything else, e.g. dev) — **wins over OTLP** |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | live OTLP/HTTP export (compose dev → the `jaeger` service) when `OTEL_TRACES_FILE` is unset |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | live OTLP/HTTP export (opt-in — compose no longer sets it; point it at any collector) when `OTEL_TRACES_FILE` is unset |
 | `OTEL_SERVICE_NAME` | span `service.name` (sai-test / sai-uas / sai-id / sai-registry / sai-data / sai-worker) |
 | `OTEL_SDK_DISABLED=true` / `OTEL_TRACES_EXPORTER=none` | hard-off |
 
@@ -35,8 +38,12 @@ prioritizing OTLP would silently ship our spans to their collector.
   (synchronous — no batching, so no tail-span loss when dagger kills services).
 - **Headers**: selected request/response headers captured as span attributes
   (`authorization`, `cookie`, `content-type`, `accept`, `if-none-match`,
-  `link`, `location`, `vary`) — these can carry real session tokens, so this
-  stays test/CI-only, never an OTLP endpoint.
+  `link`, `location`, `vary`) — these can carry real session tokens, so
+  capture is **file-dump-only** (`OTEL_TRACES_FILE`): when the exporter is
+  OTLP (compose dev loop → jaeger) the `headersToSpanAttributes` option is
+  omitted entirely. NB `HttpInstrumentation` and `UndiciInstrumentation`
+  take different shapes for it (`{client,server}` vs
+  `{request,response}Headers`).
 - **Per-test roots** (test runner): a root span named after each vitest test;
   `context.attach` via the private `_getContextManager` (api 1.9 removed
   `attach` from the public facade).
@@ -92,7 +99,9 @@ prioritizing OTLP would silently ship our spans to their collector.
 New (`packages/components/src/tracing/`): `bootstrap.ts` (async gate/init),
 `preload.cjs` (sync CJS CSS preload — `--require`, see header: `--import`
 races the main module), `ndjson-exporter.ts`, `otel-state.ts`,
-`effect-tracer.ts`. Plus `scripts/traces-to-otlp.mjs`, `scripts/jaeger.sh`.
+`effect-tracer.ts`. Plus `scripts/traces-to-otlp.mjs` (hex ids default —
+Jaeger v2 reads hex; `--aspire` switches status.code to int for the Aspire
+dashboard, which also reads hex), `scripts/jaeger.sh`, `scripts/aspire.sh`.
 
 Added to existing files:
 
@@ -120,6 +129,8 @@ Added to existing files:
 - `.dagger/src/index.ts` — per-service env/mount (`/otel` cache volume,
   `OTEL_TRACES_FILE` per run-id dir), `--require` preloads,
   `otelDump()` (run-id isolation — dagger exec-cache made a wipe a no-op)
-- `docker-compose.yaml` — `jaeger` service, preloads + `OTEL_EXPORTER_OTLP_ENDPOINT`
-  on auth/worker/data/registry/id
+- `docker-compose.yaml` — no collector in-compose (jaeger service removed);
+  `OTEL_SERVICE_NAME` on auth/data/registry/id (each with a `--require`
+  preload); worker uses the async bootstrap (no preload) and runs `dist/`,
+  so it needs a rebuild to pick up tracing changes
 - `devbox.json` — `jaeger` script (`bash scripts/jaeger.sh`)

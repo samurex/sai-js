@@ -48,9 +48,10 @@ export async function initNodeTracing(serviceName: string): Promise<NodeSDK | un
     const resource = resourceFromAttributes({ [ATTR_SERVICE_NAME]: serviceName })
 
     // headers → span attributes: the subset the diagram http blocks care
-    // about — auth/type headers + the discovery Link. TEST/CI only:
+    // about — auth/type headers + the discovery Link. DUMP-ONLY (file mode):
     // cookie/authorization carry real session tokens into the file dump
-    // (the .c4 notes already print them); keep this OFF for any OTLP endpoint.
+    // (the .c4 notes already print them), so they must never reach an OTLP
+    // endpoint (the compose dev loop -> jaeger). Omitted entirely otherwise.
     const requestHeaders = [
       'authorization',
       'cookie',
@@ -60,10 +61,15 @@ export async function initNodeTracing(serviceName: string): Promise<NodeSDK | un
       'link',
     ]
     const responseHeaders = ['link', 'content-type', 'location', 'vary']
-    const headersToSpanAttributes = {
-      client: { requestHeaders, responseHeaders },
-      server: { requestHeaders, responseHeaders },
-    }
+    const headersToSpanAttributes = dumpFile
+      ? {
+          client: { requestHeaders, responseHeaders },
+          server: { requestHeaders, responseHeaders },
+        }
+      : undefined
+    // undici takes a DIFFERENT shape ({request,response}Headers) than http
+    // ({client,server}) — keep both gated on file mode the same way.
+    const undiciHeadersToSpanAttributes = dumpFile ? { requestHeaders, responseHeaders } : undefined
 
     // SimpleSpanProcessor (NOT batch): dagger tears the bound services down
     // right after the test exec — batch would buffer and lose the tail spans.
@@ -93,7 +99,7 @@ export async function initNodeTracing(serviceName: string): Promise<NodeSDK | un
       instrumentations: [
         new HttpInstrumentation({ headersToSpanAttributes }),
         new UndiciInstrumentation({
-          headersToSpanAttributes: { requestHeaders, responseHeaders },
+          headersToSpanAttributes: undiciHeadersToSpanAttributes,
           // optional: skip long-lived streams (GET /.sai/events)
           // ignoreRequestHook: (request) => request.path === '/.sai/events',
         }),

@@ -17,15 +17,19 @@
  * OTLP/JSON spec encodes bytes (traceId/spanId/parentSpanId) as base64, but
  * the Jaeger v2 collector's JSON decoder (`model.ID.UnmarshalJSONIter`)
  * reads them as HEX (32/16 chars) — verified live: base64 ids get
- * `ID.UnmarshalJSONIter: length mismatch`, hex ids get HTTP 200. So this
- * script keeps the dumps' hex ids as-is (matching what curl-loaded
- * otel.json proves works). If you target a strictly spec-compliant OTLP
- * endpoint instead, switch to `Buffer.from(hex, 'hex').toString('base64')`.
+ * `ID.UnmarshalJSONIter: length mismatch`, hex ids get HTTP 200. The .NET
+ * Aspire dashboard (13.x, scripts/aspire.sh) turns out to read ids as hex
+ * too, but rejects enum-name strings for `kind` and `status.code` (400) — it
+ * wants ints. So: default output keeps hex ids + enum-name kind/status
+ * (Jaeger v2); pass `--aspire` for hex ids + int kind/status (Aspire 13.x).
  */
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
-const dumpDir = process.argv[2] ?? './otel-dump'
+// Aspire dashboard 13.x: hex ids (like Jaeger), but status.code as an int
+// (enum-name strings get 400). Default output targets Jaeger v2.
+const aspireMode = process.argv.includes('--aspire')
+const dumpDir = process.argv.find((a, i) => i >= 2 && !a.startsWith('--')) ?? './otel-dump'
 
 function anyValue(value) {
   if (typeof value === 'string') return { stringValue: value }
@@ -89,7 +93,7 @@ for (const [serviceName, spans] of byService) {
           spanId: span.spanId,
           ...(span.parentSpanId ? { parentSpanId: span.parentSpanId } : {}),
           name: span.name,
-          kind: SPAN_KINDS[span.kind] ?? 'SPAN_KIND_UNSPECIFIED',
+          kind: aspireMode ? (span.kind ?? 0) : (SPAN_KINDS[span.kind] ?? 'SPAN_KIND_UNSPECIFIED'),
           // dump is milliseconds; OTLP uses nanoseconds (string int64)
           startTimeUnixNano: String(Math.round(span.startTime * 1_000_000)),
           endTimeUnixNano: String(Math.round(span.endTime * 1_000_000)),
@@ -99,7 +103,11 @@ for (const [serviceName, spans] of byService) {
             timeUnixNano: String(Math.round((event.time ?? span.startTime) * 1_000_000)),
             attributes: attributesToOtlp(event.attributes),
           })),
-          status: { code: STATUS_CODES[span.status?.code ?? 0] ?? 'STATUS_CODE_UNSET' },
+          status: {
+            code: aspireMode
+              ? (span.status?.code ?? 0)
+              : (STATUS_CODES[span.status?.code ?? 0] ?? 'STATUS_CODE_UNSET'),
+          },
         })),
       },
     ],

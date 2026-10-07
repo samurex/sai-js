@@ -34,7 +34,8 @@
       "up": "make up",
       "down": "make down",
       "seed": "bun packages/repl/cmd.ts -- seed-env",
-      "jaeger": "bash scripts/jaeger.sh"
+      "jaeger": "bash scripts/jaeger.sh",
+      "aspire": "bash scripts/aspire.sh"
     }
   }
 }
