@@ -4,6 +4,10 @@ export interface RuntimeConfig {
   languages: string[]
   idOrigin: string
   dataOrigin: string
+  // Browser OTLP endpoint for the UI spans (docs/opentelemetry.md). A path is
+  // resolved against the page origin, so the default `/otlp` posts
+  // same-origin and needs no CORS on Tempo.
+  otlpBaseUrl: string
 }
 
 // Cache the config after first load to avoid repeated fetches

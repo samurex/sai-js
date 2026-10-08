@@ -7,6 +7,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@effect/opentelemetry": "0.46.1",
     "@effect/platform": "^0.69.13",
     "@effect/platform-browser": "^0.48.13",
     "@effect/rpc": "^0.44.13",
@@ -14,6 +15,9 @@
     "@fluent/bundle": "^0.18.0",
     "@janeirodigital/sai-api-messages": "file:../../packages/api-messages",
     "@mdi/font": "7.3.67",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.222.0",
+    "@opentelemetry/sdk-trace-base": "^2.11.0",
+    "@opentelemetry/sdk-trace-web": "^2.11.0",
     "@vueuse/core": "^14.4.0",
     "effect": "^3.10.8",
     "fluent-vue": "^3.8.2",

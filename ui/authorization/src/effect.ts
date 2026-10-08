@@ -36,12 +36,13 @@ import { Effect, Layer } from 'effect'
 import type * as S from 'effect/Schema'
 import type { PushSubscription } from 'web-push'
 import { getRuntimeConfig } from './runtime-config'
+import { UiTracingLive } from './tracing'
 
 // Create the client
 const makeClient = Effect.gen(function* () {
   const client = yield* HttpClient.HttpClient
 
-  return HttpRpcResolverNoStream.make<UiRpcRouter>(
+  const rpcClient = HttpRpcResolverNoStream.make<UiRpcRouter>(
     client.pipe(
       HttpClient.mapRequest(
         HttpClientRequest.prependUrl(`${getRuntimeConfig().backendBaseUrl}/.sai/api`)
@@ -49,6 +50,16 @@ const makeClient = Effect.gen(function* () {
       // HttpClient.tapRequest(Console.log)
     )
   ).pipe(RpcResolver.toClient)
+
+  // One root per UI action, named after the RPC tag. Without it the two spans
+  // of the same request start their own traces: @effect/rpc's
+  // `Rpc.request <Tag>` (it wraps request construction and ends before the
+  // batched execution) and @effect/platform's `http.client <METHOD>` (created
+  // inside the resolver). Both nest under this span, so one action is one trace.
+  return ((request: { _tag: string }) =>
+    (rpcClient as unknown as (r: unknown) => Effect.Effect<unknown, unknown, unknown>)(
+      request
+    ).pipe(Effect.withSpan(`sai.ui.${request._tag}`))) as typeof rpcClient
 })
 
 const AuthFetch = FetchHttpClient.layer.pipe(
@@ -59,7 +70,12 @@ const AuthFetch = FetchHttpClient.layer.pipe(
   )
 )
 
-const AuthLayer = FetchHttpClient.layer.pipe(Layer.provide(AuthFetch))
+// HttpClient for the RPC calls + the web OTel provider that exports the
+// browser spans (and supplies the ids @effect/platform puts in traceparent).
+const AuthLayer = Layer.mergeAll(
+  FetchHttpClient.layer.pipe(Layer.provide(AuthFetch)),
+  UiTracingLive
+)
 
 export async function getWebId() {
   const program = Effect.gen(function* () {
