@@ -35,11 +35,15 @@ const POSTGRESQL_VERSION = '16'
 const TEMPORAL_VERSION = '1.31.0'
 const TEMPORAL_ADMINTOOLS_VERSION = '1.31.0'
 
-// OpenTelemetry file dump: a cache volume shared by the services and the
-// test runner; `otelDump` materializes the per-process NDJSON files after
-// the run.
-const OTEL_CACHE_VOLUME = 'sai-otel-dump'
-const otelTracesFile = (runId: string, name: string) => `/otel/${runId}/${name}.ndjson`
+// OpenTelemetry: the instrumented processes (test runner, UAS, id/registry/
+// data, worker) export OTLP straight to the HOST's compose Tempo
+// (docker-compose.yaml `tempo` service, OTLP/HTTP :4318). No per-run
+// collector and no import step: traces land in the running Tempo while the
+// test exec itself runs. Default targets the docker host on the compose
+// network gateway; override with TEMPO_OTLP_ENDPOINT if reachability differs.
+// Exported as SAI_OTLP_ENDPOINT, not OTEL_EXPORTER_OTLP_ENDPOINT: the dagger
+// engine injects and overrides the latter with its own telemetry endpoint.
+const tempoOtlpEndpoint = process.env.TEMPO_OTLP_ENDPOINT ?? 'http://172.16.0.1:4318'
 
 type LogLevel = 'error' | 'warn' | 'info' | 'verbose' | 'debug' | 'silly'
 
@@ -246,10 +250,10 @@ export class SaiJs {
         // kept so re-enabling needs no dagger change
         .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
         // OpenTelemetry: the worker imports the bootstrap from workers/main.ts
-        // (no preload needed); spans land in the shared dump when set
-        .withMountedCache('/otel', dag.cacheVolume(OTEL_CACHE_VOLUME))
-        .withEnvVariable('OTEL_TRACES_FILE', otelTracesFile(runId, 'worker'))
+        // (no preload needed) and exports OTLP to this run's Tempo collector
+        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
         .withEnvVariable('OTEL_SERVICE_NAME', 'sai-worker')
+        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
         .withServiceBinding('postgresql', this.postgresService())
         .withServiceBinding('temporal', temporal)
         .withServiceBinding('sparql', this.sparqlService())
@@ -277,9 +281,9 @@ export class SaiJs {
         .withEnvVariable('CSS_HTTPS_KEY', CSS_HTTPS_KEY)
         .withEnvVariable('CSS_HTTPS_CERT', CSS_HTTPS_CERT)
         // OpenTelemetry server-side spans (sync --require preload, like auth)
-        .withMountedCache('/otel', dag.cacheVolume(OTEL_CACHE_VOLUME))
-        .withEnvVariable('OTEL_TRACES_FILE', otelTracesFile(runId, 'id'))
+        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
         .withEnvVariable('OTEL_SERVICE_NAME', 'sai-id')
+        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
         .withExposedPort(443)
         .withServiceBinding('sparql', this.sparqlService())
         .asService({
@@ -326,13 +330,12 @@ export class SaiJs {
         .withEnvVariable('CSS_DOC_ORIGIN', CSS_DOC_ORIGIN)
         .withEnvVariable('CSS_DATA_ORIGIN', CSS_DATA_ORIGIN)
         .withEnvVariable('CSS_REG_ORIGIN', CSS_REG_ORIGIN)
-        // OpenTelemetry: preload the tracing bootstrap (no-op without
-        // OTEL_TRACES_FILE — set here, so the auth process spans land in the
-        // run-specific dump subdir; per-run dir avoids the exec-cache-
-        // poisoned wipe, see otelDump). CSS has no app-level entrypoint we own.
-        .withMountedCache('/otel', dag.cacheVolume(OTEL_CACHE_VOLUME))
-        .withEnvVariable('OTEL_TRACES_FILE', otelTracesFile(runId, 'auth'))
+        // OpenTelemetry: preload the tracing bootstrap (no-op without an OTLP
+        // endpoint or dump file). CSS has no app-level entrypoint we own, so
+        // the preload is what registers the instrumentation.
+        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
         .withEnvVariable('OTEL_SERVICE_NAME', 'sai-uas')
+        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
         .withServiceBinding('postgresql', this.postgresService())
         .withServiceBinding('temporal', temporal)
         .withServiceBinding('id', this.idService(runId))
@@ -377,9 +380,9 @@ export class SaiJs {
         )
         .withEnvVariable('NODE_TLS_REJECT_UNAUTHORIZED', NODE_TLS_REJECT_UNAUTHORIZED)
         // OpenTelemetry server-side spans (sync --require preload, like auth)
-        .withMountedCache('/otel', dag.cacheVolume(OTEL_CACHE_VOLUME))
-        .withEnvVariable('OTEL_TRACES_FILE', otelTracesFile(runId, 'registry'))
+        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
         .withEnvVariable('OTEL_SERVICE_NAME', 'sai-registry')
+        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
         .withExposedPort(443)
         .withServiceBinding('postgresql', this.postgresService())
         .withServiceBinding('sparql', this.sparqlService())
@@ -423,9 +426,9 @@ export class SaiJs {
         .withEnvVariable('CSS_S3_SECRET_ACCESS_KEY', CSS_S3_SECRET_ACCESS_KEY)
         .withEnvVariable('CSS_S3_REGION', CSS_S3_REGION)
         // OpenTelemetry server-side spans (sync --require preload, like auth)
-        .withMountedCache('/otel', dag.cacheVolume(OTEL_CACHE_VOLUME))
-        .withEnvVariable('OTEL_TRACES_FILE', otelTracesFile(runId, 'data'))
+        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
         .withEnvVariable('OTEL_SERVICE_NAME', 'sai-data')
+        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
         .withExposedPort(443)
         .withServiceBinding('postgresql', this.postgresService())
         .withServiceBinding('sparql', this.sparqlService())
@@ -462,12 +465,12 @@ export class SaiJs {
         .withEnvVariable('CSS_ENCODED_PRIVATE_JWK', CSS_ENCODED_PRIVATE_JWK)
         .withEnvVariable('TEMPORAL_ADDRESS', 'temporal:7233')
         .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
-        // OpenTelemetry: the test runner holds the trace roots (it plays
-        // the browser/App role). The mount makes the shared dump visible to
-        // `otelDump`.
-        .withMountedCache('/otel', dag.cacheVolume(OTEL_CACHE_VOLUME))
-        .withEnvVariable('OTEL_TRACES_FILE', otelTracesFile(runId, 'test'))
+        // OpenTelemetry: the test runner holds the trace roots (it plays the
+        // browser/App role) and exports OTLP to the host compose Tempo via
+        // SAI_OTLP_ENDPOINT.
+        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
         .withEnvVariable('OTEL_SERVICE_NAME', 'sai-test')
+        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
         .withServiceBinding('auth', auth)
         .withServiceBinding('registry', this.registryService(runId))
         .withServiceBinding('data', this.dataService(runId))
@@ -513,91 +516,6 @@ export class SaiJs {
     return (await this.testBase()).withExec(args).stdout()
   }
 
-  /**
-   * Run the test suite with the OpenTelemetry file dump enabled and return
-   * the per-process NDJSON traces (auth.ndjson / worker.ndjson / test.ndjson)
-   * from the shared cache volume. View offline:
-   *   dagger call otel-dump --testFile="authorization.test.ts" export --path ./otel-dump
-   *   node scripts/traces-to-otlp.mjs ./otel-dump | curl -X POST \
-   *     http://localhost:4318/v1/traces -H 'Content-Type: application/json' --data-binary @-
-   */
-  @func()
-  /**
-   * Run the test suite with the OpenTelemetry file dump enabled and return
-   * the per-process NDJSON traces (`<runId>/auth.ndjson`, `worker.ndjson`,
-   * `test.ndjson`) from the shared cache volume. Each call uses a fresh run
-   * subdirectory — no wipe needed (dagger execs that `rm` the cache volume
-   * are no-ops after the first run: mounted cache contents are excluded
-   * from exec cache keys, so the wipe never re-executes and old spans
-   * accumulate). `--only` (same as `test`) narrows to a single test by name.
-   * View offline:
-   *   dagger call otel-dump --testFile="authorization.test.ts" \
-   *     --only="alice approves bobs request — authorization data from the request, grants follow" \
-   *     export --path ./otel-dump
-   *   node scripts/traces-to-otlp.mjs ./otel-dump | curl -X POST \
-   *     http://localhost:4318/v1/traces -H 'Content-Type: application/json' --data-binary @-
-   */
-  @func()
-  async otelDump(
-    @argument()
-    testFile?: string,
-    @argument()
-    only?: string
-  ): Promise<Directory> {
-    // unique per call — also makes the cleanup/copy execs below cache-miss
-    const runId = `run-${Date.now().toString(36)}`
-    // opportunistic cleanup of previous runs (command embeds runId → no
-    // dagger exec-cache hit, actually runs every time)
-    await dag
-      .container()
-      .from('alpine:latest')
-      .withMountedCache('/otel', dag.cacheVolume(OTEL_CACHE_VOLUME))
-      .withExec([
-        'sh',
-        '-c',
-        `find /otel -mindepth 1 -maxdepth 1 -type d ! -name '${runId}' -exec rm -rf {} +`,
-      ])
-      .sync()
-    const args = ['npm', 'run', 'dagger:test']
-    const filter: string[] = []
-    if (testFile) {
-      // allow multiple files: --testFile="share.test.ts roles.test.ts"
-      filter.push(...testFile.split(/\s+/))
-    }
-    if (only) {
-      // single test: vitest -t <testNamePattern>
-      filter.push('-t', only)
-    }
-    // npm's own arg parser strips/rewrites args placed before `--` (it ate
-    // the `-t` flag), so forward everything after the separator verbatim
-    if (filter.length) args.push('--', ...filter)
-    const result = await (await this.testBase(runId)).withExec(args)
-    // copy the cache-mounted dump into a plain container path — dagger cannot
-    // materialize a cache volume as a Directory (`/otel` is not retrievable);
-    // bounded guard: wait for at least one dump file first (services are
-    // killed right after this exec returns). Empty-run diagnostics kept in
-    // stderr and the exec exits 0 so the export still materializes.
-    return result
-      .withExec([
-        'sh',
-        '-c',
-        `for i in $(seq 60); do [ -n "$(ls -A /otel/${runId} 2>/dev/null)" ] && break; sleep 1; done
-mkdir -p /out
-if [ -d /otel/${runId} ]; then
-  cp -r /otel/${runId}/. /out/
-else
-  echo "NO TRACES EMITTED for run ${runId}" >&2
-  echo '--- OTEL env in test container ---' >&2
-  env | grep -i otel || true
-  echo '--- /otel contents ---' >&2
-  ls -la /otel 2>/dev/null || echo '(no /otel dir)' >&2
-  exit 0
-fi`,
-      ])
-      .directory('/out')
-  }
-
-  @func()
   async debugService(
     @argument()
     testFile?: string

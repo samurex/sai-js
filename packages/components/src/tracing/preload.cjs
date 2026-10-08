@@ -14,11 +14,12 @@
 const hardDisabled =
   process.env.OTEL_SDK_DISABLED === 'true' || process.env.OTEL_TRACES_EXPORTER === 'none'
 const otlpEndpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT
-const dumpFile = process.env.OTEL_TRACES_FILE
-if (!hardDisabled && (otlpEndpoint || dumpFile)) {
+// dagger overrides OTEL_EXPORTER_OTLP_ENDPOINT with its own telemetry endpoint,
+// so our collector endpoint travels in this dedicated var and is passed to the
+// exporter explicitly (see bootstrap.ts)
+const saiEndpoint = process.env.SAI_OTLP_ENDPOINT
+if (!hardDisabled && (saiEndpoint || otlpEndpoint)) {
   try {
-    const { appendFileSync, mkdirSync } = require('node:fs')
-    const { dirname } = require('node:path')
     const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http')
     const { UndiciInstrumentation } = require('@opentelemetry/instrumentation-undici')
     const { resourceFromAttributes } = require('@opentelemetry/resources')
@@ -28,46 +29,11 @@ if (!hardDisabled && (otlpEndpoint || dumpFile)) {
 
     const serviceName = process.env.OTEL_SERVICE_NAME ?? 'sai-uas'
 
-    // JSON-lines dump — one compact span record per line, appended
-    // synchronously (SimpleSpanProcessor, NOT batch: dagger kills the
-    // service right after the test exec — batch would lose tail spans).
-    class NdjsonSpanExporter {
-      constructor(path) {
-        mkdirSync(dirname(path), { recursive: true })
-        this.path = path
-      }
-      export(spans, resultCallback) {
-        for (const span of spans) {
-          appendFileSync(
-            this.path,
-            `${JSON.stringify({
-              traceId: span.spanContext().traceId,
-              spanId: span.spanContext().spanId,
-              parentSpanId: span.parentSpanContext?.spanId,
-              name: span.name,
-              kind: span.kind,
-              startTime: span.startTime[0] * 1000 + span.startTime[1] / 1e6,
-              endTime: span.endTime[0] * 1000 + span.endTime[1] / 1e6,
-              duration: span.duration[0] * 1000 + span.duration[1] / 1e6,
-              attributes: span.attributes,
-              events: span.events,
-              status: span.status,
-              serviceName: span.resource.attributes['service.name'],
-              // restart detection: one writer per process, appended to the same file
-              pid: process.pid,
-            })}\n`
-          )
-        }
-        resultCallback({ code: 0 }) // ExportResultCode.SUCCESS
-      }
-      shutdown() {}
-    }
-
     const resource = resourceFromAttributes({ [ATTR_SERVICE_NAME]: serviceName })
     // headers → span attributes: the subset the diagram http blocks care
     // about — auth/type headers + the discovery Link. TEST/CI only:
-    // cookie/authorization carry real session tokens into the file dump
-    // (the .c4 notes already print them); keep this OFF for any OTLP endpoint.
+    // cookie/authorization carry real session tokens; keep this OFF unless
+    // the collector is ours (OTEL_CAPTURE_HEADERS=true, dagger test env).
     const requestHeaders = [
       'authorization',
       'cookie',
@@ -77,31 +43,32 @@ if (!hardDisabled && (otlpEndpoint || dumpFile)) {
       'link',
     ]
     const responseHeaders = ['link', 'content-type', 'location', 'vary']
-    // DUMP-ONLY (file mode): authorization/cookie carry real session tokens —
-    // never attach them when exporting to OTLP (compose dev loop -> jaeger).
-    const headersToSpanAttributes = dumpFile
+    // Headers only when the caller opts in (OTEL_CAPTURE_HEADERS=true — the
+    // dagger test collector sets it): authorization/cookie carry real session
+    // tokens, so never send them to an unrelated collector. undici takes a
+    // DIFFERENT shape than http.
+    const captureHeaders = process.env.OTEL_CAPTURE_HEADERS === 'true'
+    const headersToSpanAttributes = captureHeaders
       ? {
           client: { requestHeaders, responseHeaders },
           server: { requestHeaders, responseHeaders },
         }
       : undefined
-    // undici takes a DIFFERENT shape ({request,response}Headers) than http
-    // ({client,server}) — keep both gated on file mode the same way.
-    const undiciHeadersToSpanAttributes = dumpFile
+    const undiciHeadersToSpanAttributes = captureHeaders
       ? { requestHeaders, responseHeaders }
       : undefined
     // SimpleSpanProcessor (NOT batch): dagger kills the service right after
-    // the test exec — batch would lose tail spans. Exporter precedence:
-    // OTEL_TRACES_FILE (OUR var) wins — the dagger engine injects standard
-    // OTLP env (OTEL_EXPORTER_OTLP_ENDPOINT/_TRACES_EXPORTER) into exec
-    // containers for its own telemetry; prioritizing it would silently ship
-    // our spans to their collector. OTLP is used only when no file var set
-    // (compose dev loop -> the jaeger service).
-    const spanProcessor = dumpFile
-      ? new SimpleSpanProcessor(new NdjsonSpanExporter(dumpFile))
-      : new SimpleSpanProcessor(
-          new (require('@opentelemetry/exporter-trace-otlp-http').OTLPTraceExporter)()
-        )
+    // the test exec — batch would lose tail spans. The exporter is handed
+    // SAI_OTLP_ENDPOINT explicitly — the dagger engine injects standard OTLP
+    // env (OTEL_EXPORTER_OTLP_ENDPOINT/_TRACES_EXPORTER) into exec containers
+    // for its own telemetry, so letting it read those would silently ship our
+    // spans to their collector. Unset saiEndpoint → falls back to the
+    // standard vars (compose dev loop -> the tempo service).
+    const spanProcessor = new SimpleSpanProcessor(
+      new (require('@opentelemetry/exporter-trace-otlp-http').OTLPTraceExporter)(
+        saiEndpoint ? { url: `${saiEndpoint}/v1/traces` } : undefined
+      )
+    )
     // cross-realm holder — read by temporal/client.ts in this same process
     globalThis[Symbol.for('sai.otel.temporalPluginConfig')] = { resource, spanProcessor }
 

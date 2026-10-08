@@ -9,27 +9,50 @@ Production is off by construction (no env vars → no-op, zero loaded OTel code)
 ## Usage
 
 ```bash
-# collect (dagger test env — NDJSON dump per process, cached volume)
-dagger call otel-dump --testFile=invitation.test.ts export --path ./otel-dump
-# view (Jaeger v2 on :16686/:4318 — compose no longer ships it, run your own:
-#   docker run -p 16686:16686 -p 4318:4318 jaegertracing/jaeger:2.10)
-devbox run jaeger        # converts ./otel-dump → OTLP/JSON → POST :4318/v1/traces
-# view (.NET Aspire dashboard 13.x — OTLP/HTTP on :18890, hex ids, int status)
-devbox run aspire        # POST http://localhost:18890/v1/traces (ASPIRE_OTLP_ENDPOINT to override)
+# run a test with dagger: the instrumented processes export OTLP straight to
+# the compose Tempo on the host (:4318), so the traces land in the running
+# Tempo during the exec — nothing to export or import afterwards
+dagger call test --testFile=invitation.test.ts
+# view (Grafana Tempo + Grafana — compose services; Tempo's built-in MCP at
+# POST :3200/api/mcp). Reachability from the dagger containers defaults to the
+# docker host on the compose network gateway (172.16.0.1); override with
+# TEMPO_OTLP_ENDPOINT.
 ```
+
+## Reset Tempo data (fresh slate before a run)
+
+Blocks accumulate in the compose `sai-tempo-data` volume, so previous runs
+stay searchable in Grafana/Tempo. To start clean — e.g. only the next run's
+traces visible:
+
+```bash
+# in the devbox shell (the compose up needs $CAROOT from mkcert)
+devbox shell
+# stop + drop the tempo container, delete the blocks volume, recreate
+docker compose stop tempo
+docker compose rm -f tempo
+docker volume rm sai-tempo-data
+docker compose up -d tempo grafana
+```
+
+The old traces (and any leftover WAL/index) are gone; Tempo rebuilds its
+blocklist on the next run.
 
 ## Env contract (each instrumented process)
 
 | Var | Effect |
 |---|---|
-| `OTEL_TRACES_FILE` | NDJSON file dump (`/otel/<runId>/<service>.ndjson` in dagger; anything else, e.g. dev) — **wins over OTLP** |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | live OTLP/HTTP export (opt-in — compose no longer sets it; point it at any collector) when `OTEL_TRACES_FILE` is unset |
+| `SAI_OTLP_ENDPOINT` | our own OTLP endpoint, handed to the exporter explicitly. Required in dagger, whose engine injects and overrides `OTEL_EXPORTER_OTLP_ENDPOINT` with its own telemetry endpoint; in dagger runs it points at the compose Tempo on the docker host (172.16.0.1:4318, override with `TEMPO_OTLP_ENDPOINT`) |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | live OTLP/HTTP export (compose dev loop → the `tempo` service) when `SAI_OTLP_ENDPOINT` is unset |
 | `OTEL_SERVICE_NAME` | span `service.name` (sai-test / sai-uas / sai-id / sai-registry / sai-data / sai-worker) |
+| `OTEL_CAPTURE_HEADERS=true` | attach the header attributes (`authorization`, `cookie`, …) to an OTLP export — the dagger test env sets it |
 | `OTEL_SDK_DISABLED=true` / `OTEL_TRACES_EXPORTER=none` | hard-off |
 
 Precedence is deliberate: the dagger engine injects `OTEL_EXPORTER_OTLP_ENDPOINT`
-and `OTEL_TRACES_EXPORTER` into exec containers for its own telemetry, so
-prioritizing OTLP would silently ship our spans to their collector.
+and `OTEL_TRACES_EXPORTER` into exec containers for its own telemetry and its
+values win over the ones we set, so our collector endpoint travels in
+`SAI_OTLP_ENDPOINT` and is passed to the exporter explicitly (the injected
+standard vars are then ignored).
 
 ## Mechanics
 
@@ -38,11 +61,10 @@ prioritizing OTLP would silently ship our spans to their collector.
   (synchronous — no batching, so no tail-span loss when dagger kills services).
 - **Headers**: selected request/response headers captured as span attributes
   (`authorization`, `cookie`, `content-type`, `accept`, `if-none-match`,
-  `link`, `location`, `vary`) — these can carry real session tokens, so
-  capture is **file-dump-only** (`OTEL_TRACES_FILE`): when the exporter is
-  OTLP (compose dev loop → jaeger) the `headersToSpanAttributes` option is
-  omitted entirely. NB `HttpInstrumentation` and `UndiciInstrumentation`
-  take different shapes for it (`{client,server}` vs
+  `link`, `location`, `vary`) with `OTEL_CAPTURE_HEADERS=true`, which the
+  dagger test collector sets (they carry real session tokens, so an unrelated
+  collector must not receive them). NB `HttpInstrumentation` and
+  `UndiciInstrumentation` take different shapes for it (`{client,server}` vs
   `{request,response}Headers`).
 - **Per-test roots** (test runner): a root span named after each vitest test;
   `context.attach` via the private `_getContextManager` (api 1.9 removed
@@ -90,18 +112,46 @@ prioritizing OTLP would silently ship our spans to their collector.
   spans (`ignoreRequestHook`/`ignoreOutgoingRequestHook`, service-name gated) —
   91% of registry traffic was their own re-queries; `sai-uas` keeps sparql
   spans (the diagrams' `[Data]`/`[Grant]` hops).
-- **Dump records** carry `pid` (restart detection) and hex ids; the Jaeger
-  OTLP/JSON converter passes ids through as hex (this Jaeger build reads ids
-  as hex — base64 gets `ID.UnmarshalJSONIter: length mismatch`).
 
 ## Where it lives
 
 New (`packages/components/src/tracing/`): `bootstrap.ts` (async gate/init),
 `preload.cjs` (sync CJS CSS preload — `--require`, see header: `--import`
-races the main module), `ndjson-exporter.ts`, `otel-state.ts`,
-`effect-tracer.ts`. Plus `scripts/traces-to-otlp.mjs` (hex ids default —
-Jaeger v2 reads hex; `--aspire` switches status.code to int for the Aspire
-dashboard, which also reads hex), `scripts/jaeger.sh`, `scripts/aspire.sh`.
+races the main module), `otel-state.ts`, `effect-tracer.ts`.
+
+Compose trace stack (`docker-compose.yaml` + `tempo/tempo.yaml` +
+`grafana/provisioning/datasources/tempo.yaml`): `tempo` (OTLP in on 4317/4318,
+TraceQL API and the built-in MCP server on 3200) and `grafana` (provisioned
+Tempo datasource, anonymous admin, for viewing traces). Tempo's MCP server
+(`query_frontend.mcp_server.enabled`) speaks streamable HTTP at
+`POST /api/mcp` and exposes `traceql-search`, `get-trace`,
+`get-attribute-names`/`get-attribute-values`,
+`traceql-metrics-instant`/`traceql-metrics-range` and `docs-traceql`, so no
+separate MCP container is needed. Search serves recent traces from the
+backend blocks, not only the live ingesters: `query_frontend.search`
+`query_backend_after: 5s` (short) with `query_end_cutoff: 1s` — Tempo
+validates `query_backend_after > query_end_cutoff` (the cutoff defaults to
+30s, which would crash with a 5s backend window).
+
+Browser spans (`ui/authorization/src/tracing.ts` plus `effect.ts`):
+`WebSdk.layer` supplies a `WebTracerProvider` whose tracer backs Effect's
+spans. The relevant span is the per-request `http.client <METHOD>` span that
+`@effect/platform`'s HttpClient creates, because `HttpTraceContext` reads it
+(`HttpClient.currentTracerPropagation`, default on) to write the W3C
+`traceparent`/`b3` headers. The UAS already inherited a parent from it, which
+Tempo could not resolve (`<root span not yet received>`); exporting the browser
+spans fixes that. The endpoint is `config.json`'s `otlpBaseUrl` resolved
+against the page origin (default `/otlp`), routed by traefik to `tempo:4318`
+with the prefix stripped, because Tempo's OTLP receiver sends no CORS headers.
+
+Tempo 3's live store starts a block at ingestion (`live_store.max_block_duration`)
+and takes the block end from the latest span end; `storage.trace.wal`'s
+`ingestion_time_range_slack` is ignored, so a back-dated push lands in a block
+whose range runs backwards (start > end) and search prunes it. This is why
+traces go straight to the compose Tempo (default live-store timings) instead
+of a per-run collector: the test-runner root span ends ~1-2s after the last
+child (in the final `afterEach`), and a collector with a short
+`max_trace_idle` cut the block before the root arrived and dropped it.
 
 Added to existing files:
 
@@ -126,11 +176,17 @@ Added to existing files:
   `@opentelemetry/sdk-trace-web` (peer)
 - `test/setup.ts` — init, per-test root spans, seed suppression
   (`suppressTracing`)
-- `.dagger/src/index.ts` — per-service env/mount (`/otel` cache volume,
-  `OTEL_TRACES_FILE` per run-id dir), `--require` preloads,
-  `otelDump()` (run-id isolation — dagger exec-cache made a wipe a no-op)
-- `docker-compose.yaml` — no collector in-compose (jaeger service removed);
-  `OTEL_SERVICE_NAME` on auth/data/registry/id (each with a `--require`
-  preload); worker uses the async bootstrap (no preload) and runs `dist/`,
-  so it needs a rebuild to pick up tracing changes
-- `devbox.json` — `jaeger` script (`bash scripts/jaeger.sh`)
+- `.dagger/src/index.ts` — per-service `SAI_OTLP_ENDPOINT` /
+  `OTEL_SERVICE_NAME` / `OTEL_CAPTURE_HEADERS`, `--require` preloads; the
+  endpoint points at the compose Tempo on the docker host (172.16.0.1,
+  override with `TEMPO_OTLP_ENDPOINT`), so dagger runs trace straight into
+  the running Tempo with no export/import step
+- `docker-compose.yaml` — `tempo`/`grafana` trace stack + the traefik `/otlp`
+  route on the UI host; `OTEL_EXPORTER_OTLP_ENDPOINT` + `OTEL_SERVICE_NAME` on
+  auth/data/registry/id (each with a `--require` preload); worker uses the
+  async bootstrap (no preload) and runs `dist/`, so it needs a rebuild to pick
+  up tracing changes
+- `ui/authorization/src/tracing.ts` — web OTel layer (the browser roots)
+- `ui/authorization/src/effect.ts` — `UiTracingLive` provided alongside the
+  RPC client's HttpClient layer
+- `ui/authorization/src/runtime-config.ts` + `public/config.json` — `otlpBaseUrl`

@@ -25,7 +25,7 @@ async function connectWithRetry() {
 }
 async function run() {
   const connection = await connectWithRetry()
-  // no-op unless OTEL_TRACES_FILE (or an OTLP endpoint) is set
+  // no-op unless an OTLP endpoint is set
   const otelSdk = await initNodeTracing('sai-worker')
   const pluginConfig = temporalPluginConfig()
   const plugins = pluginConfig ? [new OpenTelemetryPlugin(pluginConfig)] : []

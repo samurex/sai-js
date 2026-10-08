@@ -1,0 +1,47 @@
+# Grafana Tempo (single binary) for the compose dev loop.
+# Ingest OTLP on 4317 (gRPC) / 4318 (HTTP); query API and TraceQL on 3200.
+server:
+  http_listen_port: 3200
+  log_level: debug
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+# Tempo's built-in MCP server (streamable HTTP, POST /api/mcp) — TraceQL
+# search/get-trace tools for agents, no separate MCP container needed.
+query_frontend:
+  mcp_server:
+    enabled: true
+  # QueryEndCutoff prevents querying incomplete recent data; it defaults to
+  # 30s and search validation requires query_backend_after > query_end_cutoff.
+  # Lowered to 1s so a recent import (within the 5s backend window) is searched
+  # against the backend blocks instead of only the live ingesters.
+  query_end_cutoff: 1s
+  search:
+    query_backend_after: 5s
+# Distributor attribute-value cap. Tempo truncates any span attribute value
+# longer than this at ingestion (the repo's sai.jsonld.*/sai.rpc.* payloads
+# exceed the 2048 default). Tempo enforces no ceiling: int64 is accepted, so
+# this is an effectively unlimited 1 GiB. Lower it if memory matters more
+# than keeping whole payloads.
+overrides:
+  defaults:
+    ingestion:
+      max_attribute_bytes: 1073741824
+storage:
+  trace:
+    backend: local
+    local:
+      path: /var/tempo/traces
+    # imported blocks (`devbox run tempo-import`) become searchable on this poll;
+    # the 5m default makes an import look like it did nothing
+    blocklist_poll: 1s
+    wal:
+      path: /var/tempo/wal
+      # ingestion_time_range_slack is ignored by the Tempo 3 live store (it owns
+      # block cutting, live_store.max_block_duration); traces are pushed live,
+      # so blocks carry real timestamps and no range adjustment is needed

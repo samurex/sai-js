@@ -1,16 +1,15 @@
 import type { NodeSDK } from '@opentelemetry/sdk-node'
-import type { SpanProcessor } from '@opentelemetry/sdk-trace-base'
 import { setTemporalPluginConfig } from './otel-state.js'
 
 /**
  * Opt-in OpenTelemetry bootstrap.
  *
- * Gate: `OTEL_TRACES_FILE` (our NDJSON file dump) wins over the standard
- * OTLP env vars — infra (incl. the dagger engine) sets
- * `OTEL_EXPORTER_OTLP_ENDPOINT`/`OTEL_TRACES_EXPORTER` globally on every
- * container, so prioritizing them would ship our spans into their
- * collector. Hard-off: `OTEL_SDK_DISABLED=true` / `OTEL_TRACES_EXPORTER=none`.
- * When the gate is closed no OpenTelemetry module is loaded (lazy imports).
+ * Gate: our own `SAI_OTLP_ENDPOINT` wins over the standard OTLP env vars —
+ * infra (incl. the dagger engine) sets `OTEL_EXPORTER_OTLP_ENDPOINT`/
+ * `OTEL_TRACES_EXPORTER` globally on every container, so prioritizing them
+ * would ship our spans into their collector. Hard-off:
+ * `OTEL_SDK_DISABLED=true` / `OTEL_TRACES_EXPORTER=none`. When the gate is
+ * closed no OpenTelemetry module is loaded (lazy imports).
  *
  * Async variant — only use where the caller awaits it before any network
  * activity (worker main.ts, test/setup.ts). CSS servers must use
@@ -23,8 +22,12 @@ export async function initNodeTracing(serviceName: string): Promise<NodeSDK | un
     return undefined
   }
   const otlpEndpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT
-  const dumpFile = process.env.OTEL_TRACES_FILE
-  if (!otlpEndpoint && !dumpFile) return undefined
+  // dagger injects its own OTEL_EXPORTER_OTLP_ENDPOINT into exec containers for
+  // its telemetry, overriding ours, so our collector endpoint travels in this
+  // dedicated var and is handed to the exporter explicitly (which is also what
+  // stops the exporter from reading the injected standard vars).
+  const saiEndpoint = process.env.SAI_OTLP_ENDPOINT
+  if (!saiEndpoint && !otlpEndpoint) return undefined
 
   try {
     const [
@@ -34,7 +37,6 @@ export async function initNodeTracing(serviceName: string): Promise<NodeSDK | un
       { UndiciInstrumentation },
       { resourceFromAttributes },
       { ATTR_SERVICE_NAME },
-      { NdjsonSpanExporter },
     ] = await Promise.all([
       import('@opentelemetry/sdk-node'),
       import('@opentelemetry/sdk-trace-base'),
@@ -42,16 +44,15 @@ export async function initNodeTracing(serviceName: string): Promise<NodeSDK | un
       import('@opentelemetry/instrumentation-undici'),
       import('@opentelemetry/resources'),
       import('@opentelemetry/semantic-conventions'),
-      import('./ndjson-exporter.js'),
     ])
 
     const resource = resourceFromAttributes({ [ATTR_SERVICE_NAME]: serviceName })
 
     // headers → span attributes: the subset the diagram http blocks care
-    // about — auth/type headers + the discovery Link. DUMP-ONLY (file mode):
-    // cookie/authorization carry real session tokens into the file dump
-    // (the .c4 notes already print them), so they must never reach an OTLP
-    // endpoint (the compose dev loop -> jaeger). Omitted entirely otherwise.
+    // about — auth/type headers + the discovery Link. Only when the caller opts
+    // in with OTEL_CAPTURE_HEADERS=true (the dagger test collector sets it):
+    // cookie and authorization carry real session tokens, so never send them
+    // to an unrelated OTLP collector.
     const requestHeaders = [
       'authorization',
       'cookie',
@@ -61,33 +62,31 @@ export async function initNodeTracing(serviceName: string): Promise<NodeSDK | un
       'link',
     ]
     const responseHeaders = ['link', 'content-type', 'location', 'vary']
-    const headersToSpanAttributes = dumpFile
+    const captureHeaders = process.env.OTEL_CAPTURE_HEADERS === 'true'
+    const headersToSpanAttributes = captureHeaders
       ? {
           client: { requestHeaders, responseHeaders },
           server: { requestHeaders, responseHeaders },
         }
       : undefined
     // undici takes a DIFFERENT shape ({request,response}Headers) than http
-    // ({client,server}) — keep both gated on file mode the same way.
-    const undiciHeadersToSpanAttributes = dumpFile ? { requestHeaders, responseHeaders } : undefined
+    // ({client,server}); same gate.
+    const undiciHeadersToSpanAttributes = captureHeaders
+      ? { requestHeaders, responseHeaders }
+      : undefined
 
     // SimpleSpanProcessor (NOT batch): dagger tears the bound services down
     // right after the test exec — batch would buffer and lose the tail spans.
-    // Exporter precedence: OTEL_TRACES_FILE (OUR var) wins — standard OTLP
+    // The exporter is handed SAI_OTLP_ENDPOINT explicitly — the standard OTLP
     // env is set globally by infra (e.g. the dagger engine's own telemetry
     // injects OTEL_EXPORTER_OTLP_ENDPOINT/_TRACES_EXPORTER into exec
-    // containers), so prioritizing it would silently send our spans into
-    // their collector. OTLP is used only when no file var is set (compose
-    // dev loop -> the jaeger service).
-    let spanProcessor: SpanProcessor
-    if (dumpFile) {
-      spanProcessor = new SimpleSpanProcessor(new NdjsonSpanExporter(dumpFile))
-    } else {
-      const { OTLPTraceExporter } = await import('@opentelemetry/exporter-trace-otlp-http')
-      // endpoint comes from the OTEL_EXPORTER_OTLP_ENDPOINT env var;
-      // the exporter appends /v1/traces
-      spanProcessor = new SimpleSpanProcessor(new OTLPTraceExporter())
-    }
+    // containers), so letting it read those would silently send our spans
+    // into their collector. Unset saiEndpoint → the exporter falls back to
+    // the standard vars (compose dev loop -> the tempo service).
+    const { OTLPTraceExporter } = await import('@opentelemetry/exporter-trace-otlp-http')
+    const spanProcessor = new SimpleSpanProcessor(
+      new OTLPTraceExporter(saiEndpoint ? { url: `${saiEndpoint}/v1/traces` } : undefined)
+    )
     setTemporalPluginConfig({ resource, spanProcessor })
 
     const sdk = new NodeSDK({

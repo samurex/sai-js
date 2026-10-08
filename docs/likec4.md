@@ -151,16 +151,17 @@ Traces are the source of truth for request/response **payloads** (every
 snippet in `authz-data-need-based-request`/`approve-access-request` comes
 from a captured run). Full mechanics/layout: `opentelemetry.md`.
 
-- **Collect a focused dump** (single test keeps the trace tiny):
+- **Capture a focused trace** (single test keeps the waterfall tiny):
 
   ```bash
-  dagger call otel-dump --testFile=authorization.test.ts \
-    --only="alice approves bobs request — …" export --path ./otel-dump
+  dagger call test --testFile=authorization.test.ts \
+    --only="alice approves bobs request — …"
   ```
 
-  The dump is per-process NDJSON (`test`/`auth`/`registry`/`data`/`worker`/
-  `id`); one trace = the test root `alice approves bobs request — …`.
-- **Find payloads on spans** (NDJSON `attributes`):
+  The instrumented processes export OTLP straight to the compose Tempo on the
+  host; one trace = the test root `alice approves bobs request — …`.
+- **Find payloads on spans** (span `attributes` — Tempo MCP `get-trace`,
+  the `/api/traces/<id>` API, or Grafana span detail):
   - `sai.rpc.handle` → `sai.rpc.request` / `sai.rpc.response` (RPC
     envelopes, request captured pre-rewrite; response pre-envelope `value`)
   - `fetchJsonLd` → `sai.jsonld.raw` (wire doc as stored)
@@ -170,7 +171,8 @@ from a captured run). Full mechanics/layout: `opentelemetry.md`.
     (actual wire body)
   - `sparql.query` → `sai.sparql.query` (verbatim SPARQL text) +
     `sai.sparql.form`/`sai.sparql.endpoint`/`sai.sparql.resultCount`
-    (results recorded as counts only — not payloads)
+    (results recorded as counts only — not payloads; the full payloads are
+    on `sai.rpc.request`/`sai.rpc.response` and the `sai.jsonld.*` spans)
 - **Use the framed form for JSON-LD snippets** — compacted aliases
   (`id`/`type`/term keys, no `@context`), matching how the data-model
   `fromJsonLd`s consume it (see “Payload data” above for the conventions).

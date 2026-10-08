@@ -7,10 +7,10 @@ import { suppressTracing } from '@opentelemetry/core'
 import { S3mini } from 's3mini'
 import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest'
 
-// opt-in OpenTelemetry: a no-op unless OTEL_TRACES_FILE (or an OTLP
-// endpoint) is set by the .dagger otel-dump flow. The test runner plays
-// the browser/App role — this process holds the trace roots.
-await initNodeTracing('sai-test')
+// opt-in OpenTelemetry: a no-op unless an OTLP endpoint (SAI_OTLP_ENDPOINT in
+// the dagger test env) is set. The test runner plays the browser/App role —
+// this process holds the trace roots.
+const otelSdk = await initNodeTracing('sai-test')
 
 // seeding/teardown is harness I/O, not part of any interaction — keep it out
 // of the traces (iso a no-op when no SDK/instrumentation is active)
@@ -84,6 +84,18 @@ beforeAll(async () => {
 })
 afterAll(async () => {
   await withoutTracing(() => garage.deleteObject(clientId))
+  // flush the trace root before vitest exits: the root span ends in the very
+  // last afterEach, and SimpleSpanProcessor's OTLP export is fire-and-forget
+  // (the HTTP POST completes asynchronously). NodeSDK.shutdown() flushes the
+  // processors and the exporter awaits its in-flight sends before tearing
+  // down (same pattern the worker has, packages/components/src/workers/main.ts).
+  // Without it the process exit kills the request and the dump lands without
+  // a root span.
+  try {
+    await otelSdk?.shutdown()
+  } catch (err) {
+    console.warn('[otel] runner shutdown error:', err)
+  }
 })
 beforeEach(async () => {
   await withoutTracing(async () => {
