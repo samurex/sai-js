@@ -35,15 +35,22 @@ const POSTGRESQL_VERSION = '16'
 const TEMPORAL_VERSION = '1.31.0'
 const TEMPORAL_ADMINTOOLS_VERSION = '1.31.0'
 
-// OpenTelemetry: the instrumented processes (test runner, UAS, id/registry/
-// data, worker) export OTLP straight to the HOST's compose Tempo
-// (docker-compose.yaml `tempo` service, OTLP/HTTP :4318). No per-run
-// collector and no import step: traces land in the running Tempo while the
-// test exec itself runs. Default targets the docker host on the compose
-// network gateway; override with TEMPO_OTLP_ENDPOINT if reachability differs.
-// Exported as SAI_OTLP_ENDPOINT, not OTEL_EXPORTER_OTLP_ENDPOINT: the dagger
-// engine injects and overrides the latter with its own telemetry endpoint.
-const tempoOtlpEndpoint = process.env.TEMPO_OTLP_ENDPOINT ?? 'http://172.16.0.1:4318'
+// OpenTelemetry is OPT-IN and configured per invocation via the module's
+// `--tempo-endpoint` argument (constructor arg, so it applies to every
+// function), e.g.
+//   dagger call --tempo-endpoint=http://172.16.0.1:4318 test
+// `172.16.0.1` is the docker host on the compose network gateway — the compose
+// DNS name `tempo` is not resolvable from the engine's exec containers. When
+// the argument is omitted, tracing is hard-disabled so local/CI runs need no
+// Tempo service.
+// NB `process.env` is not an option here: the Dagger engine does not forward
+// the calling shell's environment to module code, so a host TEMPO_OTLP_ENDPOINT
+// would silently read as unset.
+// The endpoint travels to the containers as SAI_OTLP_ENDPOINT, not
+// OTEL_EXPORTER_OTLP_ENDPOINT: the engine injects and overrides the latter with
+// its own telemetry endpoint, so `withTracing` also pins OTEL_SDK_DISABLED=true
+// in the off case — otherwise the tracing gate would fall back to that
+// injected endpoint.
 
 type LogLevel = 'error' | 'warn' | 'info' | 'verbose' | 'debug' | 'silly'
 
@@ -77,12 +84,35 @@ function imageBaseName(image: string): string {
 @object()
 export class SaiJs {
   source: Directory
+  tempoEndpoint?: string
 
   constructor(
     @argument({ defaultPath: '.' })
-    source: Directory
+    source: Directory,
+    @argument()
+    tempoEndpoint?: string
   ) {
     this.source = source
+    this.tempoEndpoint = tempoEndpoint
+  }
+
+  /**
+   * OpenTelemetry env for one instrumented process. Tempo is opt-in via the
+   * module's `--tempo-endpoint` argument (see the module-level note). When it
+   * is unset this pins OTEL_SDK_DISABLED=true so the tracing gate cannot fall
+   * back to the OTLP endpoint the Dagger engine injects for its own telemetry.
+   */
+  private withTracing(container: Container, serviceName: string): Container {
+    if (!this.tempoEndpoint) {
+      return container.withEnvVariable('OTEL_SDK_DISABLED', 'true')
+    }
+    return (
+      container
+        .withEnvVariable('SAI_OTLP_ENDPOINT', this.tempoEndpoint)
+        .withEnvVariable('OTEL_SERVICE_NAME', serviceName)
+        // headers carry real session tokens — only ever send them to our Tempo
+        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
+    )
   }
 
   @func()
@@ -228,9 +258,7 @@ export class SaiJs {
   ): Promise<Service> {
     const temporal = await this.temporalService()
     return (
-      dag
-        .container()
-        .from('node:24-slim')
+      this.withTracing(dag.container().from('node:24-slim'), 'sai-worker')
         .withMountedDirectory('/sai', this.source)
         .withEnvVariable('CSS_BASE_URL', CSS_BASE_URL)
         .withEnvVariable('CSS_ID_ORIGIN', CSS_ID_ORIGIN)
@@ -249,11 +277,6 @@ export class SaiJs {
         // syncReciprocalMirror, org-context-sparql.md) — currently dormant, env
         // kept so re-enabling needs no dagger change
         .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
-        // OpenTelemetry: the worker imports the bootstrap from workers/main.ts
-        // (no preload needed) and exports OTLP to this run's Tempo collector
-        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
-        .withEnvVariable('OTEL_SERVICE_NAME', 'sai-worker')
-        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
         .withServiceBinding('postgresql', this.postgresService())
         .withServiceBinding('temporal', temporal)
         .withServiceBinding('sparql', this.sparqlService())
@@ -270,31 +293,23 @@ export class SaiJs {
     @argument()
     runId = 'dev'
   ): Service {
-    return (
-      dag
-        .container()
-        .from('node:24-alpine')
-        .withMountedDirectory('/sai', this.source)
-        .withEnvVariable('ID_ORIGIN', 'id')
-        .withEnvVariable('DOC_ORIGIN', 'id')
-        .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
-        .withEnvVariable('CSS_HTTPS_KEY', CSS_HTTPS_KEY)
-        .withEnvVariable('CSS_HTTPS_CERT', CSS_HTTPS_CERT)
-        // OpenTelemetry server-side spans (sync --require preload, like auth)
-        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
-        .withEnvVariable('OTEL_SERVICE_NAME', 'sai-id')
-        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
-        .withExposedPort(443)
-        .withServiceBinding('sparql', this.sparqlService())
-        .asService({
-          args: [
-            'node',
-            '--require=/sai/packages/components/src/tracing/preload.cjs',
-            '/sai/services/id/https.ts',
-          ],
-        })
-        .withHostname('id')
-    )
+    return this.withTracing(dag.container().from('node:24-alpine'), 'sai-id')
+      .withMountedDirectory('/sai', this.source)
+      .withEnvVariable('ID_ORIGIN', 'id')
+      .withEnvVariable('DOC_ORIGIN', 'id')
+      .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
+      .withEnvVariable('CSS_HTTPS_KEY', CSS_HTTPS_KEY)
+      .withEnvVariable('CSS_HTTPS_CERT', CSS_HTTPS_CERT)
+      .withExposedPort(443)
+      .withServiceBinding('sparql', this.sparqlService())
+      .asService({
+        args: [
+          'node',
+          '--require=/sai/packages/components/src/tracing/preload.cjs',
+          '/sai/services/id/https.ts',
+        ],
+      })
+      .withHostname('id')
   }
 
   @func()
@@ -303,58 +318,48 @@ export class SaiJs {
     runId = 'dev'
   ): Promise<Service> {
     const temporal = await this.temporalService()
-    return (
-      dag
-        .container()
-        .from('node:24-alpine')
-        .withMountedDirectory('/sai', this.source)
-        .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/auth.json')
-        .withEnvVariable('CSS_BASE_URL', CSS_BASE_URL)
-        .withEnvVariable('CSS_AUTHORIZATION_ENDPOINT', 'https://ui.auth/authorize')
-        .withEnvVariable('CSS_LOGGING_LEVEL', CSS_LOG_LEVEL)
-        .withEnvVariable('CSS_PORT', CSS_PORT)
-        .withEnvVariable('CSS_HTTPS_KEY', CSS_HTTPS_KEY)
-        .withEnvVariable('CSS_HTTPS_CERT', CSS_HTTPS_CERT)
-        .withEnvVariable('CSS_VAPID_PUBLIC_KEY', CSS_VAPID_PUBLIC_KEY)
-        .withEnvVariable('CSS_VAPID_PRIVATE_KEY', CSS_VAPID_PRIVATE_KEY)
-        .withEnvVariable('CSS_PUSH_SENDER', CSS_PUSH_SENDER)
-        .withEnvVariable('CSS_ENCODED_PRIVATE_JWK', CSS_ENCODED_PRIVATE_JWK)
-        .withEnvVariable(
-          'CSS_POSTGRES_CONNECTION_STRING',
-          'postgres://temporal:temporal@postgresql:5432/auth'
-        )
-        .withEnvVariable('TEMPORAL_ADDRESS', 'temporal:7233')
-        .withEnvVariable('NODE_TLS_REJECT_UNAUTHORIZED', NODE_TLS_REJECT_UNAUTHORIZED)
-        .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
-        .withEnvVariable('CSS_ID_ORIGIN', CSS_ID_ORIGIN)
-        .withEnvVariable('CSS_DOC_ORIGIN', CSS_DOC_ORIGIN)
-        .withEnvVariable('CSS_DATA_ORIGIN', CSS_DATA_ORIGIN)
-        .withEnvVariable('CSS_REG_ORIGIN', CSS_REG_ORIGIN)
-        // OpenTelemetry: preload the tracing bootstrap (no-op without an OTLP
-        // endpoint or dump file). CSS has no app-level entrypoint we own, so
-        // the preload is what registers the instrumentation.
-        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
-        .withEnvVariable('OTEL_SERVICE_NAME', 'sai-uas')
-        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
-        .withServiceBinding('postgresql', this.postgresService())
-        .withServiceBinding('temporal', temporal)
-        .withServiceBinding('id', this.idService(runId))
-        .withServiceBinding('registry', this.registryService(runId))
-        .withServiceBinding('data', this.dataService(runId))
-        .withExposedPort(443)
-        .withExposedPort(9229)
-        .asService({
-          args: [
-            'node',
-            '--inspect=0.0.0.0:9229',
-            // CJS on purpose: --require runs synchronously before CSS builds
-            // its HTTP server (--import preloads race — preload.cjs header)
-            '--require=/sai/packages/components/src/tracing/preload.cjs',
-            '/sai/node_modules/@solid/community-server/bin/server.js',
-          ],
-        })
-        .withHostname('auth')
-    )
+    return this.withTracing(dag.container().from('node:24-alpine'), 'sai-uas')
+      .withMountedDirectory('/sai', this.source)
+      .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/auth.json')
+      .withEnvVariable('CSS_BASE_URL', CSS_BASE_URL)
+      .withEnvVariable('CSS_AUTHORIZATION_ENDPOINT', 'https://ui.auth/authorize')
+      .withEnvVariable('CSS_LOGGING_LEVEL', CSS_LOG_LEVEL)
+      .withEnvVariable('CSS_PORT', CSS_PORT)
+      .withEnvVariable('CSS_HTTPS_KEY', CSS_HTTPS_KEY)
+      .withEnvVariable('CSS_HTTPS_CERT', CSS_HTTPS_CERT)
+      .withEnvVariable('CSS_VAPID_PUBLIC_KEY', CSS_VAPID_PUBLIC_KEY)
+      .withEnvVariable('CSS_VAPID_PRIVATE_KEY', CSS_VAPID_PRIVATE_KEY)
+      .withEnvVariable('CSS_PUSH_SENDER', CSS_PUSH_SENDER)
+      .withEnvVariable('CSS_ENCODED_PRIVATE_JWK', CSS_ENCODED_PRIVATE_JWK)
+      .withEnvVariable(
+        'CSS_POSTGRES_CONNECTION_STRING',
+        'postgres://temporal:temporal@postgresql:5432/auth'
+      )
+      .withEnvVariable('TEMPORAL_ADDRESS', 'temporal:7233')
+      .withEnvVariable('NODE_TLS_REJECT_UNAUTHORIZED', NODE_TLS_REJECT_UNAUTHORIZED)
+      .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
+      .withEnvVariable('CSS_ID_ORIGIN', CSS_ID_ORIGIN)
+      .withEnvVariable('CSS_DOC_ORIGIN', CSS_DOC_ORIGIN)
+      .withEnvVariable('CSS_DATA_ORIGIN', CSS_DATA_ORIGIN)
+      .withEnvVariable('CSS_REG_ORIGIN', CSS_REG_ORIGIN)
+      .withServiceBinding('postgresql', this.postgresService())
+      .withServiceBinding('temporal', temporal)
+      .withServiceBinding('id', this.idService(runId))
+      .withServiceBinding('registry', this.registryService(runId))
+      .withServiceBinding('data', this.dataService(runId))
+      .withExposedPort(443)
+      .withExposedPort(9229)
+      .asService({
+        args: [
+          'node',
+          '--inspect=0.0.0.0:9229',
+          // CJS on purpose: --require runs synchronously before CSS builds
+          // its HTTP server (--import preloads race — preload.cjs header)
+          '--require=/sai/packages/components/src/tracing/preload.cjs',
+          '/sai/node_modules/@solid/community-server/bin/server.js',
+        ],
+      })
+      .withHostname('auth')
   }
 
   @func()
@@ -362,41 +367,33 @@ export class SaiJs {
     @argument()
     runId = 'dev'
   ): Service {
-    return (
-      dag
-        .container()
-        .from('node:24-alpine')
-        .withMountedDirectory('/sai', this.source)
-        .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/registry.json')
-        .withEnvVariable('CSS_BASE_URL', 'https://registry/')
-        .withEnvVariable('CSS_LOGGING_LEVEL', CSS_LOG_LEVEL)
-        .withEnvVariable('CSS_PORT', CSS_PORT)
-        .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
-        .withEnvVariable('CSS_HTTPS_KEY', CSS_HTTPS_KEY)
-        .withEnvVariable('CSS_HTTPS_CERT', CSS_HTTPS_CERT)
-        .withEnvVariable(
-          'CSS_POSTGRES_CONNECTION_STRING',
-          'postgres://temporal:temporal@postgresql:5432/auth'
-        )
-        .withEnvVariable('NODE_TLS_REJECT_UNAUTHORIZED', NODE_TLS_REJECT_UNAUTHORIZED)
-        // OpenTelemetry server-side spans (sync --require preload, like auth)
-        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
-        .withEnvVariable('OTEL_SERVICE_NAME', 'sai-registry')
-        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
-        .withExposedPort(443)
-        .withServiceBinding('postgresql', this.postgresService())
-        .withServiceBinding('sparql', this.sparqlService())
-        .withExposedPort(9230)
-        .asService({
-          args: [
-            'node',
-            '--inspect=0.0.0.0:9230',
-            '--require=/sai/packages/components/src/tracing/preload.cjs',
-            '/sai/node_modules/@solid/community-server/bin/server.js',
-          ],
-        })
-        .withHostname('registry')
-    )
+    return this.withTracing(dag.container().from('node:24-alpine'), 'sai-registry')
+      .withMountedDirectory('/sai', this.source)
+      .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/registry.json')
+      .withEnvVariable('CSS_BASE_URL', 'https://registry/')
+      .withEnvVariable('CSS_LOGGING_LEVEL', CSS_LOG_LEVEL)
+      .withEnvVariable('CSS_PORT', CSS_PORT)
+      .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
+      .withEnvVariable('CSS_HTTPS_KEY', CSS_HTTPS_KEY)
+      .withEnvVariable('CSS_HTTPS_CERT', CSS_HTTPS_CERT)
+      .withEnvVariable(
+        'CSS_POSTGRES_CONNECTION_STRING',
+        'postgres://temporal:temporal@postgresql:5432/auth'
+      )
+      .withEnvVariable('NODE_TLS_REJECT_UNAUTHORIZED', NODE_TLS_REJECT_UNAUTHORIZED)
+      .withExposedPort(443)
+      .withServiceBinding('postgresql', this.postgresService())
+      .withServiceBinding('sparql', this.sparqlService())
+      .withExposedPort(9230)
+      .asService({
+        args: [
+          'node',
+          '--inspect=0.0.0.0:9230',
+          '--require=/sai/packages/components/src/tracing/preload.cjs',
+          '/sai/node_modules/@solid/community-server/bin/server.js',
+        ],
+      })
+      .withHostname('registry')
   }
 
   @func()
@@ -404,46 +401,38 @@ export class SaiJs {
     @argument()
     runId = 'dev'
   ): Service {
-    return (
-      dag
-        .container()
-        .from('node:24-alpine')
-        .withMountedDirectory('/sai', this.source)
-        .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/data.json')
-        .withEnvVariable('CSS_BASE_URL', 'https://data/')
-        .withEnvVariable('CSS_LOGGING_LEVEL', CSS_LOG_LEVEL)
-        .withEnvVariable('CSS_PORT', CSS_PORT)
-        .withEnvVariable('CSS_HTTPS_KEY', CSS_HTTPS_KEY)
-        .withEnvVariable('CSS_HTTPS_CERT', CSS_HTTPS_CERT)
-        .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
-        .withEnvVariable(
-          'CSS_POSTGRES_CONNECTION_STRING',
-          'postgres://temporal:temporal@postgresql:5432/auth'
-        )
-        .withEnvVariable('NODE_TLS_REJECT_UNAUTHORIZED', NODE_TLS_REJECT_UNAUTHORIZED)
-        .withEnvVariable('CSS_S3_ENDPOINT', CSS_S3_ENDPOINT)
-        .withEnvVariable('CSS_S3_ACCESS_KEY_ID', CSS_S3_ACCESS_KEY_ID)
-        .withEnvVariable('CSS_S3_SECRET_ACCESS_KEY', CSS_S3_SECRET_ACCESS_KEY)
-        .withEnvVariable('CSS_S3_REGION', CSS_S3_REGION)
-        // OpenTelemetry server-side spans (sync --require preload, like auth)
-        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
-        .withEnvVariable('OTEL_SERVICE_NAME', 'sai-data')
-        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
-        .withExposedPort(443)
-        .withServiceBinding('postgresql', this.postgresService())
-        .withServiceBinding('sparql', this.sparqlService())
-        .withServiceBinding('garage', this.garageService())
-        .withExposedPort(9231)
-        .asService({
-          args: [
-            'node',
-            '--inspect=0.0.0.0:9231',
-            '--require=/sai/packages/components/src/tracing/preload.cjs',
-            '/sai/node_modules/@solid/community-server/bin/server.js',
-          ],
-        })
-        .withHostname('data')
-    )
+    return this.withTracing(dag.container().from('node:24-alpine'), 'sai-data')
+      .withMountedDirectory('/sai', this.source)
+      .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/data.json')
+      .withEnvVariable('CSS_BASE_URL', 'https://data/')
+      .withEnvVariable('CSS_LOGGING_LEVEL', CSS_LOG_LEVEL)
+      .withEnvVariable('CSS_PORT', CSS_PORT)
+      .withEnvVariable('CSS_HTTPS_KEY', CSS_HTTPS_KEY)
+      .withEnvVariable('CSS_HTTPS_CERT', CSS_HTTPS_CERT)
+      .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
+      .withEnvVariable(
+        'CSS_POSTGRES_CONNECTION_STRING',
+        'postgres://temporal:temporal@postgresql:5432/auth'
+      )
+      .withEnvVariable('NODE_TLS_REJECT_UNAUTHORIZED', NODE_TLS_REJECT_UNAUTHORIZED)
+      .withEnvVariable('CSS_S3_ENDPOINT', CSS_S3_ENDPOINT)
+      .withEnvVariable('CSS_S3_ACCESS_KEY_ID', CSS_S3_ACCESS_KEY_ID)
+      .withEnvVariable('CSS_S3_SECRET_ACCESS_KEY', CSS_S3_SECRET_ACCESS_KEY)
+      .withEnvVariable('CSS_S3_REGION', CSS_S3_REGION)
+      .withExposedPort(443)
+      .withServiceBinding('postgresql', this.postgresService())
+      .withServiceBinding('sparql', this.sparqlService())
+      .withServiceBinding('garage', this.garageService())
+      .withExposedPort(9231)
+      .asService({
+        args: [
+          'node',
+          '--inspect=0.0.0.0:9231',
+          '--require=/sai/packages/components/src/tracing/preload.cjs',
+          '/sai/node_modules/@solid/community-server/bin/server.js',
+        ],
+      })
+      .withHostname('data')
   }
 
   async testBase(
@@ -453,34 +442,24 @@ export class SaiJs {
     const auth = await this.authService(runId)
     const worker = await this.workerService(runId)
     const temporal = await this.temporalService()
-    return (
-      dag
-        .container()
-        .from('node:24-alpine')
-        .withMountedDirectory('/sai', this.source)
-        .withEnvVariable('NODE_TLS_REJECT_UNAUTHORIZED', NODE_TLS_REJECT_UNAUTHORIZED)
-        .withEnvVariable('CSS_BASE_URL', CSS_BASE_URL)
-        .withEnvVariable('CSS_ID_ORIGIN', CSS_ID_ORIGIN)
-        .withEnvVariable('CSS_REG_ORIGIN', CSS_REG_ORIGIN)
-        .withEnvVariable('CSS_ENCODED_PRIVATE_JWK', CSS_ENCODED_PRIVATE_JWK)
-        .withEnvVariable('TEMPORAL_ADDRESS', 'temporal:7233')
-        .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
-        // OpenTelemetry: the test runner holds the trace roots (it plays the
-        // browser/App role) and exports OTLP to the host compose Tempo via
-        // SAI_OTLP_ENDPOINT.
-        .withEnvVariable('SAI_OTLP_ENDPOINT', tempoOtlpEndpoint)
-        .withEnvVariable('OTEL_SERVICE_NAME', 'sai-test')
-        .withEnvVariable('OTEL_CAPTURE_HEADERS', 'true')
-        .withServiceBinding('auth', auth)
-        .withServiceBinding('registry', this.registryService(runId))
-        .withServiceBinding('data', this.dataService(runId))
-        .withServiceBinding('worker', worker)
-        .withServiceBinding('temporal', temporal)
-        .withServiceBinding('sparql', this.sparqlService())
-        .withServiceBinding('id', this.idService(runId))
-        .withServiceBinding('garage', this.garageService())
-        .withWorkdir('/sai/test')
-    )
+    return this.withTracing(dag.container().from('node:24-alpine'), 'sai-test')
+      .withMountedDirectory('/sai', this.source)
+      .withEnvVariable('NODE_TLS_REJECT_UNAUTHORIZED', NODE_TLS_REJECT_UNAUTHORIZED)
+      .withEnvVariable('CSS_BASE_URL', CSS_BASE_URL)
+      .withEnvVariable('CSS_ID_ORIGIN', CSS_ID_ORIGIN)
+      .withEnvVariable('CSS_REG_ORIGIN', CSS_REG_ORIGIN)
+      .withEnvVariable('CSS_ENCODED_PRIVATE_JWK', CSS_ENCODED_PRIVATE_JWK)
+      .withEnvVariable('TEMPORAL_ADDRESS', 'temporal:7233')
+      .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
+      .withServiceBinding('auth', auth)
+      .withServiceBinding('registry', this.registryService(runId))
+      .withServiceBinding('data', this.dataService(runId))
+      .withServiceBinding('worker', worker)
+      .withServiceBinding('temporal', temporal)
+      .withServiceBinding('sparql', this.sparqlService())
+      .withServiceBinding('id', this.idService(runId))
+      .withServiceBinding('garage', this.garageService())
+      .withWorkdir('/sai/test')
   }
 
   /**
