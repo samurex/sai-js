@@ -3,9 +3,6 @@ type: frontend
 title: Authorization UI
 description: The Vue 3 + Vuetify + Pinia authorization console — entrypoint, router and pages, Pinia stores, the @effect/rpc client, the NDJSON events stream, localization, and PWA push.
 tags: [ui, vue, vuetify, pinia, effect, pwa]
-verified:
-  - by: openwiki/0.7.1
-    at: 2026-10-09T19:35:35.072Z
 sources:
   - id: openwiki-source-a3fc2fbd28c4b3f035ac208f
     resource: repo://ui/authorization/src/effect.ts
@@ -19,7 +16,10 @@ sources:
     resource: repo://ui/authorization/src/store/app.ts
   - id: openwiki-source-1f2b0c598f24062f7708088d
     resource: repo://ui/authorization/vite.config.ts
-generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+generated: { by: "pi", at: "2026-10-09T21:04:39.559Z" }
+verified:
+  - by: openwiki/0.7.1
+    at: 2026-10-09T21:04:39.559Z
 ---
 
 # Authorization UI
@@ -62,6 +62,15 @@ request and `Effect.runPromise`s it.
 refreshes the relevant store per activity class (filtering by
 `actor === currentContext()`), with exponential-backoff reconnect and a
 heartbeat watchdog.
+
+The connection is a small state machine (`stopped → connecting → open ⇄
+reconnecting`): on open it fires a **full store refresh** (snapshot resync —
+the server never replays), the server heartbeats every ~30s and a watchdog
+aborts a silent connection, and reconnects back off exponentially (1s → 30s).
+Store freshness is soft, with three refresh kinds: **synchronous** (right after
+the RPC returns — what the service already mutated), **completion-driven**
+(a `done` event → targeted refetch by activity type), and **baseline** (view
+mount + the `fullRefresh` on every (re)connect).
 
 ## Localization and PWA
 

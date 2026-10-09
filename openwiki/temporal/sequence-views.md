@@ -1,17 +1,15 @@
 ---
 type: reference
 title: Sequence and discovery flows
-description: A catalogue of the dynamic views in docs/temporal.c4 — discovery, reciprocal registration, invitation, admin, roles, share/request access, and authorization flows — as the authoritative interaction sequences.
+description: A catalogue of the dynamic views in docs/temporal.c4 — discovery, reciprocal registration, invitation, admin, roles, share/request access, and authorization flows — plus the LikeC4 authoring conventions used to keep them consistent.
 tags: [likec4, sequences, flows, temporal, discovery]
-verified:
-  - by: openwiki/0.7.1
-    at: 2026-10-09T19:35:35.072Z
 sources:
-  - id: openwiki-source-7705adcc9d658c079a979e1b
-    resource: repo://docs/likec4.md
   - id: openwiki-source-f94e6df9b22c5d9088de9576
     resource: repo://docs/temporal.c4
-generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+generated: { by: "pi", at: "2026-10-09T21:04:39.559Z" }
+verified:
+  - by: openwiki/0.7.1
+    at: 2026-10-09T21:41:59.486Z
 ---
 
 # Sequence and discovery flows
@@ -26,9 +24,33 @@ and an `AUI` authorization UI. `App` owns the application-side
 `StreamingHTTPReceiver`, `UI`, and `CID`. `Common` hosts the shared
 `Shapetrees` directory.
 
-The `docs/likec4.md` convention file governs how these views are authored
-(dynamic-view syntax, note callouts, include ordering, request+response as a
-single step).
+## LikeC4 conventions
+
+The dynamic views follow a fixed set of authoring conventions:
+
+- **Dynamic views & steps** — view ids and `navigateTo` targets are kebab-case
+  (`social-agent-registration-discovery`); step syntax is `SOURCE -> TARGET
+  'title'` (`<-` for a response step, `<->` is not valid); a `navigateTo
+  <view-id>` on a step renders the drill-down link. Never leave unused
+  includes — every included element is referenced by a step or a style.
+- **Include ordering** — acceptor first, then the inviter party, then the
+  admin; in two-party views the parties' components mirror around the registry
+  seam so the two registries sit adjacent. Colors: `green` inviter/org owner,
+  `indigo` admin, `sky` acceptor/peer.
+- **Notes & callouts** — a step's note opens with an h4 header that repeats
+  the relationship title, then callouts; every step carries a `>[!NOTE]` with
+  `>file > describe`; requests carry a `>[!IMPORTANT]` naming the acting
+  identity (e.g. `Auth: CSS cookie session as alice`); `>[!TIP]` only for
+  genuine patterns.
+- **Request + response is a single step** — a request and its directly
+  following response are one step; the response `HTTP/1.1 <status>` (+ payload)
+  goes at the bottom of the request step's note, separated by a `---` line.
+  Non-adjacent responses stay separate steps.
+- **Code blocks** — `http` blocks are minimal (request line + auth/type
+  headers); JSON-LD payloads use the compacted form with the expanded-context
+  note; SPARQL declares `PREFIX` with subject/predicate/object on their own
+  lines. Validate with `likec4 validate --json --no-layout --file <file>
+  <project-dir>`.
 
 ## Discovery flows
 
@@ -82,6 +104,7 @@ single step).
 - `approve-access-request` / `deny-access-request` — the owner approves or
   (silently) declines a need-based access request.
 
-The activity→workflow→view mapping is catalogued in `docs/features.md`; the
-corresponding Temporal workflow definitions are documented in
+The activity→workflow mapping is documented in
+[Activity outbox and events pipeline](../services/activity-lifecycle.md); the
+corresponding Temporal workflow definitions are in
 [Temporal workflows and activities](../temporal/workflows.md).

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:5f613a195bf923128f06dedca0c25c08fc16d5c6fefe611f99dfb67e9305b5a2",
+  "pageVersion": "sha256:c4cf8756fa14deab48ba297e02eeab9f133c38c83283fe8914471c5c574ec7c1",
   "claims": [
     {
       "id": "claim_3b287ef42f2043e1a0d19ff409c2bba9",
@@ -69,10 +69,24 @@
           "version": "repo-lines-v1:sha256:a2c15bbaa81863110cf14a7d6f0db5c17ae1b3bbafc73efddd4c9d650bc5bb61:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkY2FmM2YxNmU0ZDRmOThmOTZlNjk5NzZiNzk1Y2U0OWY1ZjlkN2M4ZGY2MDc5MzNjNWY4ZTcwYzkzMWQxNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5NzhlMjUwM2I4Y2YzN2EwNmY3ZDZmMGEzYTZiNmZlMzU2OTFmYmNhYjUwYjg3NzVjYWI2ZmFiYzcxYzU5MmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5NDcxMDY0ZTMwNGZmODA1N2M2NzA5MWMyNTg1OTQ1YjY4NjczM2YxNDk4OTllNGE1ZTFjYjJlYTY5YTI2MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI2MDFmN2YzOThhMDBkMDM0Yjc3YzA2OGNkOWQwNmE5YzY5NzA1NWEzYTY0MTU1YzY5NmIxNzJkNDdiZDk4MmIifQ"
         }
       ]
+    },
+    {
+      "id": "claim_7065c7cd0091418ebc70cd12553d6530",
+      "statement": "The UI events client runs a connection state machine: on first open and every reconnect it runs a full store refresh (the server never replays), reconnects with exponential backoff from 1s to 30s, and aborts silent connections via a heartbeat watchdog.",
+      "evidence": [
+        {
+          "resource": "repo://ui/authorization/src/events.ts#L156-L184",
+          "version": "repo-lines-v1:sha256:fa68ed8d9d1f8b2cd6ccd3a3a9555ad0ff5eb18574c410855bb1f7d85da2da0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5ZDM0YjE3ZGM0NmE0NTBjZjk1MzZhODliMWI2OGQ4NGJmMjMxYjdmMTVhMjk2OGFlODAxYTM3MDA0NjhiNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmNThkMDEyZjZjNTJmMThkYmE2NmQyZTQ2YjI3MTQ0ZGFhZjRkZGRhOTdjZjMzMzI3NDUzZTVmYWY2ODYxMjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwMjM4NTBhMDE2N2E4ZmMyYzgzM2U2NGE0ZjI4NGU2YWQwOGNjNTcyNzU5NGI5MGEzNTVlYmY1NDFiNjA0MDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc0YWNiZWJmNTVhZjVlMjg3YTMzMzJiY2MwZWI5MWI4N2RhN2RmOTIyMTBkZGNmY2E0ZTc4OTljOGRhZTRmMjYifQ"
+        },
+        {
+          "resource": "repo://ui/authorization/src/events.ts#L36-L42",
+          "version": "repo-lines-v1:sha256:6d67e0459c714738095a5233c00ea5391ae1714a50bd7f9ebf60768369e4e815:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmZkYTFjODA0YmJkOTg2NjE4Y2IyM2U0ZDBiNDAyNDhkMzI3ZTNkOWM0MDczNGYyMTljMDU5NDhmMzUxYTA4NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWUzZGFjZTMxMjNjZTBhNTk2YWZlODE1YzM4YTE4NDU3NzUxYjIxMmFlZGUwZTA3NGQ3OWVmMTlhN2IwZDFlNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2NlOWY3NGNkNjZiZDQ1MjJiNWFhNGIwNTQ5YTQ0NmNjZWQxYWI2YWE5Y2IzNzAxOWQ4N2UyOTkwYzUyNDdmMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTAxNDU2NTQwMDQ0NGJhNGE3NTllMDRhODc5MGM5ODNlNzliODhmOTY5YjkwNDMzYzdjNDJiY2QxOWE2OGE4NyJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.1",
-    "at": "2026-10-09T19:35:35.072Z"
+    "at": "2026-10-09T21:04:39.559Z"
   }
 }

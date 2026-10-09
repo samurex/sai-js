@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:f0344fce22a9aac0289aa6219d6afd15af381cbdcbce2e4e2f5271e8ad78a2e8",
+  "pageVersion": "sha256:d5646957b2bbfb5deea3d71c90c5176414348ad00b6b9f8f6bcdb4570dea49b0",
   "claims": [
     {
       "id": "claim_2dbdd57724204bb28552ccc4b24a6ea5",
@@ -89,10 +89,34 @@
           "version": "repo-lines-v1:sha256:afd1e9cb53dda285ba043a6c694616c7c6e3d6bcb7707ec64a801006c5d51575:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1ZWMyMGMyOGIzODk2OTYyNjA1NDlhZWZlYmZiN2UzMDQ4ZDVkYmY3ZjE1NzdmMmY2NDYyODUxYWEyMmQ1NGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2NzM0NGQ5NmMyNmRiZjllZTZhZWZmZjQ0MWJmZWE4YTI4Y2UwN2RhZGJmMDllYmMxMmZiYTZhYzhjNTZiODIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxYzFkN2RlYjMyMDExYjQwOWQxMzAwMWJkNjg0Y2YxNGY3NGQ3OWJmN2I0NjBiNTUyZWE4MzlhNDlhYjkzZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2OWI1ODM2MWVlOTU2NGY3MDVjZDA5YTY3OGQxZjVhZmE1ZjNjYmRmYjVjNmIyYWY2NGM5Nzk5MjRiYzk5MDAifQ"
         }
       ]
+    },
+    {
+      "id": "claim_ae8c8b59f1f24a3cae3b64d2ffaf30a3",
+      "statement": "The activity state machine derives pending as a non-completion change activity with no completion referencing it, and done as the existence of an ActivityCompleted whose target is the activity IRI.",
+      "evidence": [
+        {
+          "resource": "repo://packages/authorization-agent/src/activity-registry.ts#L509-L525",
+          "version": "repo-lines-v1:sha256:5fd99fb2694e7c60c2315d5ee368365f1c559bc3a5205b1239a4d96fe8078380:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllZGJmNzI5ZmUxOTk1ZTQ1NGViMjM4MDVhZjdkZjdkOWQzZDhjZjNmYWE2Zjc2MzFjODIxZDdkNjE4MmViNDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliYTU5YmU5MjVkYmVkNzFjYzA2YThhMTJjYzQxMDU4NDA4OTI5MjI4NmI2NzVjNzc3MjBmNjVjZDQ3ZTBjMTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0Nzk1ZGEwZjQxNmFhY2E3MTc4MWZjN2M0ZTc3Yzg0ZWQzNGRmNDRmZmQ0NWRhOGJhODBlODIzNDI4MDk0NmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhNDBjMTg0YmYyZjU0NDhlNTYxNTdhODQwOTZiOTdiOWNkNWQ3ZTFmNWVlNzc4ZThhODBjZmQ1NmM4Y2I1NjMifQ"
+        },
+        {
+          "resource": "repo://packages/components/src/temporal/activities/grants.ts#L749-L790",
+          "version": "repo-lines-v1:sha256:44be5b5de3750e18c50df7cb022861af6cd946ae5016a25cc8632ffa3c04db7b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjgwNGJjYmE3ZWRjNjkxMTA0MmVmYmQ2ZDhhYWYzNzVkOTY4MGZiNGEyYzBlZTNlYTBlZTdhMjc2ZGJkZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA3NmRmODgxZTIwZThkOGQyMWY4NjUxOTlmM2E4ZWVkZWM4ZWZhZDJkMGNmNmViY2I0ZDFlYWIyMmNjOWE3MDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f313fa56ca4d4f01950cc7215a6f9cc3",
+      "statement": "The AgentRegistrationAdded activity is dispatched to the establishReciprocal workflow on the reciprocal-registration task queue.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/ActivityWebhookHandler.ts#L250-L253",
+          "version": "repo-lines-v1:sha256:ef69a87d1e9f751d50429629413a16d1e0c5744b8a81f3dce283625103ac620e:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWJhNDZhNmYyNmUwZjYxM2NmNGE5OTE5ZjMyMmIwMWVlM2M3YzE3NWFlMDU3ZjI0MjJjM2FiZmY1MzQ5ODYyMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2RkYWRiZTlmMGI2ZjBjNjkzNzFlZWJmMjg5OGFiOWM2Njc0OTZkMDAzOTVmZWQ1MDc1YTVmZGYzZjhlZTQ3NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmQ5N2ZmYTA3YjcwOTFjOTE4N2RlYjQxMDJjYmEyY2Q5MjNlYjUwYjY4MDQ5NDc3MTE3ZDk3MWM4YmNhMTlkZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTNjMTU3NTA2ZWUwOTE1NTUzNDAyODNjZTU3YjRiZWZjYTVkZGI3NjRjN2ViMWEyYjQwNWExMDg4ZGFiYzFlMCJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.1",
-    "at": "2026-10-09T20:45:09.690Z"
+    "at": "2026-10-09T21:04:39.559Z"
   }
 }

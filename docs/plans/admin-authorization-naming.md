@@ -41,7 +41,7 @@ Rename the activity class + its RDF term + the RPC message. Keep
 | UI | `ui/authorization/src/events.ts` | `type.includes('AdminAuthorizationRecorded')` → `…Granted` |
 | UI | `ui/authorization/src/store/app.ts` | the toggle-admin claim `type: 'AdminAuthorizationRecorded'` → `…Granted` |
 | tests | `packages/data-model/test/activities.test.ts`, `packages/utils/test/namespaces.test.ts`, `test/admin-events.test.ts` | assertions |
-| docs | `docs/plans/events.md`, `docs/features.md`, `docs/temporal.c4` (`org-admin-add`), `docs/plans/activity-first-services.md`, `docs/plans/payload-contract-alignment.md`, `docs/plans/authorization-granting.md` | terminology |
+| docs | `docs/plans/events.md`, `openwiki/services/activity-lifecycle.md`, `docs/temporal.c4` (`org-admin-add`), `docs/plans/activity-first-services.md`, `docs/plans/payload-contract-alignment.md`, `docs/plans/authorization-granting.md` | terminology |
 
 ## 3. Steps (each independently verifiable)
 

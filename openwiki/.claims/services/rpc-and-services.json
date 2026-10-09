@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:915aa282011262626d9311e866b7cb6837bf9f48bf7f76f0698f0aa7e17cffd8",
+  "pageVersion": "sha256:3c5aac80c640dad76e4ed8b820243477deedfcb89a4a0ee6af9b6239ae326110",
   "claims": [
     {
       "id": "claim_dab50ed8b3754de2ab938bdffc459a8d",
@@ -77,10 +77,20 @@
           "version": "repo-lines-v1:sha256:87a06fb8c16217d5ca000d588bc6b174c0667617810f6797366633a759110eb3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3YWM1YTAwNDZhY2FiMWYyNjg1YmQxZTVjYzEwZWYzZDZlNzYwNmE4NmY3YzhmMGMyZDM1YmU1YWI1MThjM2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjZTViYjkwNzEwODQxYTAyNTNkZDRkODg5NTA3OGUxMDBmYWRkOTY1YzVmMzVkOWQ1OWZhYmIwNGRkM2Q0OWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1ODlmMjViNjQ0Mzk4NDU3MjZmOTM0YjQ2Mzg3Yjk0ODRkNDgyZWJkMWRkMTYwMmQ1MGIwMzIzNWVmN2NjMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwNGY2NTRmMzVjMmRjNmYzNWZhZWY5NDBjZmZhZWIyOTA0ZGViOTkwZWE4MDA2OWZkMWNjNzBiYWMzOTdiYzQifQ"
         }
       ]
+    },
+    {
+      "id": "claim_ea17ec8d7adc448b93d670f3153b98e9",
+      "statement": "In an org context the owner identity is the org, not the admin: resolveContext returns webId = the context (org) while userWebId = the signed-in user, so the admin only authenticates and every record is owned by the org.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/services/Context.ts#L60-L76",
+          "version": "repo-lines-v1:sha256:d4c31d21a301c3fafc967a58783063f671b4a7d18ffbd0c036cbb8e639bb2b1d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhYWFlZmYwOTJmMzFmMTAxZmJiNTdlNWMzNTkyZTI4MTZlY2QyMjA3Mjg0MjFmNGE3Njc5OTk2NWQ5ODUxNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjODk0YzljMTg3NGFlNTcxN2JjNGRhNTU0ZTI3MzljZjI2NjViMzlhZWY1ZTljN2ZlMmQ5MmExNjdmYmI5OGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4ZmNjZjQ2OGU4NjNkM2MyYzI5NGU2YTRkMzg5YmI4ZjJlZTYzZGRlYzljZDNkZDJjMzMxYmRhMTQwZGUzMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.1",
-    "at": "2026-10-09T20:45:09.690Z"
+    "at": "2026-10-09T21:04:39.559Z"
   }
 }

@@ -112,7 +112,7 @@ effect-free and must not import `api-messages`. ⇒ the canonical shapes live in
     must generate/receive: `capabilityUrl`, `registeredAgent`). The embedded
     node's `rdf:type` claim in the activity graph is kept out of
     authoritative reads by the **self-graph read convention**
-    (`docs/sparql.md`: classification queries filter `GRAPH ?g` …
+    (`openwiki/data-model/json-ld-layer.md`: classification queries filter `GRAPH ?g` …
     `FILTER(?g = ?s)`) — the write-path rule "never embed type at a real
     id" is superseded by that read-side filter (decided with step 1). The
     workflow input is the decoded object **verbatim** — the handler passes it

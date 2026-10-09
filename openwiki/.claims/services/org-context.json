@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:6561528fd143fea4237c53f214692cc905bb35eda46ed6cdd61266b61f98e3fd",
+  "pageVersion": "sha256:9a08902345232d7c9a1837d1dacca6822d7ce184cb5f489470901d7cbdf81a94",
   "claims": [
     {
       "id": "claim_b5871d230f8c4e0f9c3ae3d8ea64b36b",
@@ -63,10 +63,30 @@
           "version": "repo-lines-v1:sha256:8113aea94ec5393206d55ec9fa550089691258ae158c24a91237bc13777d09e5:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjYjlkMjNiNzgwOGM3ZDczMThhZTYwNjc0YjljNTEyYzQ5ODIwN2Q5NzMwZGVjMjczYzI4NmYzZjhlMDk3MjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyOTcyM2ZmY2FhOTE5ODYwZjFmMjcxYjJmYTg2N2JjNWNjNTE2Y2NlMDMzZDUxYjUwN2EzYzA2MTQxZDM4YTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_a651fd022a7d434782fee41119ae11bf",
+      "statement": "SparqlTransport is a two-op interface (fetchBindings for SELECT, fetchTriples for CONSTRUCT), and query functions are endpoint-agnostic, taking the transport as their first argument.",
+      "evidence": [
+        {
+          "resource": "repo://packages/authorization-agent/src/sparql.ts#L58-L60",
+          "version": "repo-lines-v1:sha256:d1d3dfb258eca7ed2486657945049b2378b93cdea6ea7c72298f12b198a6b74e:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzNlNDI4MTM5MDI4NTliNWYyYTY2ODEwZTNiOWNjMGU0OTgyYjcyODU2NmYzYzJlZjE5NjFmNWM5MTcxODJkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGY0NGM0NDYyYThlMmEwOWVjZmExOTUwMGRlZWUzN2I5ZjAxMWQyY2VkM2VjNTRlMzUzYjgwNmJjMjE3NzVkZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODkwZGJkZTVjNjMyZmY1MzU4YWVkOTg4NGVkMzJjOGM4YjFhNDlhYjQ2MzJiYmJiNjI5YzBiMTc2NDliMTZhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDQzZGIwZTZmNjdkNzgzYTAwMDcwOTA0NzQzN2NiYmM2YWYzNGE4MDQ0NmE4NjQwMzRiYWI1YzM1ZDFhMjcyZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_7957aa22f6ee44569d5d2548408f9482",
+      "statement": "localSparqlTransport runs the same endpoint-agnostic queries over the internal endpoint via SparqlEndpointFetcher, used for the personal context and the AA's own session reads.",
+      "evidence": [
+        {
+          "resource": "repo://packages/authorization-agent/src/sparql.ts#L74-L82",
+          "version": "repo-lines-v1:sha256:35d9b51201180ef4d42ca9449af1a82c9e10fa3fd8ec43c2e1a5f6bf20bd28f1:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjFjNTU1MjQ3MjljZTQyZDBiMzA5ZDdiODA4MzkxODM3ZmU0NTc4NTA3ZjQ0NGU3ZmQ4MjBkM2VmZDZiNDJlYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzViMTRhYmFmMmQ5MDJhOGZlNTlkYzNjNzk1ZDk0OWRkMjViY2U4ZWQ1OGFhZTgyYWEyZDdkY2I4NzgwY2ZkNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTU5MTE5ODI4NDFmZDY5ZjcyNDZlYTkzM2EzNzBmYjZkMDNkMTA0NmYyZjRjMDBjYjE0MWU4YjA2ZjUxNDA5NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjhlMGQyOTgwNDcwYmNjNzhiYmE3YWM0MTg2MWFmODYwMzhhNzU2NDFjMDUzYTFmYWVhNjdiMmU4OTRmN2RjOSJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.1",
-    "at": "2026-10-09T20:45:09.690Z"
+    "at": "2026-10-09T21:04:39.559Z"
   }
 }

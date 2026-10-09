@@ -1,12 +1,14 @@
 ---
 type: data-model
 title: JSON-LD read/write layer
-description: The JSON-LD-first transport shared by the data-model and authorization-agent packages — fetchJsonLd/putJsonLd/frameDoc/linkedIrisJsonLd/withContext helpers, the shared dataModelContext framing, createContainer semantics, the single WhatwgFetch, and the SPARQL-quad vs JSON-LD-CRUD split.
-tags: [json-ld, transport, framing, typescript, solid]
+description: The JSON-LD-first transport shared by the data-model and authorization-agent packages — framing-not-compacting, the selectNode whitelist, the loader factory, the read and write paths, the activity-registry class-gated decode, embedding semantics, manual helpers, and the self-graph SPARQL scoping hygiene.
+tags: [json-ld, transport, framing, typescript, solid, sparql]
 verified:
   - by: openwiki/0.7.1
-    at: 2026-10-09T20:45:09.690Z
+    at: 2026-10-09T21:04:39.559Z
 sources:
+  - id: openwiki-source-82daddf07d8ad3efedbe52d2
+    resource: repo://packages/authorization-agent/src/activity-registry.ts
   - id: openwiki-source-654e83ca378000da767000a7
     resource: repo://packages/authorization-agent/src/agent-registration.ts
   - id: openwiki-source-81f61b66ae2ead4432d4358a
@@ -21,15 +23,14 @@ sources:
     resource: repo://packages/utils/src/sparql-update.ts
   - id: openwiki-source-228968b8fb4f70750899249e
     resource: repo://packages/utils/src/whatwg-fetch.ts
-generated: { by: "pi", at: "2026-10-09T20:45:09.690Z" }
+generated: { by: "pi", at: "2026-10-09T21:04:39.559Z" }
 ---
 
 # JSON-LD read/write layer
 
 The entity POJOs (see [Data model entities](entities.md)) are carried to and
-from the Solid servers through a small JSON-LD transport in
-`packages/utils`, with the Turtle/quad machinery kept strictly at the SPARQL
-and ACP/ACR boundaries.
+from the Solid servers through a JSON-LD transport in `packages/utils`, with
+Turtle/quad machinery kept at the SPARQL and ACP/ACR boundaries.
 
 ## Core helpers (`packages/utils/src/jsonld.ts`)
 
@@ -53,29 +54,87 @@ and ACP/ACR boundaries.
 
 The shared `dataModelContext` aliases `id` to `@id` and maps `@type` to a
 `@set` container, so `type` is always a `string[]` on reads and on expanded
-writes. POJO types declare `type: string[]` accordingly; presence is enforced
-by TypeScript rather than a runtime validator.
+writes. Reads use **framing, not compacting** — compaction cannot filter to one
+node in a multi-node document, resolve `@reverse`, or omit absent keys.
+`buildFrame` gives every property `@embed: '@never'` / `@omitDefault: true`, so
+node refs stay plain-IRI references and `@reverse` children resolve on the
+top-level matched node.
+
+## Selection and loaders
+
+Framing emits **every** property of the focus node, so frame entries govern
+embedding/omission but not inclusion. The per-model whitelist is
+`selectNode(node, terms)`: `id`/`type` plus exactly the model's terms, present
+values only, with **no defaults** (absent means `undefined`; empty `@set`
+arrays round-trip as absent and consumers coalesce with `?? []`).
+Language-tagged literals compact to `{ '@value', '@language' }`, read through
+the `opt(node, key)` unwrapper.
+
+There are no `loadX` exports; consumers compose the generic
+`loader(fromJsonLd)` factory at module top, which infers `T` from the reader's
+return type and threads `fetchJsonLd` through it.
+
+## Activity decode (class-gated framing)
+
+`frameActivity` (`packages/authorization-agent/src/activity-registry.ts`)
+sniffs the raw doc's `@type` and picks a frame per class:
+
+- `AuthorizationGranted` — **two-phase**: the default frame makes `as:object`
+  plain-IRI strings; a second frame re-frames the same doc once per object id
+  via `DataAuthorizationFromJsonLd`, giving each embedded object a uniform
+  top-level read (so `@reverse` children resolve) without dereferencing.
+- Need-based classes — the **deep** frame embeds the complete
+  access-need group (`@embed: '@always'`) so the approval workflow resolves
+  inherited children from the activity graph.
+- Everything else — the wildcard `{ '@embed': '@always' }` on `object`:
+  snapshot objects embed from the same document; a live-link object stays a
+  plain-IRI string.
+
+## Embedding semantics
+
+- Single values collapse to scalars/objects unless the term has
+  `@container: '@set'` (`type` is solved; `object` is not — mappers wrap with
+  a scalar-or-array helper).
+- `@reverse` resolves only on the top-level matched node, not on wildcard-
+  embedded nodes.
+- `@type` is an **unordered set** — class discrimination is by set membership,
+  never tuple position.
+- IRI-valued terms are coerced (`@type: '@id'`), so `client_id`-style values
+  are always IRIs; a literal under a coerced term is a document defect.
+
+## Manual helpers
+
+- `documentValues(doc, iri, predicate)` — collects a predicate's values across
+  **all** nodes of a document (frames only reach other nodes via a known path).
+- `findNodeIdByType(doc, typeIri, base)` — first node of a type via a wildcard
+  `{ '@type' }` frame.
 
 ## Container creation
 
 `createContainer(id, fetch, dataset)` PUTs an empty container first (CSS
-ignores the request body), then `applyPatch`s the triples onto the discovered
-description resource. The three container-creating callers
-(`data-registration`, `application-registration`, `social-agent-registration`)
-route through it rather than PUTting bodies to container URLs.
+ignores the body), then `applyPatch`s the triples onto the discovered
+description resource; the container-creating callers route through it.
 
 ## Fetch boundary
 
-`packages/utils/src/whatwg-fetch.ts` is the single `WhatwgFetch` type —
-`fetch.ts`/`RdfFetch` are gone from source (only stale build artifacts
-remain). Resource CRUD uses raw JSON-LD (`putJsonLd`/`fetchJsonLd`/`frameNode`),
-while the SPARQL-patch layer keeps quad machinery (`DatasetCore`, the N3
-`Store`, `fetchTriples`, `graphDoc` via `jsonld.fromRDF`) in
-`packages/authorization-agent/src/sparql.ts`. Turtle survives only at the two
-non-JSON-LD boundaries: the ACP/ACR templates
-(`setAcr` → `parseTurtle(agentRegistrationAcrTemplate(...))` →
-`text/turtle`) and the SPARQL `INSERT/DELETE DATA` patches
-(`insertPatch`/`deletePatch` embed `serializeTurtle`).
+`packages/utils/src/whatwg-fetch.ts` is the single `WhatwgFetch` type. Resource
+CRUD uses raw JSON-LD; the SPARQL-patch layer keeps quad machinery (`DatasetCore`,
+N3 `Store`, `graphDoc` via `jsonld.fromRDF`) in
+`packages/authorization-agent/src/sparql.ts`. Turtle survives only at the
+ACP/ACR template boundary and the SPARQL `INSERT/DELETE DATA` patches.
+
+## SPARQL graph scoping
+
+Every resource's document body lives in its own named graph (`GRAPH <iri>`,
+name == resource IRI); `meta:` graphs hold mirror metadata. The **activity
+registry is the exception**: an activity's `as:object` may embed a projection
+of a real resource, putting the embedded node's `rdf:type`/properties inside
+the activity's graph — one graph, two subjects. Type-matching queries across
+the dataset must therefore scope to the subject's own graph
+(`FILTER(?g = ?s)`) or they return embedded (non-authoritative) "phantom"
+claims — e.g. `findRolesWithMember` uses `FILTER(?g = ?role)` so a
+`roleMembershipChanged` projection of a to-be role (activities are immutable)
+cannot keep asserting stale membership.
 
 ## Known debt
 

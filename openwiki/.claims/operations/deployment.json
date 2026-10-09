@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:dd155c9bd4fc7c88ad0caa346801ce2c228e28aedf14308629eab6586743d582",
+  "pageVersion": "sha256:228d369b1303db10013052031e30732e261e65d66b8c823de695cbe0b8916da9",
   "claims": [
     {
       "id": "claim_6ad365bb567b4686bdb7422b4b2103d5",
@@ -47,10 +47,6 @@
       "statement": "Node processes start OpenTelemetry through packages/components/src/tracing/preload.cjs and bootstrap.ts, exporting OTLP/HTTP to Tempo, with SAI_OTLP_ENDPOINT taking precedence over OTEL_EXPORTER_OTLP_ENDPOINT.",
       "evidence": [
         {
-          "resource": "repo://docs/opentelemetry.md#L45-L54",
-          "version": "repo-lines-v1:sha256:72eb54d72e77c7d41193f2b1b79126d57f216a9aa8ae1eb3be7b674eb45890e9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MjNkMDEzM2JkOWM1NDAyNmZiNTRhODMxOWIyMWEyMmU5NWE1YjA3ZDg3MDU5ZGNhYjViYjAzZTYzMjRmMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExZTc3YmQ0YzFhMDMyZjRjYzg4OTQwZjg4ZmVlMDA1OWZiNmQ2MjcwZmMxZTI5OTIwNmFiNzNjNjM5M2ZmMmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MTgwZWYyOTEzMmZmN2Q0N2E1MmNiMTI0OTk1OGI5MTVkMDM5MGZiNGIxYmU5ZjA2Y2RjZjI4ZGVkYzQzYWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjNzc0NjIwNmU1MjA5Yjc0ZTU2ZDdmYTE0NDAxZTgwNzg0Y2FhNmE0M2ZjZGU3MjVmMmJkNzE2NmFlYzk1YTkifQ"
-        },
-        {
           "resource": "repo://packages/components/src/tracing/bootstrap.ts#L19-L30",
           "version": "repo-lines-v1:sha256:dfe46d53b5aed37750eab494dabd2be6139ffa6eb0db65da5d7249a072c26a9a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3ZGI0YWQ0M2EwOGIzMTdlNTBiOWJhYzczZjNhMzQ1OTYyMWRhMGFhYmVkZTQyMzE5MmY4NGNkZmIxOWI0YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNDExMDk1YTVkNTI5ZWM4ZDE1NTVkYzg2ZmZmNTcyMDU0OGVlNDZjMTliMjAyNjgwZmE2YWE1ZjM2NDU4NzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkZTQ1YmJlZTQyNTZiOGNmZTcwOWY2MGE3MWU3NTM4NDY5YWJkNzQ3YTU4NTQ0MGU4MDM1NDM5OTllNzdkOTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3MTQ1YWMxYWU0NzEyOWUwN2Q4YjUzMTZhNTUzZWMzODk3YTY1ZDg5MmEwYTljMTJmMDA2MmU2OGI0OWFiNmMifQ"
         }
@@ -65,10 +61,30 @@
           "version": "repo-lines-v1:sha256:75b5bb1ffe4fafa07db1b8dba5236234ebd052960221514c10b1b5628db407c0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3NjVhZjI0MDY0ZjhhMTY5MGQ2NGJjNzdiZTIxOTFmMTExZWI3OTFmZDhlNDFlNjEwMGQ0OWE3YWI4Yjg0ZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4NzliZmMxODUwMjIwNjlkNDgyMWVhZmU1MDllNjU3ZDYzYzE3ODJiYjNlODUzYzk2ZjRlMGNhZTEyZjRkMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoxLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0ZWNiYWY3MzRmNmE3ODhkNTJlM2E5OTJmMTEzZDYyOTgyMzcxOGNjMDgyMTA4NjY5M2JhNjA4ZTVlZDU2ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczZDE2NzE3Mjg3NzhiYjBkN2M0ODJkYjk1NWU1MTkxYTEyMGQwNmY3OWRjYTdlZGUzYjY2OWMyYjRiMWMyMTkifQ"
         }
       ]
+    },
+    {
+      "id": "claim_806e8f6e4c9d4635bff08a0b56de4deb",
+      "statement": "The OpenTelemetry hard-off escape hatch is OTEL_SDK_DISABLED=true or OTEL_TRACES_EXPORTER=none, which makes initNodeTracing return undefined.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/tracing/bootstrap.ts#L21-L23",
+          "version": "repo-lines-v1:sha256:0cf0bdd6e00e25a5a8d17fbf17223d3452bb51802e08b5757435c3ec9af35338:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGRjOWQyYTdlOWM5NmE1MTE3ZDY5YWQwMmY4MjExZWUzMDdiMjQ5ZDE5OWVjNjI2ZWE3ZWY1NTU2YmExZGE1NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzZmNGYwMDk4YTE5OGZkMGNiYTYzYTE0ZGY3YzhhMTdhOWZhOGZjODhjZjRhMGY4NzA2N2E1ZWE4NzkyMzQ1MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzU3OTVlZDhkYTY5NGQ1NTNiMWZmZTM5NmQ3YTFiNTUyNWRkZDk2N2YzMWQzYjI1MjIyNzk5Nzg1ZTYyMjUzZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_94634cc8beeb4b4b86b68e9f103de167",
+      "statement": "Header capture is opt-in via OTEL_CAPTURE_HEADERS=true and attaches the authorization, cookie, content-type, accept, if-none-match, and link headers as span attributes.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/tracing/bootstrap.ts#L56-L65",
+          "version": "repo-lines-v1:sha256:8ccb120cc970e348bde4541c9c073dd5244e3bea9aab87e0ff7fb639143c0560:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ5MzJiOTM5NWYzZTE0NjEyMjI5ZTYxMDE1NjMwMmVkOTdjYjI5YTNkMmNmODlkNjIzODFmOGExOGMzYjRhYjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4Nzk0ZDU0MzFjMmZmMTViOTFiMTE0YmEwOTE3ZjdlNDA4YzZlMzk0ZGU1ZmRjMjZlOGQwMDAwNDBlNzllYzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2ZGIwODhhNDQwZDk4ZTU3NDU0ZWQ1ZDMwZThkMGE3NTg0OGFiZjE4YjdlMTlkNzBlZTRkYzMwZmU0NjFlYjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ3ZGVjODc1ZGU2NmU3YWM3OGJiZGNhOTMwNjkzZjUyYmYwMmIwYTkwODJiOWU0NWQyNTMxODZjYjQyNjE1MzUifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.1",
-    "at": "2026-10-09T19:35:35.072Z"
+    "at": "2026-10-09T21:04:39.559Z"
   }
 }

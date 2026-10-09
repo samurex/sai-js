@@ -1,12 +1,14 @@
 ---
 type: architecture
 title: Org-context data plane
-description: The org-admin data plane — the SPARQL read plane (queries/org.ts, sparqlTransportFor), the /sparql-admin HTTP-QUERY endpoint, the /.sai/proxy-admin GET-only JSON-LD-only proxy, the admin-side peer clients, and the ACP non-cascade constraint with its seeded-resource mutation debt.
+description: The org-admin data plane — the SPARQL transport abstraction (one query, endpoint chosen by context), the /sparql-admin HTTP-QUERY endpoint, the /.sai/proxy-admin GET-only JSON-LD-only proxy, the admin-side peer clients, and the ACP non-cascade constraint with its seeded-resource mutation debt.
 tags: [org-context, sparql, proxy, admin, architecture]
 verified:
   - by: openwiki/0.7.1
-    at: 2026-10-09T20:45:09.690Z
+    at: 2026-10-09T21:04:39.559Z
 sources:
+  - id: openwiki-source-81f61b66ae2ead4432d4358a
+    resource: repo://packages/authorization-agent/src/sparql.ts
   - id: openwiki-source-77182bdd0f02f880bb397ec8
     resource: repo://packages/components/src/AdminSparqlHandler.ts
   - id: openwiki-source-32079b13473bb3dd34f28c63
@@ -19,7 +21,7 @@ sources:
     resource: repo://packages/components/src/services/peerProxy.ts
   - id: openwiki-source-d5d71ad8cddece4a004d0065
     resource: repo://packages/components/src/services/queries/org.ts
-generated: { by: "pi", at: "2026-10-09T20:45:09.690Z" }
+generated: { by: "pi", at: "2026-10-09T21:04:39.559Z" }
 ---
 
 # Org-context data plane
@@ -32,15 +34,31 @@ documents that data plane; the context-resolution rules that select it are in
 
 ## SPARQL read plane
 
-`packages/components/src/services/queries/org.ts` supplies the org-side
-transport: `adminSparqlTransport` implements `fetchBindings` (SELECT) and
-`fetchTriples` (CONSTRUCT) over HTTP `QUERY` requests to
-`/.sai/sparql-admin/<base64url-org>`, built by `adminSparqlQuery`.
-`sparqlTransportFor(ctx)` dispatches on context — the session's
-`localSparqlTransport` for the personal context, `adminSparqlTransport` for an
-org context. The actual SELECT/CONSTRUCT query strings live in
-`packages/authorization-agent/src/sparql.ts`; `org.ts` only supplies the
-transport.
+The read plane is built on a single principle: **the same registry query runs
+against whichever endpoint the context requires** — only the endpoint differs,
+never the query or the mapping. The transport + query core lives in
+`packages/authorization-agent/src/sparql.ts`:
+
+- `SparqlTransport` is a two-op interface — `fetchBindings` (SELECT) and
+  `fetchTriples` (CONSTRUCT). Query functions are endpoint-agnostic: each takes
+  a `transport` as its first argument and never mentions an endpoint.
+- `localSparqlTransport(endpoint)` is the internal endpoint via
+  `SparqlEndpointFetcher` (used for the **personal** context and the AA's own
+  session reads).
+- `adminSparqlTransport(session, orgWebId)` issues HTTP `QUERY`
+  (`application/sparql-query`) to `/.sai/sparql-admin/<base64url-org>`
+  authenticated as the admin (the **org** context); it lives in
+  `packages/components/src/services/queries/org.ts`.
+- `sparqlTransportFor(ctx)` is the single dispatch: personal →
+  `localSparqlTransport`, org → `adminSparqlTransport`.
+
+Queries are **IRI-parametrized** (keyed by resource/graph IRI, never by
+`session.webId`), so they resolve unchanged to mirror graphs at the per-owner
+store split. **Writes stay REST/LDP** (the enforcement path); only registry-set
+reads use SPARQL — data-instance content, webid/client-id profiles, shape-tree
+descriptions, and storage descriptions stay HTTP. The personal context uses the
+same query functions as the org context, routed to the session's internal
+endpoint.
 
 ## Admin-gated endpoints
 

@@ -3,9 +3,6 @@ type: testing
 title: Integration test suite
 description: The Dagger-driven integration suite — seeded environments/data, per-test re-seed, the waitForQuiescence/awaitGrantCompletion race-prevention helpers, and what each test file verifies.
 tags: [testing, dagger, vitest, integration, race-prevention]
-verified:
-  - by: openwiki/0.7.1
-    at: 2026-10-09T19:35:35.072Z
 sources:
   - id: openwiki-source-a8a954b9de2bc6c0b4ca5044
     resource: repo://.dagger/src/index.ts
@@ -19,7 +16,10 @@ sources:
     resource: repo://test/setup.ts
   - id: openwiki-source-44922de4c3997ca2d1d53cd9
     resource: repo://test/util.ts
-generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+generated: { by: "pi", at: "2026-10-09T21:04:39.559Z" }
+verified:
+  - by: openwiki/0.7.1
+    at: 2026-10-09T21:04:39.559Z
 ---
 
 # Integration test suite
@@ -82,5 +82,13 @@ requests), `admin-events.test.ts` (org-admin activity forwarding),
 `personal-admin.test.ts` (AddAdmin/RemoveAdmin + ACR),
 `policy-engine.test.ts` (WAC/ACP matrix), `reciprocal-webhook.test.ts`,
 `reconciliation.test.ts` (sweep), `revocation-rpc.test.ts`, `roles.test.ts`,
-`services.test.ts` (reachability smoke), and `share.test.ts`. The isolation
-details and residual limits are documented in `docs/tests.md`.
+`services.test.ts` (reachability smoke), and `share.test.ts`.
+
+## Residual limits
+
+The measures serialize and wait — they do **not** fix product-side races: a
+workflow iterating authorizations still 404s on a just-replaced/deleted
+authorization (stale `ldp:contains` after `replaceDataAuthorizationsForGrantee`;
+CSS SPARQL-backend `dcterms:modified` metadata corruption). Iterators
+(`findAuthorizationsForAgent`, `dataAuthorizations`) have no 404/410 tolerance
+yet.

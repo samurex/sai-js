@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:3bb4aaf3a66f26e81682551ad23d0540e54996e91cb187c5d59f53878ec86032",
+  "pageVersion": "sha256:90b3fd4298126a5a6e2fcd7fa2d89425815d994f10a53b0ba0be54386376d1e0",
   "claims": [
     {
       "id": "claim_c0d040529023490a8a016339ae020d13",
@@ -69,20 +69,10 @@
           "version": "repo-lines-v1:sha256:783edbfd75c5da07f02c1e5a82f646020cc652839cc2cedc96f37769e8cad0a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzgzZWRiZmQ3NWM1ZGEwN2YwMmMxZTVhODJmNjQ2MDIwY2M2NTI4MzljYzJjZWRjOTZmMzc3NjllOGNhZDBhOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzgzZWRiZmQ3NWM1ZGEwN2YwMmMxZTVhODJmNjQ2MDIwY2M2NTI4MzljYzJjZWRjOTZmMzc3NjllOGNhZDBhOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmQzYWQ5MWE4ZGJkMzNjZTBkYWViNzVkYmQ1ZGQ5YTMzN2RjYjMyZWE5ZWJlZmE3MTRhZTZjMmQyMjNiZDNlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGZjMWFiODZiZWRkYzc1N2E5NWEwNTQ1N2UzMTlhZjVkN2NmMzg0ZGYwMzQ2NTM4NDVjZTFmYWZkMGQ2NTJmOSJ9"
         }
       ]
-    },
-    {
-      "id": "claim_16e50e0f5f2a4314b6792edf683ce646",
-      "statement": "docs/likec4.md codifies the authoring conventions for the dynamic views, including dynamic-view syntax, note callouts, include ordering, and modelling a request plus its directly following response as a single step.",
-      "evidence": [
-        {
-          "resource": "repo://docs/likec4.md#L1-L20",
-          "version": "repo-lines-v1:sha256:2d2341709249be6478d0e219a47e8b54da52e027e3eb748428451975a1c62997:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNDkwMzBiNTQxZTEzNDA3NTg3ZjAyNjk1M2U2ODkyNzhiNmEwYzM3MTBmNDY0ZDE1N2MzMGRhZjZmZDg0M2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5MWIwNmFhODE5YzBiMDA5MTExYzQzZThkNjk5NGFlYzdkNjZhNzBjMjdmYjk2MWJiYmM2Njc5NDBlOGFlOTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4ZDAwMDgxY2Y0YzYzMWY1MDU5YzBiZjRmYzdiZGQ2ZTJjMTIxZmU2OTVlMGJhMjhkNzc1ODE3NmZmYzg1YmMifQ"
-        }
-      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.1",
-    "at": "2026-10-09T19:35:35.072Z"
+    "at": "2026-10-09T21:41:59.486Z"
   }
 }

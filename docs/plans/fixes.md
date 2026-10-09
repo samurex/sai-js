@@ -156,9 +156,9 @@ Writes stay HTTP (PUT the invitation, SPARQL PATCH the
   self-graph-scoped — the inverse failure (a store-wide scan without the
   guard) is what broke `findRolesWithMember` in step 2, where a real-id
   embedded projection inside an immutable activity graph kept asserting an
-  old `interop:hasMember` (fixed with `FILTER(?g = ?role)`; see `sparql.md`
+  old `interop:hasMember` (fixed with `FILTER(?g = ?role)`; see `openwiki/data-model/json-ld-layer.md`
   hygiene notes). Low-frequency (per role update/delete + reconcile), so not
   urgent — capture as a follow-up alongside the sibling scans.
-- Docs: promote the "invitations candidate" note in `docs/sparql.md` to
+- Docs: promote the "invitations candidate" note in `openwiki/services/org-context.md` to
   current; `docs/temporal.c4` step 5 (accept view) already uses the direct
   capabilityUrl-matching `CONSTRUCT` (§3.2).

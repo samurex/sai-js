@@ -5,11 +5,11 @@ description: The h4p.net production landscape modeled in docs/architecture.c4 â€
 tags: [architecture, deployment, solid, c4, h4p]
 verified:
   - by: openwiki/0.7.1
-    at: 2026-10-09T19:35:35.072Z
+    at: 2026-10-09T21:41:59.486Z
 sources:
   - id: openwiki-source-d0f68fe32d2ff3a73bba3cb6
     resource: repo://docs/architecture.c4
-generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+generated: { by: "pi", at: "2026-10-09T21:41:59.486Z" }
 ---
 
 # Deployment landscape
@@ -67,6 +67,4 @@ The model ships six LikeC4 views: a full `index` landscape plus scoped views for
 The `account` view is the richest â€” it pulls in `Data`, `WebID`, and `Auth` and
 explicitly excludes the `Data -> WebID` edge while including `Auth -> Registry`.
 
-> The `docs/likec4.md` convention file governs authoring of `docs/temporal.c4`
-> (dynamic views, note callouts, include ordering); `docs/architecture.c4`
-> follows the same LikeC4 project scope.
+> The LikeC4 authoring conventions for the dynamic views (note callouts, include ordering) are documented in [Sequence and discovery flows](../temporal/sequence-views.md); `docs/architecture.c4` follows the same LikeC4 project scope.

@@ -1,14 +1,12 @@
 ---
 type: operations
 title: Production deployment and observability
-description: The NixOS/Podman VPS deployment (nixos-anywhere, flake hosts, ragenix-encrypted secrets, Caddy reverse proxy) and the OpenTelemetry/Tempo/Grafana observability path for sai-js.
+description: The NixOS/Podman VPS deployment (nixos-anywhere, flake hosts, ragenix-encrypted secrets, Caddy reverse proxy) and the OpenTelemetry env contract, mechanics, and Tempo/Grafana observability path for sai-js.
 tags: [operations, nixos, podman, caddy, ragenix, opentelemetry, tempo]
 verified:
   - by: openwiki/0.7.1
-    at: 2026-10-09T19:35:35.072Z
+    at: 2026-10-09T21:04:39.559Z
 sources:
-  - id: openwiki-source-ec41bb5ef5df8f458a78c5ac
-    resource: repo://docs/opentelemetry.md
   - id: openwiki-source-3eda5d2b85501c78fc0ba02d
     resource: repo://flake.nix
   - id: openwiki-source-aec65e72753159f364299ec7
@@ -21,7 +19,7 @@ sources:
     resource: repo://packages/components/src/tracing/bootstrap.ts
   - id: openwiki-source-c862349b5581cece054d0a3b
     resource: repo://tempo/tempo.yaml
-generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+generated: { by: "pi", at: "2026-10-09T21:04:39.559Z" }
 ---
 
 # Production deployment and observability
@@ -63,14 +61,34 @@ Gandi DNS plugin for ACME DNS-01 challenges, mounts `age.secrets.gandi` and
 
 Every instrumented Node process starts OpenTelemetry through
 `packages/components/src/tracing/preload.cjs` and `bootstrap.ts`
-(`initNodeTracing`), exporting OTLP/HTTP to the Tempo service. Env precedence
-is deliberate: `SAI_OTLP_ENDPOINT` (explicit, used under Dagger whose engine
-injects its own `OTEL_EXPORTER_OTLP_ENDPOINT`) wins over the plain
-`OTEL_EXPORTER_OTLP_ENDPOINT` used by the Compose dev loop; `OTEL_SERVICE_NAME`
-sets `service.name`.
+(`initNodeTracing`), exporting OTLP/HTTP to the Tempo service. Production is
+off by construction — with no env vars the SDK is a no-op.
+
+### Env contract
+
+| Var | Effect |
+| --- | --- |
+| `SAI_OTLP_ENDPOINT` | our OTLP endpoint, handed to the exporter explicitly — required under Dagger, whose engine injects and overrides `OTEL_EXPORTER_OTLP_ENDPOINT` |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | live OTLP/HTTP export for the Compose dev loop when `SAI_OTLP_ENDPOINT` is unset |
+| `OTEL_SERVICE_NAME` | span `service.name` (sai-test / sai-uas / sai-id / sai-registry / sai-data / sai-worker) |
+| `OTEL_CAPTURE_HEADERS=true` | attach `authorization` / `cookie` / `content-type` / `accept` / `if-none-match` / `link` as span attributes |
+| `OTEL_SDK_DISABLED=true` / `OTEL_TRACES_EXPORTER=none` | hard-off |
+
+`SAI_OTLP_ENDPOINT` wins because the Dagger engine injects the standard vars for
+its own telemetry; the dedicated endpoint is passed straight to the exporter so
+the injected standard vars are ignored.
+
+### Mechanics
+
+`HttpInstrumentation` + `UndiciInstrumentation` provide server/client spans, and
+`SimpleSpanProcessor` is used (synchronous — no batching, no tail-span loss when
+services are killed). `ApiHandler` wraps each RPC call in a `sai.rpc.handle`
+span; the JSON-LD helpers emit `sai.jsonld.raw` / `sai.jsonld.framed` /
+`sai.jsonld.expanded` spans; SPARQL reads run inside `sparql.query` spans;
+Temporal uses `OpenTelemetryPlugin` on the three workers and the client. Browser
+spans export from the UI to `/otlp`, routed by Traefik to `tempo:4318`.
 
 `tempo/tempo.yaml` runs single-binary Tempo: OTLP ingestion on `4317` (gRPC)
 and `4318` (HTTP), the TraceQL/query API on `3200`, with local WAL/blocks. A
 provisioned Grafana datasource (`grafana/provisioning/datasources/tempo.yaml`)
-points Grafana at Tempo, so traces are browsable out of the box. The detailed
-precedence and troubleshooting lives in `docs/opentelemetry.md`.
+points Grafana at Tempo, so traces are browsable out of the box.

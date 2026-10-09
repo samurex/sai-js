@@ -453,7 +453,7 @@ sketches):
     POJO projection at the REAL pre-minted id, `type` included** (the pojo
     minus what the workflow generates — `CreateInvitationPojo` pattern).
     The activity-graph `rdf:type` claim never surfaces as authoritative:
-    classification reads self-graph-filter (`docs/sparql.md` —
+    classification reads self-graph-filter (`openwiki/data-model/json-ld-layer.md` —
     `FILTER(?g = ?s)`, adopted with step 1). Re-pins: `AuthorizationGranted`
     (+`Revoked`), `AdminAuthorizationGranted` (+`Revoked`),
     `RoleMembershipChanged`/`RoleDeleted` (the *intended* change rides the
