@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6561528fd143fea4237c53f214692cc905bb35eda46ed6cdd61266b61f98e3fd",
+  "claims": [
+    {
+      "id": "claim_b5871d230f8c4e0f9c3ae3d8ea64b36b",
+      "statement": "adminSparqlTransport implements fetchBindings (SELECT) and fetchTriples (CONSTRUCT) over HTTP QUERY to /.sai/sparql-admin/<base64url-org>, and sparqlTransportFor dispatches personal contexts to localSparqlTransport and org contexts to adminSparqlTransport.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/services/queries/org.ts#L129-L169",
+          "version": "repo-lines-v1:sha256:954a175728e35668bd062358453e247a865ba715f65417674ba1f4ecfca01d44:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZDk4YWJlODUwYTUwMWIzOThiZGZiYjA5ZjdlNjI1YjNmMjg0MTYxMzk3NjNkYWJlYThhYzZhZjBhNWIyMTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjZjliYmZhYTM3Mjg4YzIzY2Y2YTRiNTdmMzAzNzM4Y2JlOThhYWQ1ZGJmNTg2ZDYzZDM3ZGMyNWJmYmUzNTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a7974a4117c74bcf8c74a1625d404083",
+      "statement": "The /.sai/sparql-admin handler accepts QUERY only (rejecting other methods with MethodNotAllowedHttpError(['QUERY'])) and requires requireOrgAdmin.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/AdminSparqlHandler.ts#L91-L99",
+          "version": "repo-lines-v1:sha256:a0ad3bc2830229e5c7eb968c3c736d49a6a30187b3d1f50002db0787a34559a0:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZhNzllMTg0Nzk2YTEyMzQ5YzAwMzEzNDdiMDFjMzA4MDAyNjEzYWYwZmUwNDUzMDIxYzI0NmM0ZjUwMDlmYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTBlNTBiNjAxM2Y3YzRmYzRkYzUwZjAyNWJlYWZkMWY0ODU4YTc5ZTRiZmViMDgxMmRlNjM3MTBmODk0YzFjOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWYyNDk2ZGUzZWZlYTNhZjJlYmQzYjMyNzBiYTczNTljNDdhM2NjN2FhMGM1NmU4NDA2NjIxODhhNTY1ZDhiZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjRjNjZkZmJjZjRmZDA0MWE0NTIzMjhlMGRlYmU1NTlkMzVkMDM3NDRmYWViZTBmYjZhZWVlM2YyZDBmMzJkNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8f63f28f3b894b0680417563cedd5df9",
+      "statement": "requireOrgAdmin returns 403 unless the org's registration of the caller carries a non-empty hasAdminGrant, making an unknown org indistinguishable from a non-admin.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/services/adminGate.ts#L37-L57",
+          "version": "repo-lines-v1:sha256:3441414923a8d8603755749084814ce1263a5f14f45cf35a465922d1eabec0e3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0NmZiZTg4YWIwN2VhZWExMTliZGFjMjJhOTI0ZTA1OTQyZDc1ODhmMmFmYWI5ZGMyZGMwZjNhNjQ3YzZkMWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZjQwNWRlMThlYTcyODBjNmY3ZGFhZjJlNjNlODVlNmUxNTExODhjZmY0YjUwYjkzOWExNjcxM2ZlNWIyZWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0MjQyMDAyYjMzZDMxNzk5N2QwMWIzYWNhNTlhODFmZWM4OTQzZGYzYjQ4ZTI3YzI5YzU2N2RhMjg5MmE0NGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlMmViMTVjZTRiNjAxNThlYTU1MzU4YmQxZTQyZTYzYzcwZjUwZTk4OWNmYzBkYTQxZGU4ZTg3NTA4NWExNGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_98c5b556cb1e48c19937d9dcb8925407",
+      "statement": "The /.sai/proxy-admin handler is GET-only, resolves the org webId from the base64url path segment, gates on requireOrgAdmin, and enforces JSON-LD-only responses.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/ProxyAdminHandler.ts#L108-L115",
+          "version": "repo-lines-v1:sha256:89031e8f4230743446c000a2e9377282f015017129d40b95a9b0fedb64f719a4:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTlkZDZiNGJlMTE1ODgyYTZiNWE4ODQ2MmU3MTYzY2Q0YjVhNzA5NjVjYjgxNWI1ZDIyNzk1YzA5ZjA3ODExMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOGVkYzRlMzI3Mjg4NzQ5NzVkYWM5NDZmMDg4MjIwMjI4YzIzZjNhZjcyOTMxZGFmZjMzNWU1YjdmYzY5ODE0MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGMxNTIyMDY2YTlkMTE4MzY4NTg1NTNhNzhhMGFlZmQ4MDI3NjE5MGI5ZDExMWFhNzE5OGM0MTVkYjQxZTFjMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzRhODU3NDc3Yjk0ZWE2NTQyNzk1NTJhODU5MDc5YmEyNGMzNWZhM2RhNDVlYWM5YjcyM2JhMmY3OWEyOGJmNCJ9"
+        },
+        {
+          "resource": "repo://packages/components/src/ProxyAdminHandler.ts#L61-L71",
+          "version": "repo-lines-v1:sha256:5d9119cca002674ee025f29c457fdbf516b1f85c98aff3328bc04a94c3dc7012:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5YTM1YzJhMWUzZGQ4MGUzZTZmMTQ2NTk3ZTJhZTBhN2IwNDNhNmI5OTM2NGQ3MWM0ODM0Y2U4NmEyZmY5YjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVhYTc3M2U5ZTA0YzBlNzIzZWZjNTZhZjJkYjk5OGI2OTE5YzgxMjgzOWZlYmFiYmQxOWIwY2EzNzRkODk2YTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0MDFhMjU4ZDc5NjVmYjlmMmViZTc4YzNhYjMwNGU0MGZiZDljMzMyYWIyN2ViNmExZmRlNDJmYjU0MmVlMzkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c293a2c3668645f597aa51f9bdb5790c",
+      "statement": "fetchPeerDocument GETs /.sai/proxy-admin/<base64url-org>?iri=<target> with the admin session, and dataRegistrationContains, peerInstanceNode, and peerInstanceIris route org-context reads through it, with fetchPeerResource pinning Accept: application/ld+json.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/services/peerFetch.ts#L39-L53",
+          "version": "repo-lines-v1:sha256:622c5b25d1a3b3f2dfa5da93277943853753e9cdd8d3add1f5c017991f024ddf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyNWNhZTdmOTg0YjY3ZDkwODM4NzVhNjA4YTcxNjAyNmY3ODBkOGQ4NGM4MmY2NmM4NWU3YTYwODA4ZmE0NmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjMWY4MmMwNTQ3NjkyMzM1MDExMWRhNWNjYzVkNThlOGVlNjUzY2I5N2FlOWU5YjNlZTgwNTViZjVjZTVmM2QiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://packages/components/src/services/peerProxy.ts#L54-L87",
+          "version": "repo-lines-v1:sha256:39a3302c44f9825842ce9a836f5a329e7d5fb8c795961700e44c67a11aa9ef80:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0YmQxOGY3MWMyZTk4NGVhM2QxNDNmMzFjZjUxNzI0MmQ5ZWU2YjJlYzQ2OTgxZmEyZGFjODJiMDM2YmZlMzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRiNDU1MDM4YTBjMDJjYzgzYTYyZGNmZDEzYWMwZjlhMDU3MWZmNTNiODQ3OWFhYTVjMzczZmVlYmE5NjFkZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjMjYyMzA2YTBlYmJkZjM0MWYyN2Y4ZjM4NDllOWMzNzMzNzZhNjMzZmJkMTc2MzE4MDE3ZGYyNTE0ODRjZmYifQ"
+        },
+        {
+          "resource": "repo://packages/components/src/services/peerProxy.ts#L99-L170",
+          "version": "repo-lines-v1:sha256:8113aea94ec5393206d55ec9fa550089691258ae158c24a91237bc13777d09e5:eyJzZWxlY3RlZExpbmVDb3VudCI6NzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjYjlkMjNiNzgwOGM3ZDczMThhZTYwNjc0YjljNTEyYzQ5ODIwN2Q5NzMwZGVjMjczYzI4NmYzZjhlMDk3MjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyOTcyM2ZmY2FhOTE5ODYwZjFmMjcxYjJmYTg2N2JjNWNjNTE2Y2NlMDMzZDUxYjUwN2EzYzA2MTQxZDM4YTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-09T20:45:09.690Z"
+  }
+}

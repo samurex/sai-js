@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:15d7f745da798ada52da7875d5a8ec18b15aaa1aae6b094cc4b6530792cf59ad",
+  "pageVersion": "sha256:915aa282011262626d9311e866b7cb6837bf9f48bf7f76f0698f0aa7e17cffd8",
   "claims": [
     {
       "id": "claim_dab50ed8b3754de2ab938bdffc459a8d",
@@ -63,10 +63,24 @@
           "version": "repo-lines-v1:sha256:e7dab71bc0a73ae1e1f35f80c8849041476abc6ba6cbbb34421ed774f19ddb68:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4ZTg5ZjFiOGRiNDM3NzNjMjc4YTg4NThlNDdiODUwZjUyOTIxYTRhMGM5Yzc0ZjdhYmU0M2VkZGE4NTIyMzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0MGM1ZDNkYzNhNzczMDc5M2M4OTI3OTQ4YjU1OTY2NDIwN2Y3OWJhODc3NzNjMjE1MDA0NDMxOTYyZmQ0ODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExMjYyOTRiZjg3MzU1MDE5N2EzNzQ2YjRhMGFiNGI1NTkwMjVmMzMzMjk5NWRlMDA3ZTk0MDAyMWRiYTUwMDYifQ"
         }
       ]
+    },
+    {
+      "id": "claim_2c1c17d530314dcbb79f775cbe44812f",
+      "statement": "The AuthorizeApp request returns an AuthorizationGrantedMessage as its success type, and the older AccessAuthorization schema (S.Array(RecordedDataAuthorization)) still exists in effect.ts but is no longer referenced by any tagged request.",
+      "evidence": [
+        {
+          "resource": "repo://packages/api-messages/src/effect.ts#L726-L742",
+          "version": "repo-lines-v1:sha256:cdeba26200be3bd0e762e91a95997ea597168156533f2521f385b437d65db195:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkZWEyYTQyN2IwOGI5NzJkNTBiYzAyOGRhNmE4YTZhM2MyNjU5ZThhM2QxZGIzYjcwNTcwYTE0YzRiNTRhYzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiN2VjYTMyZjFiNjBmMzlhMTY2YmEzYjJiODRlYTI5NTU0OWUxYjFjMzIyZjljYmIwZWQ0ZGNkZGE4ZjdhYzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExNjY3ZTY4MWZkMjVmODE3ODA5NDE3N2Q4YWU2MjM2N2M2NDU4MTk5ZWMxOTExYmEwNTVhODJkMjA3YzI3ZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyNTI2NGYxYWI1ODc1Njc5ZWM2M2YxY2E0MTM4MDc2ZTk2Y2MyZWFjNzIwNzEwNjg2NWIyMjMyMjE0NDZlMTQifQ"
+        },
+        {
+          "resource": "repo://packages/api-messages/src/effect.ts#L977-L987",
+          "version": "repo-lines-v1:sha256:87a06fb8c16217d5ca000d588bc6b174c0667617810f6797366633a759110eb3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3YWM1YTAwNDZhY2FiMWYyNjg1YmQxZTVjYzEwZWYzZDZlNzYwNmE4NmY3YzhmMGMyZDM1YmU1YWI1MThjM2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjZTViYjkwNzEwODQxYTAyNTNkZDRkODg5NTA3OGUxMDBmYWRkOTY1YzVmMzVkOWQ1OWZhYmIwNGRkM2Q0OWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE1ODlmMjViNjQ0Mzk4NDU3MjZmOTM0YjQ2Mzg3Yjk0ODRkNDgyZWJkMWRkMTYwMmQ1MGIwMzIzNWVmN2NjMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwNGY2NTRmMzVjMmRjNmYzNWZhZWY5NDBjZmZhZWIyOTA0ZGViOTkwZWE4MDA2OWZkMWNjNzBiYWMzOTdiYzQifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.1",
-    "at": "2026-10-09T19:35:35.072Z"
+    "at": "2026-10-09T20:45:09.690Z"
   }
 }

@@ -1,3 +1,4 @@
 # Files
 
-- [Data model entities](entities.md) - The data-model package's JSON-LD POJO entities — registries, registrations, grants, roles, access needs, shape trees, activities, and the ACR templates — and how each maps to the Solid Application Interoperability specification.
+- [Data model entities](entities.md) - The data-model package's JSON-LD POJO entities — registries, registrations, grants, roles, access needs, shape trees, activities, their ldp:contains containment and wrapper removals, POJO id invariants, and the ACR templates.
+- [JSON-LD read/write layer](json-ld-layer.md) - The JSON-LD-first transport shared by the data-model and authorization-agent packages — fetchJsonLd/putJsonLd/frameDoc/linkedIrisJsonLd/withContext helpers, the shared dataModelContext framing, createContainer semantics, the single WhatwgFetch, and the SPARQL-quad vs JSON-LD-CRUD split.

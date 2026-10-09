@@ -3,15 +3,15 @@ type: index
 title: Quickstart
 description: Task-routing map of the sai-js wiki — architecture, data model, service layer, activity pipeline, Temporal workflows, UI, testing, and operations pages at a glance.
 tags: [quickstart, index, navigation]
-verified:
-  - by: openwiki/0.7.1
-    at: 2026-10-09T19:35:35.072Z
 sources:
   - id: openwiki-source-5b54a58d1b51cd490b0e7162
     resource: repo://package.json
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
-generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+generated: { by: "pi", at: "2026-10-09T20:45:09.690Z" }
+verified:
+  - by: openwiki/0.7.1
+    at: 2026-10-09T20:45:09.690Z
 ---
 
 # Quickstart
@@ -27,7 +27,9 @@ Use this map to find the page for the topic you need.
 | Understand the repo and packages | [Architecture overview](architecture/overview.md) |
 | See the production landscape | [Deployment landscape](architecture/deployment-landscape.md) |
 | Learn the JSON-LD entities | [Data model entities](data-model/entities.md) |
+| Learn the JSON-LD read/write helpers | [JSON-LD read/write layer](data-model/json-ld-layer.md) |
 | Understand the RPC contract and services | [RPC contract and service layer](services/rpc-and-services.md) |
+| See the org-admin data plane | [Org-context data plane](services/org-context.md) |
 | Trace the activity/outbox flow | [Activity outbox and events pipeline](services/activity-lifecycle.md) |
 | See the async workflow machinery | [Temporal workflows and activities](temporal/workflows.md) |
 | Find the interaction sequences | [Sequence and discovery flows](temporal/sequence-views.md) |

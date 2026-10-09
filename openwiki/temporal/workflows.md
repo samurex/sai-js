@@ -1,12 +1,16 @@
 ---
 type: architecture
 title: Temporal workflows and activities
-description: The Temporal client and worker bootstrap, the three task queues (create-grants, reciprocal-registration, forward-to-push), the workflow/activity catalog, and how activities call back into the service layer.
+description: The Temporal client and worker bootstrap, the three task queues (create-grants, reciprocal-registration, forward-to-push), the typed *Id boundary objects, the self-contained createGrantsForAgent regeneration, findRoleUsage routing, the single-activity share with per-grantee fan-out, and how activities call back into the service layer.
 tags: [temporal, workflows, activities, worker, architecture]
 verified:
   - by: openwiki/0.7.1
-    at: 2026-10-09T19:35:35.072Z
+    at: 2026-10-09T20:45:09.690Z
 sources:
+  - id: openwiki-source-9f9c5f051cdee5032dfd735b
+    resource: repo://packages/components/src/services/Authorization.ts
+  - id: openwiki-source-ec9b01d4f49d308517fdc575
+    resource: repo://packages/components/src/services/ShareResource.ts
   - id: openwiki-source-a3ebe61b7dbf9a95d1051312
     resource: repo://packages/components/src/temporal/activities/grants.ts
   - id: openwiki-source-e04884959e0812782a6d49fe
@@ -15,7 +19,9 @@ sources:
     resource: repo://packages/components/src/temporal/workflows/grants.ts
   - id: openwiki-source-23ba2a7bbe5efb6e2d77954d
     resource: repo://packages/components/src/workers/main.ts
-generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+  - id: openwiki-source-81127af59080ceff3a2cde89
+    resource: repo://packages/data-model/src/index.ts
+generated: { by: "pi", at: "2026-10-09T20:45:09.690Z" }
 ---
 
 # Temporal workflows and activities
@@ -65,6 +71,39 @@ by the producers in `ActivityWebhookHandler` and the grant handlers:
 - `access-request.ts` — `processNeedBasedAccessRequest`,
   `processNeedBasedAccessRequestReceived`, `detectGrantedRequests`.
 - `forward-to-push.ts` — `sendPushNotifications`.
+
+## Boundary objects and routing
+
+- **Typed `{id, type}` boundary objects** — `AgentId = SocialAgentId |
+  ApplicationId` and `AgentOrRoleId = AgentId | RoleId` are the identities
+  passed across workflow/activity payloads (e.g.
+  `CreateGrantsInput.authorizationGrantee: AgentOrRoleId`,
+  `CreateGrantsForAgentInput.grantee: AgentId`).
+- **Self-contained regeneration** — `createGrantsForAgent` fetches all the
+  grantee's authorizations (including via roles) and existing grants itself,
+  handles the empty/deny case, generates/stores/requests grants, and rewrites
+  the registration links.
+- **Role routing** — `findRoleUsage` delegates to `session.findRoleUsage`,
+  which returns `usedAsGrantee` plus `affectedGrantees`; the membership/deletion
+  workflows route role-as-grantee to the changed members and role-as-dataOwner
+  to the affected grantees (members for a role, the agent itself otherwise).
+- **Registration invariant** — grantees are always registered: grant
+  generation relies on it (the registration "is guaranteed to exist"), and
+  `replaceDataGrantsOnRegistration` throws if no registration is found; for
+  applications `ensureApplicationRegistration` maintains it.
+- **Sandbox rule** — workflow modules run in the Temporal sandbox and avoid
+  runtime imports; `grants.ts` defines local IRI constants and a sandbox-safe
+  `isActivityClass` instead of importing them.
+
+## Granting fan-out
+
+`recordAuthorization` writes **one** `AuthorizationGranted` activity with the
+`dataAuthorizations` object, and `shareResource` writes **one**
+`AuthorizationGranted` for all grantees. `processAuthorizationGranted` groups
+that object by `grantee` and fans out an `executeChild` of
+`processGranteeAuthorization` per group; each child materializes its data
+authorizations and regenerates the grantee's grants, and the parent completes
+only after all children succeed.
 
 ## Activities and the service layer
 

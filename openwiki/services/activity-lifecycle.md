@@ -1,11 +1,11 @@
 ---
 type: architecture
 title: Activity outbox and events pipeline
-description: The append-only Activity Registry outbox, Solid Notifications webhook delivery, ActivityWebhookHandler routing (owner vs admin channels), the ActivityEvents bus, and the reconcileActivities backstop.
+description: The append-only Activity Registry outbox, Solid Notifications webhook delivery, ActivityWebhookHandler routing (owner vs admin channels), the ActivityEvents bus, the embedded DataAuthorizationData POJO carrier at pre-minted ids, and the reconcileActivities backstop.
 tags: [activities, webhook, events, solid-notifications, architecture]
 verified:
   - by: openwiki/0.7.1
-    at: 2026-10-09T19:35:35.072Z
+    at: 2026-10-09T20:45:09.690Z
 sources:
   - id: openwiki-source-a9275a0e3a23f49eea3d9b3f
     resource: repo://packages/components/src/ActivityEvents.ts
@@ -13,11 +13,15 @@ sources:
     resource: repo://packages/components/src/ActivityWebhookHandler.ts
   - id: openwiki-source-a9727c97c08565f7dac9c147
     resource: repo://packages/components/src/EventsHandler.ts
+  - id: openwiki-source-9f9c5f051cdee5032dfd735b
+    resource: repo://packages/components/src/services/Authorization.ts
+  - id: openwiki-source-ec9b01d4f49d308517fdc575
+    resource: repo://packages/components/src/services/ShareResource.ts
   - id: openwiki-source-03c71d0f7eed5c1f113d08e3
     resource: repo://packages/components/src/temporal/workflows/grants.ts
   - id: openwiki-source-40eb9f7315a1082fe32671da
     resource: repo://packages/data-model/src/activities.ts
-generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+generated: { by: "pi", at: "2026-10-09T20:45:09.690Z" }
 ---
 
 # Activity outbox and events pipeline
@@ -38,6 +42,15 @@ class (`InvitationAccepted`, `AuthorizationGranted`, `DelegatedGrantsUpdated`,
 in the class tuple. The comment on the union codifies the extension seam:
 adding a class means extending the union plus the vocab/context entry, and
 updating the handler, `reconcileActivities`, and the UI `events.ts` row.
+
+## Activity object carrier
+
+Granting activities embed the term-covered `DataAuthorizationData` POJOs
+directly on the activity `object` at **pre-minted ids** — there is no separate
+RPC structure crossing the wire (the carrier decision that settled the RPC
+term gap). `recordAuthorization` pre-mints the data authorizations and embeds
+them as `AuthorizationGranted.object: DataAuthorizationData[]`, and
+`shareResource` does the same with the `buildShareDataAuthorizations` output.
 
 ## Webhook entrypoint and routing
 

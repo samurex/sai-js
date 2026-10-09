@@ -3,9 +3,6 @@ type: architecture
 title: RPC contract and service layer
 description: The @effect/rpc + effect Schema contract in api-messages, the ApiHandler entrypoint, personal-versus-org context resolution, and what each component service owns.
 tags: [rpc, effect, services, architecture, typescript]
-verified:
-  - by: openwiki/0.7.1
-    at: 2026-10-09T19:35:35.072Z
 sources:
   - id: openwiki-source-39263cf4b989bfbe674c72c0
     resource: repo://packages/api-messages/src/effect.ts
@@ -15,7 +12,10 @@ sources:
     resource: repo://packages/components/src/services/Context.ts
   - id: openwiki-source-20e9ce588a1e0e4469c2c993
     resource: repo://packages/components/src/services/RoleRegistry.ts
-generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+generated: { by: "pi", at: "2026-10-09T20:45:09.690Z" }
+verified:
+  - by: openwiki/0.7.1
+    at: 2026-10-09T20:45:09.690Z
 ---
 
 # RPC contract and service layer
@@ -34,7 +34,10 @@ success types, and `failure: S.Never`. The service surface is the `SaiService`
 `Context.Tag` interface, and the exported `router` is
 `RpcRouter.make(...)` mapping each tagged request to a method that pulls
 `SaiService` from the Effect context. Output IRIs are unbranded `S.String` on
-the wire; `IRI` is a `S.brand('IRI')` used for internal typing only.
+the wire; `IRI` is a `S.brand('IRI')` used for internal typing only. The
+`AuthorizeApp` request returns an `AuthorizationGrantedMessage` as its success
+type; the older `AccessAuthorization` schema (`S.Array(RecordedDataAuthorization)`)
+still exists in `effect.ts` but is no longer referenced by any tagged request.
 
 ## The entrypoint (`ApiHandler`)
 
@@ -55,7 +58,9 @@ minted. If `context === userSession.webId`, it resolves to the user's own
 registry set. Otherwise `isAdminOf` must pass (the org's reciprocal
 registration of the user carries a non-empty `hasAdminGrant`), after which the
 org's registry set is resolved through the org's agent-id document and writes
-are owned by `ctx.webId` as the org. Failure throws `ContextError`.
+are owned by `ctx.webId` as the org. Failure throws `ContextError`. The
+org-context read and proxy endpoints this resolution selects are documented in
+[Org-context data plane](org-context.md).
 
 ## Services
 

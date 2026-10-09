@@ -1,16 +1,32 @@
 ---
 type: data-model
 title: Data model entities
-description: The data-model package's JSON-LD POJO entities — registries, registrations, grants, roles, access needs, shape trees, activities, and the ACR templates — and how each maps to the Solid Application Interoperability specification.
+description: The data-model package's JSON-LD POJO entities — registries, registrations, grants, roles, access needs, shape trees, activities, their ldp:contains containment and wrapper removals, POJO id invariants, and the ACR templates.
 tags: [data-model, json-ld, solid, entities, typescript]
 verified:
   - by: openwiki/0.7.1
-    at: 2026-10-09T19:35:35.072Z
+    at: 2026-10-09T20:45:09.690Z
 sources:
+  - id: openwiki-source-1d72172ac5b4243a0342f708
+    resource: repo://packages/application/src/grant.ts
+  - id: openwiki-source-4882e1fd924283cc46a8913e
+    resource: repo://packages/authorization-agent/src/access-description-set.ts
+  - id: openwiki-source-a53c5361cefa789231b20bc0
+    resource: repo://packages/authorization-agent/src/authorization.ts
   - id: openwiki-source-40eb9f7315a1082fe32671da
     resource: repo://packages/data-model/src/activities.ts
+  - id: openwiki-source-9d948095f3f5ea720e39040b
+    resource: repo://packages/data-model/src/agent-registration.ts
+  - id: openwiki-source-4c483ee0e31262852db887ef
+    resource: repo://packages/data-model/src/application-registration.ts
+  - id: openwiki-source-3c1f107e8ef50fc77806f71c
+    resource: repo://packages/data-model/src/authorization-registry.ts
   - id: openwiki-source-5f3a5827ade0bebc11f29499
     resource: repo://packages/data-model/src/context.ts
+  - id: openwiki-source-55719eab9d1c37202ec0cc48
+    resource: repo://packages/data-model/src/data-authorization.ts
+  - id: openwiki-source-42b7781fbb51339433b3e01d
+    resource: repo://packages/data-model/src/data-instance.ts
   - id: openwiki-source-6b6976370d0cdcf6bd57cad3
     resource: repo://packages/data-model/src/grant.ts
   - id: openwiki-source-81127af59080ceff3a2cde89
@@ -19,7 +35,7 @@ sources:
     resource: repo://packages/data-model/src/registry-set.ts
   - id: openwiki-source-12dd5601be4d1b21ac977892
     resource: repo://packages/data-model/src/templates/index.ts
-generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+generated: { by: "pi", at: "2026-10-09T20:45:09.690Z" }
 ---
 
 # Data model entities
@@ -47,8 +63,9 @@ type and its helpers.
 - **Authorization and grants** — `DataAuthorizationData`, `AdminAuthorizationData`,
   `GrantData` (with scope fields `inheritsFromGrant`, `delegationOfGrant`,
   `hasInheritingGrant`), and the authorization/grant registry shapes.
-- **Data** — `DataRegistryData`, `DataRegistrationData`, `DataInstanceData`
-  (with `isBlob` and `frameDataInstance` helpers).
+- **Data** — `DataRegistryData`, `DataRegistrationData`, and the read-only
+  `DataInstanceData` (with `isBlob` and `frameDataInstance` helpers; there is no
+  write-side `DataInstance` class).
 - **Access needs** — `AccessNeedData` (recursive `children`, a `required`
   derived from `interop:accessNecessity`), `AccessNeedGroupData`, and the
   `*Description` shapes (`AccessDescriptionData`, `AccessNeedDescriptionData`,
@@ -62,13 +79,50 @@ type and its helpers.
   / `AccessRevocationMessage`, `WebIdProfileData`, `ClientIdDocumentData`, and
   `DataOwnerData`.
 
+## Containment and wrapper removal
+
+The registry wrappers are gone; members are enumerated directly from the
+container:
+
+- `AgentRegistrationData` links its grants through `hasDataGrant` (an
+  `interop:hasDataGrant` string array) — there is no `AccessGrant` wrapper
+  resource. `ApplicationRegistrationData.granted` is **derived** (the
+  registration has any data grants), never a persisted field.
+- The authorization registry is a bare `{ id }` container whose members are
+  `ldp:contains` children framed straight into `DataAuthorizationData` — there
+  is no `AccessAuthorization` wrapper resource. Containment is
+  **server-managed `ldp:contains`**: no client-managed
+  `interop:hasDataAuthorization` writes.
+- Deny/revoke/replace **physically DELETE** data-authorization resources via
+  `replaceDataAuthorizationsForGrantee` (which computes the IRIs to delete and
+  issues `DELETE` requests), rather than orphaning them.
+
+## POJO invariants
+
+- Most resource POJOs require `id: string`. The exceptions are `GrantData.id?`
+  and `DataAuthorizationData.id?`, whose "final" forms
+  (`FinalGrantData`, `FinalDataAuthorizationData`) add the required `id` back.
+- `type` is always `string[]` (the shared `dataModelContext` maps `@type` to a
+  set container, and the POJO types declare `type: string[]`).
+- The access-description set is a **derived, read-only split**: there is no
+  `AccessDescriptionSetData` POJO and no set-level round-trip; `forAccessNeed`
+  and `forAccessNeedGroup` partition the set document into
+  `AccessNeedDescriptionData` and `AccessNeedGroupDescriptionData` at load time.
+- `DataInstanceData` is read-only: only the frame helpers
+  (`frameDataInstance`, `frameDataInstanceFromDoc`, `labelFromNode`,
+  `childIris`) exist; blob upload and description patching belong to the
+  application. Grant iteration yields **instance IRIs** (an
+  `AsyncIterable<string>`), not `DataInstance` objects.
+
 ## JSON-LD framing
 
 `fromJsonLd` readers uniformly take a JSON-LD document (expanded, compacted, or
 flattened), frame it through the shared `dataModelContext` (a JSON-LD 1.1
 context that aliases `id` to `@id` and forces `type` into a set container), and
 project it into a typed POJO. This is the payload contract anchor between the
-wire format and the typed layers above it.
+wire format and the typed layers above it. The raw GET/PUT helpers that carry
+these documents are documented in
+[JSON-LD read/write layer](json-ld-layer.md).
 
 ## Templates
 

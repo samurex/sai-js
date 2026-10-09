@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:83bf1df22f6d9442740c63730e4a5ea8d1352bea3419ad8cfb5c43e8b9e41fe5",
+  "pageVersion": "sha256:07072b69ca729cd63ea73da53a99243abae26506a21fdd400f550852f8fe8868",
   "claims": [
     {
       "id": "claim_0a654c6996364fdfbb807d9a29b08709",
@@ -61,10 +61,106 @@
           "version": "repo-lines-v1:sha256:877282a302d39dafd878cc61d8f833c060a32b83dc71741d6af10173b0207fd1:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTcwMjI3YzY5M2I1ODZmZDExMDZlZWFlMWUxZDM0MjdmNjc5ZGU4YzdjZGZkNmI4ZDg4MGY2ZTkzNDExNGNlYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzYwYjA2MzU1ODRhMWYxYWU1ZDlmMTY1ZDE4NWFiMjY4N2M1YmI4ODFkNTg5MzViMzIwNDdjNjhlNmE3ZGEyMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
         }
       ]
+    },
+    {
+      "id": "claim_9e1206fff66e40a1b77f9cd9253c4938",
+      "statement": "AgentRegistrationData links its grants through a hasDataGrant string array directly, with no AccessGrant wrapper resource.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/agent-registration.ts#L9-L12",
+          "version": "repo-lines-v1:sha256:9eb3f214823542fb4124e60f5dff72881438098877a8e85a505c0cfc740963d3:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGIzNTA4YmEyNzgxMmNhOTcwZjgxNjk2Mjc3MjQ0Y2Q0OWVjM2IwOTc3ODA5ODIwNzRmZTczNTlkZmU0MzdkYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzJhMzQzZjkyNmI2ZWFiNDE1NjhhODUzNDczYTVlODJjYTU5MWQzYjE4YWNlOTE4ZjQ4OWVlOGQ0ZDBiM2ZhMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjlkMDlhZjM1OGU4ZDViYjQ1MjM0Y2RlMDg2MGYyZjdmNTNmOTk5ZjEyOTBmNmE2NzIxZDJiZWYwZTE3NGUxOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_73a4c7ea82b2488ebbfb90a5c1d59549",
+      "statement": "ApplicationRegistrationData.granted is derived from grant count (hasDataGrant.length > 0) at read time rather than being a persisted field.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/application-registration.ts#L12-L36",
+          "version": "repo-lines-v1:sha256:73b288b54e0e48c0af16edf85837c582e0768a8ff407907db00c32bdd960ac99:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2NzJkOWVlYmM1ODRkODUyYTk1ZDlkNDQ0MmRkYjI3MGQwNGVkZTc4N2QyNDA4Njk3OWI5YWI4MjA3N2EwNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhYzNhNmYzOTZmMjNmZmYzMjY5NjZmYjI0Yjc5ZmVmNGU3Mjg2ZGQ0NDZmNjFlNDVlNTNiNDVlNzFjMTExNWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmNGNjNjQ4YzZkMWEwMzM2NGZlNDRiMzZhZTBiNjA4ZWM1YjY0MDg2OWQ5NmQyOWQ5ZjJkMDU4Nzg2ZDgyYWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4195f31f2aa744418f821bd4e662b9bf",
+      "statement": "The authorization registry is a bare id container whose members are server-managed ldp:contains children framed directly into DataAuthorizationData, with no AccessAuthorization wrapper resource.",
+      "evidence": [
+        {
+          "resource": "repo://packages/authorization-agent/src/authorization.ts#L303-L309",
+          "version": "repo-lines-v1:sha256:e377f76deac8f3b07d140178031fc2dcf2cd202b52ba85b1c215ab46e828ce24:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTAwMDc5MDRhOTc4NWUzMzM0ODJjZTE3MzVlZjUyYjJhMTYxMDk1YzMyMzJlZGEyNDliN2Q3ZjUzMDkxMzYzNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTg5OTc0MTQyYmQzMmFhOTJjOWRjZjBlZTE2YTA2ZGFkM2M0OTFhMjY0ZDdhMDc2ZTE2MGE3NGY4MjFjOGYyNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjBmOWViOGQ4MWUyMThhODkwNjBmZDgyMTE3ZTk4Y2U4Yzg1NTNmZDIwMDEyMmJlZTZkYjQ1NTFkZmI4NzdiZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmU3YjI4Y2VkODE3ODdhOGMxOTNmZDY2NjhiMjhlMTFlYzAwZTVkZjQxYzkxZDAxMzU3YzE3MDk1OTIzNGY2YSJ9"
+        },
+        {
+          "resource": "repo://packages/data-model/src/authorization-registry.ts#L1-L3",
+          "version": "repo-lines-v1:sha256:eea0dde9f1f1f8372294815848d17b8bb37b6bf4ba41c73b422bb8378cddd50f:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzM1Yjc5MTNhZWFjOTRkNjE1YTgyMGJhYzAyM2E4MWE4Y2I3YjhhMDM1NmIxOWI4ZWYyODQzOWJhMGU1ZDM4MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2bf49e118f414e8dbe8756c3213764f5",
+      "statement": "Deny/revoke/replace physically DELETE data-authorization resources: replaceDataAuthorizationsForGrantee computes the IRIs to delete and issues DELETE requests rather than orphaning them.",
+      "evidence": [
+        {
+          "resource": "repo://packages/authorization-agent/src/authorization.ts#L205-L228",
+          "version": "repo-lines-v1:sha256:3d069758ab6dc4ab1ff4f98a16add33cf750fb98a211e70d07ed85282e18e023:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzNTE0M2EwMGMyNmM5Y2JjN2YxNGU3MjgzMTdmZjY5ZDFjNzZhM2E3ZDk1YWY4NWQ3Y2JkOGY0YWY1Zjg3MzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhN2RjZjk0YjY4YjNkMmU1MmVlYzRkMmViY2I4ODY3Mzk4ZTE5MDQzODc1ZjUzZjk2ZGE0NzNlN2EzOTJkZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU2N2I1MmZkOWE4OTk1ODlmMGEzMjExOGMzZDkwZjQ1NzIwZTI1ZmQyNDkwNWZkMTdhNTJjOGE3MzhjMDVkMTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_986d45510b944ce0aeba22bacfac6b65",
+      "statement": "Most resource POJOs require id: string; GrantData and DataAuthorizationData make id optional, and their FinalGrantData / FinalDataAuthorizationData forms re-add the required id.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/data-authorization.ts#L26-L27",
+          "version": "repo-lines-v1:sha256:2e8d42852d1639baea2655a81f5373012bd8b74e1ee02caa7290ba04c6dd41c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWU4N2NhMjY1OTk4ZWQzY2FmM2M3YWQ3ZTcxM2I4MDcyOTFkNTUwNzhjY2UyMWRlZTdhNmNmODkxZWE2NjZhZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDBkZGMyZWE2ODU0YTJlMGVmYTViYTYzYjUyNTZhYTZjYjJlMjBmOTNmZThkZTgxNzNhM2ZlYTU5MmU0MTAxYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWYyNDRkOWJjNGY3YmNiMmE1MzU4YjI5Yjk1YTg1ZTRjNmQxZDM1ODEwMTJmNWYxMmE2NzkyZWIzN2U0Njc4MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGJiOTFkNDNiNTI3ZGRjYjMxMGYwZGJkOWRiMGZlOTkzMTVlNGMyNTljOWQ0NjlhM2NjMTIwZTNiYmMzODg3ZSJ9"
+        },
+        {
+          "resource": "repo://packages/data-model/src/data-authorization.ts#L4-L5",
+          "version": "repo-lines-v1:sha256:dd570c1b40ccff74e9d69aa776cac26b8517a18ce53c8edff0094cbf3350f8a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWUzZGFhZmY2YjdhMzlhNDAyMjdmZmQ3ZjhjYzNmOTBiNTkzMGIxOWM3ZmMyMDRjMTlmMWIxZTA0YWQ1YTA2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTMxZGQ4MTA4OWRkOGMwZmJjZDM3NWQwZDlkNzVlMDQzNjc3YmU0NTBhMDdjOWIwZDk5N2M2MjVjMjNkNGE4ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzhjZDQxNjk1ZTVlN2U0NmIwMDM0MjdhZTdmZTY1MGU4YzNlZjdlMmQ5OTEwNzBmNTQzMmQ5M2U3MDNkOGIyMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzJhMzQzZjkyNmI2ZWFiNDE1NjhhODUzNDczYTVlODJjYTU5MWQzYjE4YWNlOTE4ZjQ4OWVlOGQ0ZDBiM2ZhMSJ9"
+        },
+        {
+          "resource": "repo://packages/data-model/src/grant.ts#L26-L26",
+          "version": "repo-lines-v1:sha256:401ab659c531279e5a72afdb0d7667066aff51c1228ff38877c93aeb7972bec7:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDAxYWI2NTljNTMxMjc5ZTVhNzJhZmRiMGQ3NjY3MDY2YWZmNTFjMTIyOGZmMzg4NzdjOTNhZWI3OTcyYmVjNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDAxYWI2NTljNTMxMjc5ZTVhNzJhZmRiMGQ3NjY3MDY2YWZmNTFjMTIyOGZmMzg4NzdjOTNhZWI3OTcyYmVjNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzY2MzBjZGVlOWQxYmUzOWJhMDJjMjkzZDY0YTJlNzYzOWNmMGQ0ZGZkMTZkODBhOGM0MWM4NzUyOWEzNjM1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzY0YzlmZjI2YWQ2YmY0ZTA3ZjMxYWMzMDcxNzJlNTJlYjFiZDdlYTVjNjcyZTI2YmM4Mjg2NGU3ZWUzNGFlYSJ9"
+        },
+        {
+          "resource": "repo://packages/data-model/src/grant.ts#L4-L5",
+          "version": "repo-lines-v1:sha256:9c4374ef26d06884defd11cf5b2c4dad9eeb17e3566583f1adcf09ae9dc6e3c0:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTU4YmI2MDg4YzdiN2E0NThlYzkzNzk0YmU3OGE3ZDk2ZmI4OThhYjZlYWMzZDNiZTEyMjQyMmYyMWU1YjlkNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTMxZGQ4MTA4OWRkOGMwZmJjZDM3NWQwZDlkNzVlMDQzNjc3YmU0NTBhMDdjOWIwZDk5N2M2MjVjMjNkNGE4ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzhjZDQxNjk1ZTVlN2U0NmIwMDM0MjdhZTdmZTY1MGU4YzNlZjdlMmQ5OTEwNzBmNTQzMmQ5M2U3MDNkOGIyMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzJhMzQzZjkyNmI2ZWFiNDE1NjhhODUzNDczYTVlODJjYTU5MWQzYjE4YWNlOTE4ZjQ4OWVlOGQ0ZDBiM2ZhMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_73537f28b78d4946be313accad652729",
+      "statement": "The access-description set is a derived, read-only split: forAccessNeed and forAccessNeedGroup partition the set document into AccessNeedDescriptionData and AccessNeedGroupDescriptionData at load time, with no set-level POJO or round-trip.",
+      "evidence": [
+        {
+          "resource": "repo://packages/authorization-agent/src/access-description-set.ts#L41-L84",
+          "version": "repo-lines-v1:sha256:8c0e823928d910b9dfe4a322f204de97719b5a4449dbdeb77847d680152b253f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2MGY2YWQwNmZlYmI2MzU1MTU5Mzg2NzQ1Mzk5NTRkMzJjMjhmZTM0NDdmZmQ4MTJhMzY0M2RkMTVmMTU5M2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MDU2YTM1Nzk0Y2I1NjUzZDVlZDE2NjA2OGJhODU5MjNiZDAwYmViODk4N2JjYWIyZTdhYWI1Mzk4YWUwOTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4MDFjZDM4OTRhNDI2MWQ2OWIyMDYxM2M0NjdhYjJhMTBkNmRkMjVmNTFmZDQyOGY4YzEwZGJiZTQ5MDcyYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1Y2JkNTMxM2RiMDQ5Nzc3ZGRjZDg2MTk2YzM2ZGY3NWQ2YjVhNDFmY2M4YTk1ZWE4NDVkZDNmMjE5NjViNzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fc077053563846a094a22663759fc7c2",
+      "statement": "DataInstanceData is read-only in the data model: only the framing helpers (frameDataInstance, frameDataInstanceFromDoc, labelFromNode, childIris) exist and there is no write-side DataInstance class.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/data-instance.ts#L28-L35",
+          "version": "repo-lines-v1:sha256:f484dfd722d63464dd9db336314eba651ee304ae781933d067c2c60081044263:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmNjNGEzZjdiNTY4ZmNhYjRhMDhlNGI3ZTMxMTI3MDQyMTJhNmQwYzczMTVmMzJlYTNkZTBiNjk3NGUzZTdmNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmZjMzM4ZTkzMDFhNGEyZWRhOTkyMzcxNjZmOTY1MGRlNmQ2MDY5Yzc4NDdmNWM5MWIyOGZkYjhiZTk5YTI4YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTJiYTg0YmMxMGMxOTg4NTAwMGNiNTQwYjI0Y2I4NTI2ZWM0Y2Y1ZjA4MjRiN2IzNjVjYThkNWZhYmFhN2M0NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_77cbdabab5c24dfabf98497b2ff2c726",
+      "statement": "Grant iteration yields instance IRIs (an AsyncIterable<string>), not DataInstance objects, and lives in the application package.",
+      "evidence": [
+        {
+          "resource": "repo://packages/application/src/grant.ts#L41-L62",
+          "version": "repo-lines-v1:sha256:d14b42647fdd1dfc9d7e84ed28eef6354b00e127cf1bc3fbc949e432417f8f52:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmM2NkMjE1YThjMzY5NmZiYWJjZmM3YmY1NjMwY2Y4ZDkzMTQ4YWNhMWJkNjIxOTExNDk5MzM4OWJlODhlNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2NDdlNDAzN2M4YzZiOTk2ODE4ZGY3N2Q0YThhOTNkYTdiZTAwYTRiMGUwZjMyNmNlMmVjODUxZjY1ODE2Y2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViZGJhZWMxMDM4YjBlYzJkMmIwZDZmMGNmZDUyY2VjODRjMWU4ZjU5MGViM2E2NDI4MTAxYTYwN2M0NTBhM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjMGFjMzg3MTc5OWU1MzhjNjRjYjhiNzA2ZjJkMTBkYTU3N2FjMTA0ODYzM2RiMTE0M2RjNmU1YTZjYzQ4Y2MifQ"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.7.1",
-    "at": "2026-10-09T19:35:35.072Z"
+    "at": "2026-10-09T20:45:09.690Z"
   }
 }
