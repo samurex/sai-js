@@ -8,52 +8,43 @@ primary source.
 
 | Status | Count | Plans |
 |---|---|---|
-| ✅ done | 21 | `cleanup-fetch-utils`, `dedicated-registries`, `depend-on-generic-auditing`, `immutable-activities`, `improve-jsonld-use`, `org-context-proxy`, `org-context-sparql`, `refactor-data-instance`, `refactor-data-model`, `refactor-data-model-followup`, `refactor-grants-workflows`, `refactor-ui`, `remove-access-authorization-indirection`, `remove-access-grant-indirection`, `simplify-authorization-containment`, `simplify-factories`, `simplify-grant-as-pojos`, `test-infra-consolidation`, `workflow-temporal-decupling`, `reorganize-authz-agent-logic`, `authorization-granting` |
+| ✅ done | 12 | `cleanup-fetch-utils`, `depend-on-generic-auditing`, `org-context-proxy`, `org-context-sparql`, `refactor-data-instance`, `refactor-data-model`, `refactor-data-model-followup`, `refactor-grants-workflows`, `remove-access-authorization-indirection`, `remove-access-grant-indirection`, `simplify-authorization-containment`, `authorization-granting` |
 | 🔶 partial (first cut landed) | 1 | `revoke-delegation-chain` |
 | ⬜ not started / design only | 11 | `authorization-revoked`, `authorization-revocation`, `check-equivalence`, `durable-webhook-delivery`, `remove-turtle-serialization`, `webhook-subscription-bootstrap`, `federation`, `events`, `registry-set-permissions`, `isolated-datasets-and-sparql`, `components-tweaks` |
 | ⬜ follow-up backlog (all items open) | 1 | `revoke-delegation-chain-follow-ups` |
 
-**34 plans total.** All remaining work lives in the 13 non-done plans below —
+**25 plans total.** All remaining work lives in the 13 non-done plans below —
 nothing open is blocked by an unlanded plan.
 
 ## Full table
 
 | Plan | Status | What it does | Depends on |
 |---|---|---|---|
-| `simplify-grant-as-pojos.md` | ✅ done (historical) | Grants as `GrantData` POJOs (read/write via JSON-LD round-trip, scope-based dispatch) | — (foundation of the POJO migration) |
-| `dedicated-registries.md` | ✅ done | Splits `AgentRegistry` into `SocialAgentRegistry` / `ApplicationRegistry` / `InvitationRegistry` (new interop vocabulary terms); containment via server-managed `ldp:contains` only — the `has*Registration` predicates and the extra container PATCH are gone; components `services/AgentRegistry.ts` split into 3 models; `listContained` becomes the single listing query | `simplify-authorization-containment` (the `ldp:contains` precedent) |
-| `remove-access-grant-indirection.md` | ✅ done | Drops the `AccessGrant` wrapper: `AgentRegistration` links `hasDataGrant` directly | `simplify-grant-as-pojos` (the pattern it mirrors) |
+| `remove-access-grant-indirection.md` | ✅ done | Drops the `AccessGrant` wrapper: `AgentRegistration` links `hasDataGrant` directly | — |
 | `remove-access-authorization-indirection.md` | ✅ done | Drops the `AccessAuthorization` wrapper: registry links `DataAuthorization` directly; extracts `jsonld-utils` | `remove-access-grant-indirection` (its mirror) |
 | `simplify-authorization-containment.md` | ✅ done¹ | Authorization registry containment via server-managed `ldp:contains`; deny/revoke physically DELETEs resources | `remove-access-authorization-indirection` |
-| `refactor-data-model.md` | ✅ done² | POJO migration of the remaining data-model classes (Phases 1–4 done; Phase 5 continued in the follow-up; Phase 6 → `test-infra-consolidation`) | `simplify-grant-as-pojos`, `remove-access-authorization-indirection` (prior migrations) |
+| `refactor-data-model.md` | ✅ done² | POJO migration of the remaining data-model classes (Phases 1–4 done; Phase 5 continued in the follow-up; Phase 6 → the test-infra consolidation) | `remove-access-authorization-indirection` (prior migration) |
 | `refactor-data-model-followup.md` | ✅ done | CRUD domain resources as framed JSON-LD POJOs (GET/PUT raw JSON-LD; SPARQL stays for PATCH modules); Phase 4 (DataInstance) extracted | `refactor-data-model` |
 | `refactor-data-instance.md` | ✅ done | DataInstance read path as framed JSON-LD; write-side class removed (blob work is the app's job) | `refactor-data-model-followup` (its Phase 4) |
-| `simplify-factories.md` | ✅ done | `ApplicationFactory` becomes the base; `readable`/`crud`/`immutable` namespaces flattened to top-level methods | the POJO conversion (factories are structure-creating only once classes are gone) |
-| `improve-jsonld-use.md` | ✅ done | Single shared `dataModelContext`; JSON-LD wire bodies in expanded form; `linkedIrisJsonLd` consolidation; POJO `label`→`prefLabel` renames | `refactor-data-model-followup`, `remove-access-authorization-indirection` (jsonld-utils / framing infra) |
-| `cleanup-fetch-utils.md` | ✅ done | Deletes `fetch.ts`/`RdfFetch`; only `WhatwgFetch` remains; generic JSON-LD helpers moved data-model → utils | `improve-jsonld-use` (expanded-form writes), `refactor-data-model-followup` (`fetchJsonLd` pattern) |
-| `test-infra-consolidation.md` | ✅ done | Root `test/` becomes the server-backed suite; `css-test-utils` + in-process CSS + `localhost:3711` realm removed; `registry.trig` is the single fixture | `refactor-data-model` (Phase 6 extraction; independent workstream) |
+| `cleanup-fetch-utils.md` | ✅ done | Deletes `fetch.ts`/`RdfFetch`; only `WhatwgFetch` remains; generic JSON-LD helpers moved data-model → utils | `refactor-data-model-followup` (`fetchJsonLd` pattern) |
 | `depend-on-generic-auditing.md` | ✅ done³ | Removes `setTimestampsAndAgents` and the `creator` param from all container creates (dead writes; metadata left to a future generic auditing mechanism) | — (independent cleanup) |
 | `refactor-grants-workflows.md` | ✅ done⁴ | Self-contained `createGrantsForAgent` (full regeneration), typed `*Id` boundary objects, `checkEquivalence` dummy, removal of `updateGrantsForOneAgent`/`ensurePeers` | `simplify-authorization-containment` (extend-quirk context), the refactored workflow set |
-| `workflow-temporal-decupling.md` | ✅ done⁵ | Activity Registry as the outbox: single-PATCH registration update, pre-seeded webhook channels + handler, per-target consumer, reconciliation sweep, real CSS delivery (Phases 0–2, 4.1–4.2, 5) | `refactor-grants-workflows` (the workflow set it decouples) |
-| `immutable-activities.md` | ✅ done⁶ | Activity Registry becomes append-only; `done` = minimal `activityCompleted` completion activity; `updateActivityStatus` deleted | `workflow-temporal-decupling` (channel infra) |
-| `refactor-ui.md` | ✅ done⁷ | `/.sai/events` NDJSON stream: `ActivityEvents` bus, `EventsHandler`, `events.ts` client, completion-driven + reconnect store refresh | `immutable-activities` (its stated prerequisite) |
 | `revoke-delegation-chain.md` | 🔶 partial — first cut (steps 1–5) landed | Revocation as a boundary operation at the delegation endpoint (`AccessRevocation`, all-or-nothing validation, requester hop, `RevokeGrants` RPC); replaces direct cross-peer DELETE | `refactor-grants-workflows` (delegation model + the 403 that motivated it); references `authorization-revoked` (deny-RPC precedent) |
-| `authorization-revoked.md` | ⬜ not done (design only) | Producer writes the typed `authorizationRevoked` activity for deny; routing/consumer/sweep already handle the type | `workflow-temporal-decupling` (Phase 4.4 extraction); `refactor-grants-workflows` (deny path) |
+| `authorization-revoked.md` | ⬜ not done (design only) | Producer writes the typed `authorizationRevoked` activity for deny; routing/consumer/sweep already handle the type | `refactor-grants-workflows` (deny path) |
 | `authorization-revocation.md` | ⬜ not done (design only — deferred) | The authorization-revocation leg, extracted from `activity-first-services` step 4: UI revokes an **authorization** (never grants directly) → the `authorizationRevoked` producer → a workflow revokes the derived grants at the **issuance boundary with the org session** (fixes seeded-ACR 403) + clears the grantor's projection; decides whether the retired `grantsRevoked`/`processGrantsRevocation` wiring is revived (the `activity-first` step-4 cleanup retires the dormant temporal artifacts) | `authorization-revoked` (the typed producer); `revoke-delegation-chain` (+ its follow-ups — the boundary + `grantsRevoked` observability item); `activity-first-services` (steps 4 cleanup, 7–8 carrier re-pins) |
 | `authorization-granting.md` | ✅ done — Steps 1–4, 6 landed, Step 5 deferred (specific-instance requests — no request-side caller yet); §5.1 single-activity share (parent + per-grantee child fan-out) | The structure-based **granting**: `recordAuthorization` + `shareResource` write ONE `AuthorizationGranted` activity (term-covered `DataAuthorizationData` POJOs at pre-minted ids — the carrier decision settled the term-gap); `processAuthorizationGranted` parent groups by grantee → per-grantee `processGranteeAuthorization` children; declines are a pure `AuthorizationDenied` (Step 4 — forward-only, no delete); `AdminAuthorizationRecorded` → `AdminAuthorizationGranted` (Step 6, companion plan) | `payload-contract-alignment` (the term-gap — settled by the embedded-POJO carrier); `authorization-revocation` (the `Revoked` consumer / revoke action); `activity-first-services` (the template + keepers); `admin-authorization-naming` (Step 6) |
-| `check-equivalence.md` | ⬜ not done (design only) | Real `checkEquivalence`: reuse equivalent existing grants (incl. child trees); workflow already fully wired | `refactor-grants-workflows` (whose shipped dummy it replaces; its "future step"), `workflow-temporal-decupling` (Phase 4.5) |
-| `durable-webhook-delivery.md` | ⬜ not done (design only) | `DurableWebhookEmitter` enqueues a `deliverWebhook` Temporal workflow (bounded retries, 4xx non-retryable) on registry/data servers | `workflow-temporal-decupling` (Phase 4.3 extraction); `forward-to-push` worker |
-| `webhook-subscription-bootstrap.md` | ⬜ not done (design only) | `ensureActivityWebhookChannel` at account creation + startup/periodic healing for real deployments (dev/test are pre-seeded) | `workflow-temporal-decupling` (Phase 3 extraction; builds on the landed ActivityRegistry module + `ActivityWebhookStore`/handler) |
-| `remove-turtle-serialization.md` | ⬜ not started (no phase landed) | Drops `parseTurtle`/`serializeTurtle`: `toNQuads` for SPARQL patches, template-direct ACR write, NDJSON notification streams (custom CSS emitter) | `improve-jsonld-use` (`dataModelContext`), `refactor-data-model-followup`/`cleanup-fetch-utils` (`fetchJsonLd`/`putJsonLd` infra), external `@elfpavlik/sai-components` |
+| `check-equivalence.md` | ⬜ not done (design only) | Real `checkEquivalence`: reuse equivalent existing grants (incl. child trees); workflow already fully wired | `refactor-grants-workflows` (whose shipped dummy it replaces; its "future step") |
+| `durable-webhook-delivery.md` | ⬜ not done (design only) | `DurableWebhookEmitter` enqueues a `deliverWebhook` Temporal workflow (bounded retries, 4xx non-retryable) on registry/data servers | `forward-to-push` worker |
+| `webhook-subscription-bootstrap.md` | ⬜ not done (design only) | `ensureActivityWebhookChannel` at account creation + startup/periodic healing for real deployments (dev/test are pre-seeded) | — |
+| `remove-turtle-serialization.md` | ⬜ not started (no phase landed) | Drops `parseTurtle`/`serializeTurtle`: `toNQuads` for SPARQL patches, template-direct ACR write, NDJSON notification streams (custom CSS emitter) | `refactor-data-model-followup`/`cleanup-fetch-utils` (`fetchJsonLd`/`putJsonLd` infra), external `@elfpavlik/sai-components` |
 | `revoke-delegation-chain-follow-ups.md` | ⬜ all 9 items open | Items 1–9 of the revocation follow-up: full chain calculation, scope/mode-coverage ordering, replace-vs-delete race, grantor trigger integration (`grantsRevoked` producer), grantee self-revocation, error-detail schema, drop vestigial `delegationOfGrant`, sweep validation, `reconcileActivities` scheduling | `revoke-delegation-chain` (first cut) |
 | `federation.md` | ⬜ design note (org-admin companion) | Single-deployment shortcuts the org-admin data-plane relies on: shared SPARQL endpoint, global-fetch UAS/storage discovery, local pod-storage ownership, `hasRegistrySet` link across servers, webhook delivery; future federated lookups | `org-admin-feature` (umbrella) |
-| `events.md` | ⬜ design note (org-admin companion) | Domain-event (activityType) catalogue incl. the new `adminAuthorizationRecorded` event → parallel `createAdminGrants` + `syncAdminAcr` workflows; deferred/future events (data-registry-added regeneration, admin revocation) | `workflow-temporal-decupling` (outbox model); `org-admin-feature` (umbrella) |
+| `events.md` | ⬜ design note (org-admin companion) | Domain-event (activityType) catalogue incl. the new `adminAuthorizationRecorded` event → parallel `createAdminGrants` + `syncAdminAcr` workflows; deferred/future events (data-registry-added regeneration, admin revocation) | `org-admin-feature` (umbrella) |
 | `registry-set-permissions.md` | ⬜ not started (design) | Scope the blanket `#fullAdminAccess` per structural registry: per-container ACRs, GrantRegistry owner-only (admins never write grants; per-grant ACRs serve reads), ActivityRegistry Read + create/append (append-only immutable log) instead of blanket Write; seed ACR hygiene for the ACR-less yoyo DataGrants | `org-admin-feature` R1 |
 | `org-context-sparql.md` | ✅ done (phases 1–3 landed, committed `50b44bf4`; /test green) | Org-context correctness + read-plane migration, phases 1–3 of this document: dormant reciprocal-mirror writer → all registry-set reads via SPARQL (internal endpoint both contexts, gated `/sparql-admin` — org-context reads now route over HTTP `QUERY`, DPoP-verifiable since access-token-verifier 2.1.2; see `org-context-proxy` last step) → context/session fix (`Context.ts` stops minting org sessions; owner identity from context; class-C fixes). Records the non-cascading-ACR constraint and the seeded-resource mutation + peer-instance-listing gaps as known debt. Phase 4 (per-owner datasets) extracted to `isolated-datasets-and-sparql` | `org-admin-feature` Phase 2 (C2); supersedes its §2.8 registry-set-resolution open items |
 | `isolated-datasets-and-sparql.md` | ⬜ not started (design only) | Per-owner datasets + SPARQL: 4a endpoint registry in `AccountLoginStorage` (env-var fallback) → 4b per-owner store cutover (joint checkpoint): mirror activation + backfill, serialized syncs, `/sparql-admin` → the org's own store, external admin-endpoint discovery, environment work, cross-owner isolation + mirror-freshness tests. The IRI-parametrized reads of `org-context-sparql` phases 2–3 resolve to mirrors unchanged | `org-context-sparql` (phases 1–3); `federation.md` shortcuts 1/1a |
 | `org-context-proxy.md` | ✅ done (implemented + verified; `/test` org-context proxy parity suite green) | Org-context reads of peers' granted data (the `org-context-sparql` §2.4 known issue): `/.sai/proxy-admin` endpoint (YoYo side — org-credentialed fetch as grantee) + shared admin gate + admin-side clients (`fetchPeerDocument`, `dataRegistrationContains`, `peerInstanceIris`, `peerInstanceNode`); wired `getDescriptions` AllFromRegistry counts (were 0 — dead `[]`-truthiness fallback), `listDataInstances` peer branch (all scopes), `getResource` full-body + org-side access list; registry plane routed via `/sparql-admin` over HTTP `QUERY` (DPoP-verifiable since the token-verifier 2.1.2 added it to its method whitelist). Scope answers: instance listing enters org-context scope **yes** (labels + full bodies); direction 4 = grantee visibility (data grants, not ACRs — the engine resolved the seed grant fine) | `org-context-sparql` (§2.4 + phases 2–3); `isolated-datasets-and-sparql` (4b data-plane analogue) |
-| `reorganize-authz-agent-logic.md` | ✅ done | Four behavior-preserving phases, each gated by full build + package tests + `/test` integration: **P1** removes the factories (threaded `factory` param → `{ fetch, randomUUID }`, adds `loadShapeTree`, instance assembly becomes `loadDataInstance` on `data-instance.ts`) and folds in the `iri`→`id` param rename; **P2** extracts application-specific logic to `application` (`Grant.iriForNew`, `ApplicationRegistration.getDataGrants`, `getDataInstanceIterator` duplicated w/ Phase-4 SPARQL TODO); **P3** extracts authorization-specific logic to AA session methods (grant-generation chain, AdminAuthorization block, reciprocal-registration federation) + data-model orphan cleanup; **P4** moves components SAI domain logic to AA (services rules, temporal match semantics, delegation/revocation rules), components keeps CSS handlers, storage, RPC API, webhooks, notifications, workflow glue — adapters convert to/from `api-messages` only | — |
-| `components-tweaks.md` | ⬜ design only (investigation write-up) | Residual SAI domain/spec logic still in components after the reorganize phases: extract `SaiPermissionsEngine`'s grant-evaluation predicates (grant→request coverage, Inherited-chain resolution, admin modes) and the 4×-duplicated `hasAdminGrant` admin-marker rule to AA session methods/predicates; move the delegation-endpoint inheritance completion (`GrantIssuanceHandler`) and `buildAdminGrants` materialization to AA; plane-based session `findRegistration` | `reorganize-authz-agent-logic` (§9 deferrals) |
+| `components-tweaks.md` | ⬜ design only (investigation write-up) | Residual SAI domain/spec logic still in components after the reorganize phases: extract `SaiPermissionsEngine`'s grant-evaluation predicates (grant→request coverage, Inherited-chain resolution, admin modes) and the 4×-duplicated `hasAdminGrant` admin-marker rule to AA session methods/predicates; move the delegation-endpoint inheritance completion (`GrantIssuanceHandler`) and `buildAdminGrants` materialization to AA; plane-based session `findRegistration` | — |
 
 ## Dependency graph
 
@@ -62,17 +53,14 @@ Three lineage arcs (plus one standalone plan). Read `→` as "depends on / build
 ### A. Data-model POJO / JSON-LD refactor — all done
 
 ```
-simplify-grant-as-pojos
-  → remove-access-grant-indirection
-      → remove-access-authorization-indirection      (extracts jsonld-utils)
-          → simplify-authorization-containment       (ldp:contains)
+remove-access-grant-indirection
+  → remove-access-authorization-indirection      (extracts jsonld-utils)
+      → simplify-authorization-containment       (ldp:contains)
 
 refactor-data-model ──→ refactor-data-model-followup ──→ refactor-data-instance
-        └─ Phase 6 → test-infra-consolidation (independent workstream)
 
     both chains converge on the POJO + JSON-LD read/write infra:
-refactor-data-model / followup ──→ improve-jsonld-use ──→ cleanup-fetch-utils
-simplify-factories                      (needs the POJO conversion done)
+refactor-data-model / followup ──→ cleanup-fetch-utils
 depend-on-generic-auditing              (independent adjacent cleanup)
 remove-turtle-serialization ⬜          (sits on top of this infra; not started)
 ```
@@ -81,13 +69,10 @@ remove-turtle-serialization ⬜          (sits on top of this infra; not started
 
 ```
 refactor-grants-workflows  ✅
-  ├─ workflow-temporal-decupling ✅ (Phases 0–2, 4.1–4.2)
-  │    ├─ webhook-subscription-bootstrap ⬜ (Phase 3)
-  │    ├─ durable-webhook-delivery       ⬜ (Phase 4.3)
-  │    ├─ authorization-revoked          ⬜ (Phase 4.4)
-  │    └─ check-equivalence              ⬜ (Phase 4.5)
+  ├─ webhook-subscription-bootstrap ⬜
+  ├─ durable-webhook-delivery       ⬜
+  ├─ authorization-revoked          ⬜
   ├─ check-equivalence ⬜                        (the plan's own "future step")
-  ├─ immutable-activities ✅ → refactor-ui ✅    (both landed)
   └─ revoke-delegation-chain 🔶 (403 → boundary revocation)
         └─ revoke-delegation-chain-follow-ups ⬜ (items 1–9)
 ```
@@ -109,7 +94,7 @@ refactor-grants-workflows  ✅
   validation then scheduling). Items 3 & 4 would also re-enable the
   `refactor-grants-workflows` commented-out delete.
 - `remove-turtle-serialization` — independent of the workflow/revocation arcs.
-- `components-tweaks` — **unblocked**: follows the completed `reorganize-authz-agent-logic` (§9 deferrals + residual engine/admin-marker findings); the extraction is component-side only (AA session methods/predicates, engine keeps the plugin adapter).
+- `components-tweaks` — **unblocked**: follows the completed reorganize work (residual engine/admin-marker findings); the extraction is component-side only (AA session methods/predicates, engine keeps the plugin adapter).
 
 ### D. Org-admin workstream companion docs
 
@@ -118,7 +103,7 @@ tracked in this index). Four companions:
 
 - `federation.md` — design note; cross-checks with `org-admin-feature` §2.4 (C2)
   and the engine path in `registry-set-permissions`.
-- `events.md` — design note; builds on the `workflow-temporal-decupling` outbox
+- `events.md` — design note; builds on the activity outbox
   model (the `activityWorkflows` map / `GRANTEE_ACTIVITY_TYPES` dispatch).
 - `registry-set-permissions.md` — ⬜ design; follow-up to `org-admin-feature` R1.
 - `org-context-sparql.md` — ✅ done (phases 1–3 landed: dormant mirror
@@ -216,22 +201,17 @@ independent. They are the **only** plans that rewrite CSS internals.
 
 | Plan | Custom components added |
 |---|---|
-| `workflow-temporal-decupling.md` ✅ | `ActivityWebhookHandler` + `ActivityWebhookStore` (auth server); delivery itself stays the **stock** CSS `WebhookChannel2023` emitter with pre-seeded kv channels |
-| `refactor-ui.md` ✅ | `ActivityEvents` bus + `EventsHandler` (`GET /.sai/events`) on the auth server |
 | `revoke-delegation-chain.md` 🔶 | `GrantRevocationHandler` + `AccessRevocation` dispatch on the delegation endpoint (`GrantIssuanceRouter`), and the `RevokeGrants` RPC (`services/Revocation.ts` via `ApiHandler`) |
 | `org-context-proxy.md` ✅ | `ProxyAdminHandler` (`/.sai/proxy-admin`, admin gate in `services/adminGate.ts` shared with `AdminSparqlHandler`) + `AdminSparqlHandler` accepting HTTP `QUERY` only (safe read-only method for the org-context registry-plane reads) |
 | `webhook-subscription-bootstrap.md` ⬜ | Reuses the existing `ActivityWebhookStore` + the **stock** CSS notification API (`SubscriptionClient` → `WebhookChannel2023`, kv-backed `KeyValueChannelStorage`) — no new components |
 
-`immutable-activities.md` (✅) changes the *behavior* of the existing
-`ActivityWebhookHandler` (completions) — no new component.
-
 ### No CSS components needed
 
-Everything else — the data-model POJO/JSON-LD refactors (`simplify-grant-as-pojos` …
-`cleanup-fetch-utils`, `improve-jsonld-use`, `test-infra-consolidation`, …),
-`authorization-revoked`, `check-equivalence`, `refactor-grants-workflows`,
-`revoke-delegation-chain-follow-ups` — runs in the Temporal worker, the services layer,
-or data-model; they neither override nor extend the CSS server configuration.
+Everything else — the data-model POJO/JSON-LD refactors (`remove-access-grant-indirection` …
+`cleanup-fetch-utils`), `authorization-revoked`, `check-equivalence`,
+`refactor-grants-workflows`, `revoke-delegation-chain-follow-ups` — runs in the
+Temporal worker, the services layer, or data-model; they neither override nor
+extend the CSS server configuration.
 
 ## Known leftovers carried inside "done" plans
 
@@ -241,18 +221,12 @@ remains `describe.skip`-gated (pre-existing deferral also noted in §13 of
 support.
 ² `refactor-data-model.md` — the "Phase 5 (reworked) in progress" note is gone:
 Phase 5's continuation (CRUD modules as POJO GET/PUT) landed in
-`refactor-data-model-followup.md`, and Phase 6 in `test-infra-consolidation.md`.
+`refactor-data-model-followup.md`, and Phase 6 in the test-infra consolidation.
 ³ `depend-on-generic-auditing.md` — had no status marker; commit
 `ddc80e23 depend on generic audit mechanism` confirms the removal.
 ⁴ `refactor-grants-workflows.md` — the HTTP-DELETE of old grant resources in
 `createGrantsForAgent` is still commented out (CSS 403 on grantor-side DELETE of
 delegated grants); the revocation-boundary design (`revoke-delegation-chain.md`)
 is the resolution vehicle, whose remaining pieces are tracked in its follow-ups.
-⁵ `workflow-temporal-decupling.md` — Phases 3, 4.3, 4.4, 4.5 are tracked in the
-standalone (still open) plans listed above; the docs pass (Phase 5) is done.
-⁶ `immutable-activities.md` — doc header said "planned"; implementation landed in
-commit `ee2b366c immutable activities` (confirmed with the user).
-⁷ `refactor-ui.md` — doc header said "planned"; implementation landed in commit
-`240bb321 [ui] refactor` (confirmed with the user).
-⁸ `reorganize-authz-agent-logic.md` — §9 deferred items (org-context registry reads + UI shaping, admin-marker reciprocal read, HTTP `AgentRegistry.findRegistration`, HTTP admin reads) are now tracked as the ⬜ `components-tweaks.md` (investigation write-up, no code changed).
+
 
