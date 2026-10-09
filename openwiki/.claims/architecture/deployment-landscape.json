@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:1853be74281ab6ba4522845acb2da31f31b025f5f00cb9480ecb49fa5a195069",
+  "claims": [
+    {
+      "id": "claim_39d5e1b3e8f54ba3a7092311e5f2b49f",
+      "statement": "The production landscape is modeled in docs/architecture.c4 as a single LikeC4 `system h4p` using element kinds system, container, and component.",
+      "evidence": [
+        {
+          "resource": "repo://docs/architecture.c4#L1-L8",
+          "version": "repo-lines-v1:sha256:2548066e0fa589dc87f291b0e19eda03b49364839abd11b8791b8a97c39a7af2:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTI0OTAwNmYwYjc3ZDhhMGVmMThjMzFjN2VkMWJjMWJmMmE0MmExZDlhZDFlOWQ3M2E3YzU1NjYwNGZmYjM3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWIyODdiYTM2ZTdkYjkzZjc1ZDQ2NzJjMTIwODNiNmNlYTAzNGU2Y2Y1MzBmNGEzOTA4MTU5Mjg1Zjg2NmY2ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWJhM2Q0ODZlYmExNWIyMWJiMzU3MWM2NjIxZmZhOTM1ZmNhZDYxYmRjMGQ2YjI4YTU2MzA3MGZkZWNlYjJkNyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_92c1d53d40d44972a0991305ecdb8174",
+      "statement": "The Auth container (auth.h4p.net) is composed of three components: a Solid-OIDC Provider (CSS), a SAI Agent (sai-js), and a FedCM IdP (liquid.surf).",
+      "evidence": [
+        {
+          "resource": "repo://docs/architecture.c4#L16-L25",
+          "version": "repo-lines-v1:sha256:6f8efc65cc7286badb1268513b00cb5af5e8a2364a5f0fcfa36fc69e90e06868:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwNzg0MmRjZmNiYWE0Y2U2Yzc5MzJhZTg1ZjU0MTAwYTM5MzYwNzQxNGMwNDQyZmQ2OTg2ODFmMDNhNWMyZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3ODMyYmM5ZmFhZWM2YzA2YmU3NmQ4MjYzNmNhMDlhYmY3MjYzZWIwMzM5ODBjZmMwMTc0OWZhMmI3N2E5ZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyODRlN2QwZjNjY2VlZThhNDA2MWI0MzZmYWZlZTRiOWM3MmNkMjQ3NDU0ZWFhOWJkMzFhZDRmNDg5NTY5NmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6ab005e838ba47cb956f100839ff08c0",
+      "statement": "The Registry container (reg.h4p.net) contains a Registry Set (Authorization Registry, Agent Registry, Role Registry) plus an ACP policy engine, a SPARQL endpoint, and a Solid client.",
+      "evidence": [
+        {
+          "resource": "repo://docs/architecture.c4#L71-L114",
+          "version": "repo-lines-v1:sha256:95917369a160158411a9d19671839214a34ca94d3534c16af4fd2de7fdb57f3f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1ZGUzZjJjNmI3MmU5MmY3YjY3M2M4ZjZiZjUxMGI2ODgwN2IzZWIwMTVjYzVlYTVhZjRiN2ZhNGQ2YTRmNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YmVjMWZjNzlhNzI4ZjFmODU4N2E0NmRlYTg0ZmVkMzcxYzBlZTcwYmU5OTlkN2FlMjE5NDYwOTlhMjMyNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjNGEzYmE3MTcyYTYzYTc0Y2FkMTI4ODFlZTYwZGFmMTk3OTAyNDI2ZmI3MmQ3Y2JlMGY1ZjI4NmZhNmE5YTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_812783a6dcbd4a1ea0fb9d2a78a1cf0c",
+      "statement": "The Data container (*.data.h4p.net) contains a Data Registry, a SAI policy engine, a SPARQL endpoint, an S3 (Garage) client, and a Solid client.",
+      "evidence": [
+        {
+          "resource": "repo://docs/architecture.c4#L122-L153",
+          "version": "repo-lines-v1:sha256:6dc361f70a0bd48818453efdeb5b01db7fba9ca1b2f16fd6404230007d030f8d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiZDczZWQwZTlmYWEzYjczMWVlMzY3ODc5MzNkNGNkZjFhZjNhZDc4NjY5ZDIwZTM1NWQ1MmY5NTI0ZGZhZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY3MGIyODA3NDFjNGE4Y2I3ZmNhYWUyMThiNTZkM2RlNDQwMzA2ZDc4YTk5ZTRjMjk0YWEyOTUxMmI5NmQ0MTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlZmY3ZjNhNzFlNjJlNDE1YWE2N2ZiYTM0OWNlMWIzZGNjMzQzMWQxYzA4NGQ5NzY3OGE2Mzg5ZDhmZDg0YmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b3d9de35818e45088ed3d48367e80c26",
+      "statement": "The Workers container hosts two components: a Push notifications sender and a Webhook sender (webhooks.h4p.net).",
+      "evidence": [
+        {
+          "resource": "repo://docs/architecture.c4#L54-L69",
+          "version": "repo-lines-v1:sha256:e598641982bfe4ab8f2d7e28142a6053c186532959831c4da418f1c5f7bfb8ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5YTkwZjczZTEzNTg1MTk2MWNiMDMxOTgxNzJmNDIyMTBkMGY3ZjJiODU2YzhkMzFjY2NmZmU4MjQ3MmI4NDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxYjY5MDViNmQ3M2UyNjc1N2ViYTJhOWM3OWVkMTFkNTVmN2UwNjQxNjQzNzBmOThmNzU3ZmYwMWM3MzA0MzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3NjdjMTA2ZDNmMDNjYmVhMTZkMDUyNjczZWQ2NDk4ZjIzMzQwZTM2NWMwMTEzYTBiZWE1NThmYWFiZTIwYWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7a23fecf84b24eb0b849eee43eb83366",
+      "statement": "All inbound traffic is routed through the ReverseProxy (Caddy) container, which fronts Auth, Registry, WebID, Data, Account, and WWW.",
+      "evidence": [
+        {
+          "resource": "repo://docs/architecture.c4#L197-L202",
+          "version": "repo-lines-v1:sha256:3683af59713d53dcf9a19f1f886f55e26d86b094054d09468bf63417d9beee2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmFkZjRiNWNjYjg3YWRlY2I1NGU5NmVkNjBjY2I2NTRjNWU0MzAwMTI5NDUzOGEwMDczMDdkNTRkODI0ZmNlNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmE5ZmViZTI2ZTUzZjQ0ZDY1YTRkNDA0ZTI5Y2E1MzA2NmJmOWYzNjViZjlmYjIyNmZkODU5NzJhNDgwNWVlZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTdkODYzMmU1NGU5Mjk4YWJiOTU4NzI3ZTJkNTE0MDhhYmFmMTM2NjAzNTM3OTEwMTQwYWJmNjViMzBhYjYxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2U1NzZkOTNiYzg0OTk0NzM5YWQ2MThlMjA2YjBhMDcyMTZjZDVkYWU1M2JiYjU5MmFiNTA0OWIwM2M4NDg5MCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_40fd787d784a42259b47ce9cffaea7e7",
+      "statement": "The Auth, Registry, Data, and WebID containers each reach the Temporal server, and the Auth, Registry, Data, and Temporal containers each use the PostgreSQL KVstore.",
+      "evidence": [
+        {
+          "resource": "repo://docs/architecture.c4#L213-L221",
+          "version": "repo-lines-v1:sha256:2df7acd23e26171a731a6b6b6144f0d227a2b7e83bf5591eab7c684721bfcf3d:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmY1MWNlOTliOWE0OWYyYWE0YmZjZmRkY2NhYjNhMjk0ZmFmYTQzYTE0ZjJiYzEwODA4OTRjODhkNzkyN2RkZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDcyMTI5MTk1N2NlYWEyOGUwZjcxYzY2ZWRmYmI3MGQ2ZGRkMmM5ZjBlODU2MDBkYWRjMzdhYmFkMDhlMjA1ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODZiMzlmNzI4YWMwY2UyOTk2MmZlMDg1MTZkZWJiZjIzY2U0Y2MwZDM4MmU5NGM0OWRlYThkOGJkYTA4MDc2MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjkxYWQzM2E3N2RhMDY0YzFkNTExZjRkN2FiMWFlZTY2OGUwMzYzOTMyNTYwNmE4OGI0YzJiNTczMGIzZWVkOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2b376c0f16ae49ddb6022530cc190640",
+      "statement": "The model defines six views: a full index landscape plus scoped auth, data, registry, set, workers, and account views.",
+      "evidence": [
+        {
+          "resource": "repo://docs/architecture.c4#L225-L260",
+          "version": "repo-lines-v1:sha256:cd2426167d591bbedd5a6108917c1ae7cec5682aa0abe31e2aa70f9e952aff6c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwNmU0MmM1MWI2MzE3NjJmZDZkZGNiZDY5NzkxMzgwYzBkOGVmYTNlOWY1MmM5OTk1ZWI4NjAzZjA4MGY3OTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5MWFkMzNhNzdkYTA2NGMxZDUxMWY0ZDdhYjFhZWU2NjhlMDM2MzkzMjU2MDZhODhiNGMyYjU3MzBiM2VlZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-09T19:35:35.072Z"
+  }
+}

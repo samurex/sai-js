@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:3bb4aaf3a66f26e81682551ad23d0540e54996e91cb187c5d59f53878ec86032",
+  "claims": [
+    {
+      "id": "claim_c0d040529023490a8a016339ae020d13",
+      "statement": "docs/temporal.c4 models each party as a security actor whose UAS (User Authorization Server) contains UiApi, Temporal, WebhookReceiver, and Discovery components, plus a Registry and an AUI authorization UI, with App owning StreamingHTTPReceiver, UI, and CID.",
+      "evidence": [
+        {
+          "resource": "repo://docs/temporal.c4#L9-L131",
+          "version": "repo-lines-v1:sha256:605a3c8454638310ec044c4355a2a0641c1ce5dfdd89439cf197123daf4530ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxYTE2NDk2Yzg2MGU0NTUzMDNlNjRlYTUzYzAxNjI1Njk1MjE1ZmRjNjA1MTg2Nzc2NjJkZDUxMmEyOGIwNDEzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIwMWJhNDcxOWM4MGI2ZmU5MTFiMDkxYTdjMDUxMjRiNjRlZWVjZTk2NGUwOWMwNThlZjhmOTgwNWRhY2E1NDZiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI3ZjFmNzRjNjA1NTBkNzk2MzI1NGFkMzQ0ZmJkZDUzOTUxZTFmODUwNWY1YWIyMDQyZGJlMjRjNzdiZWNjZmM0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIwYmQ2OWUwYmVjY2YyNzM4NTU5N2E3NjUxMWMyMThiOGU1MTAzNGQzZjhhYzhlYjY4MzAyNGU0M2UyYmEzNzQ2In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_5bfbaaec822947ebb528fe9ef63b5ba3",
+      "statement": "The org-registry-set-discovery view returns the hasRegistrySet link only when the caller's registration carries the hasAdminGrant admin marker.",
+      "evidence": [
+        {
+          "resource": "repo://docs/temporal.c4#L239-L306",
+          "version": "repo-lines-v1:sha256:71274813fdd6aab5aae40603b44ae02f859757bb375bd30bb90adf7f92684d8f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczN2U4NzU5ZTZhZGM5YzFmYTM3YTUzMDVmMGIzZTU5ZWM3NmI0OWJhYzI3MmNmZmE4MmEwYWZhMGE1Y2QzYjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMzYWZhMDQ2NzQ5NzcyYjhkOTM5MzM1Mzk0NTMwN2M1NGUxMDllYTVmYTZjMDgwMzgwYTIyNGU2M2EwYzY4ZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyNjMxZDJkNzI4MjU2MmJmMzU2MzFiMDE4NTI4YmUwYjU5ODZmZTc2MDk3YzNlZjc1MDJhMTc1NWY3MmUxMjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4d20746653ee43af937f4648179d26e0",
+      "statement": "The reciprocal-registration-update view documents the updateDelegatedGrants flow: the peer's DelegatedGrantsUpdated webhook triggers finding affected authorizations, fanning out grant updates and delegation registration, then writing ActivityCompleted.",
+      "evidence": [
+        {
+          "resource": "repo://docs/temporal.c4#L133-L180",
+          "version": "repo-lines-v1:sha256:1b7da42df1d2fc25530c77f0f6dc1f3c73ef34627e94097e4558ecbe3e4fd1dd:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4MjE3MjViZmE0MzQ0ODRiYzA4MjMyMDhjYmQ5ZGFlOTI4ZjFhNjg0OWFlZmI2OTllOWU3OWY3ZWIxZmM1MTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5MWFkMzNhNzdkYTA2NGMxZDUxMWY0ZDdhYjFhZWU2NjhlMDM2MzkzMjU2MDZhODhiNGMyYjU3MzBiM2VlZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjMGExZGE5MGYxMWJhYWYyYjA5YzA3NjQxOTFlN2EwOWNjMGViMjU5ODMxM2EzODMxZGRkNTU2MDRlMGQyNmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_48622f3430314896b13a86a844d1aaf4",
+      "statement": "The temporal.c4 catalogue spans discovery (application, social-agent, registry-set), reciprocal registration, invitation (personal plus admin send/receive), admin add/remove (org and personal), roles (membership change and deletion), share/request access, and authorization flows.",
+      "evidence": [
+        {
+          "resource": "repo://docs/temporal.c4#L133-L133",
+          "version": "repo-lines-v1:sha256:d821725bfa434484bc0823208cbd9dae928f1a6849aefb699e9e79f7eb1fc516:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDgyMTcyNWJmYTQzNDQ4NGJjMDgyMzIwOGNiZDlkYWU5MjhmMWE2ODQ5YWVmYjY5OWU5ZTc5ZjdlYjFmYzUxNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDgyMTcyNWJmYTQzNDQ4NGJjMDgyMzIwOGNiZDlkYWU5MjhmMWE2ODQ5YWVmYjY5OWU5ZTc5ZjdlYjFmYzUxNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjkxYWQzM2E3N2RhMDY0YzFkNTExZjRkN2FiMWFlZTY2OGUwMzYzOTMyNTYwNmE4OGI0YzJiNTczMGIzZWVkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDhlMDE3Y2RiZWZkODJlYWI2YzA2MWU2NThmODViZjgxMDVmY2U5MjEwMjIxMGYxNzU5ODVkMDdlOGY5ZjAwYiJ9"
+        },
+        {
+          "resource": "repo://docs/temporal.c4#L181-L181",
+          "version": "repo-lines-v1:sha256:472c3a67569c04c59513b2574fd11b224604dccf779f467781177c5b8b7d2773:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDcyYzNhNjc1NjljMDRjNTk1MTNiMjU3NGZkMTFiMjI0NjA0ZGNjZjc3OWY0Njc3ODExNzdjNWI4YjdkMjc3MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDcyYzNhNjc1NjljMDRjNTk1MTNiMjU3NGZkMTFiMjI0NjA0ZGNjZjc3OWY0Njc3ODExNzdjNWI4YjdkMjc3MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjE0NmIwMmIxNjU1YTUyOTY4MzhlODVhODIyMzY1MjVhYjU4MDIxNWNkZDM1NzlhYTkwZTA2ZDI2YzY4YzM2ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTA1OTU2ODMxOGI2YmI1ODNkMGE2MTlkZGJjNWNkNmIyODAyYTYyODgxNzBmNzRmYTY4MDM5OGEzNDk5YzJmYyJ9"
+        },
+        {
+          "resource": "repo://docs/temporal.c4#L210-L210",
+          "version": "repo-lines-v1:sha256:d9e8977f4b6cbac94fd3596f2011c00ec3a6eed410a1869a6ecf1f48e4d3dd7b:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDllODk3N2Y0YjZjYmFjOTRmZDM1OTZmMjAxMWMwMGVjM2E2ZWVkNDEwYTE4NjlhNmVjZjFmNDhlNGQzZGQ3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDllODk3N2Y0YjZjYmFjOTRmZDM1OTZmMjAxMWMwMGVjM2E2ZWVkNDEwYTE4NjlhNmVjZjFmNDhlNGQzZGQ3YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTYwMzhlYTViZmZjZWU5N2E2YWQ0MmY3YjBlNjU5NGE2OGQ4MDI2ZmQ2Y2U4OGU4MzE2OTJmOGQwNzQxZDk4NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjYyMjY0MDgxODBhM2I0ZjU2MzhhNzc4OTQ4YjdkZGFmOTg1ZjVmZDI1NzQ2NTNiYzU4NzM4OTE3NTA4YzY2NCJ9"
+        },
+        {
+          "resource": "repo://docs/temporal.c4#L2110-L2110",
+          "version": "repo-lines-v1:sha256:cac4bdb1d00a6718cb2e40846391e065e507a846a67d12b7b58496586deec802:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2FjNGJkYjFkMDBhNjcxOGNiMmU0MDg0NjM5MWUwNjVlNTA3YTg0NmE2N2QxMmI3YjU4NDk2NTg2ZGVlYzgwMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2FjNGJkYjFkMDBhNjcxOGNiMmU0MDg0NjM5MWUwNjVlNTA3YTg0NmE2N2QxMmI3YjU4NDk2NTg2ZGVlYzgwMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzljYmY3MTY1ZDljNTUzNGEwMDZiZjFmMzViNDY2MzM0ZGVmZWRkZmM0ODNkZGY0MGJlMTEwOTI4MmMxMjgxNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWRjOTdlNWI1Y2QxZGE4OTFiZDBmMmE2YzU4ZGNiNTNiZjhmZDYwZTFiYmYzYTUxNGZmMDBiYWU4ODAwM2QyZCJ9"
+        },
+        {
+          "resource": "repo://docs/temporal.c4#L2337-L2337",
+          "version": "repo-lines-v1:sha256:67ce0765837f4f40ac5ca0d127f81bee4cbdc89dd6d27c530aee17fcd8e3f76d:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjdjZTA3NjU4MzdmNGY0MGFjNWNhMGQxMjdmODFiZWU0Y2JkYzg5ZGQ2ZDI3YzUzMGFlZTE3ZmNkOGUzZjc2ZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjdjZTA3NjU4MzdmNGY0MGFjNWNhMGQxMjdmODFiZWU0Y2JkYzg5ZGQ2ZDI3YzUzMGFlZTE3ZmNkOGUzZjc2ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjkxYWQzM2E3N2RhMDY0YzFkNTExZjRkN2FiMWFlZTY2OGUwMzYzOTMyNTYwNmE4OGI0YzJiNTczMGIzZWVkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzEwNjlmNDVlMzdmYzE2YWEzMGJjOGU5ZWZmM2QzN2E2NDMzNThhMDBkZTFhYjVjNDY1MTE4M2JlZmZiZjdjNCJ9"
+        },
+        {
+          "resource": "repo://docs/temporal.c4#L239-L239",
+          "version": "repo-lines-v1:sha256:737e8759e6adc9c1fa37a5305f0b3e59ec76b49bac272cffa82a0afa0a5cd3b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzM3ZTg3NTllNmFkYzljMWZhMzdhNTMwNWYwYjNlNTllYzc2YjQ5YmFjMjcyY2ZmYTgyYTBhZmEwYTVjZDNiNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzM3ZTg3NTllNmFkYzljMWZhMzdhNTMwNWYwYjNlNTllYzc2YjQ5YmFjMjcyY2ZmYTgyYTBhZmEwYTVjZDNiNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzNhZmEwNDY3NDk3NzJiOGQ5MzkzMzUzOTQ1MzA3YzU0ZTEwOWVhNWZhNmMwODAzODBhMjI0ZTYzYTBjNjhkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTViZjZlNzEzNzQ1ZWU4NjVkMmVkMDVlYTRhNjEzYThlY2FjYWYxMDVlMzY2ZWEyNTM2MDJlZDhkNzBjN2MyNiJ9"
+        },
+        {
+          "resource": "repo://docs/temporal.c4#L5568-L5568",
+          "version": "repo-lines-v1:sha256:1644caba7e657da319af9e29b005ebfc7dd7e57d7c78fbec8a9ee42996dcba08:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTY0NGNhYmE3ZTY1N2RhMzE5YWY5ZTI5YjAwNWViZmM3ZGQ3ZTU3ZDdjNzhmYmVjOGE5ZWU0Mjk5NmRjYmEwOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTY0NGNhYmE3ZTY1N2RhMzE5YWY5ZTI5YjAwNWViZmM3ZGQ3ZTU3ZDdjNzhmYmVjOGE5ZWU0Mjk5NmRjYmEwOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTdkODYzMmU1NGU5Mjk4YWJiOTU4NzI3ZTJkNTE0MDhhYmFmMTM2NjAzNTM3OTEwMTQwYWJmNjViMzBhYjYxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTU5ZTYxMTZlY2I4YjUzMzU2Y2UxYjQxZjUzNmZmMGJiNjE4ZDlkOWMwODM5ZWE3YTVhMzQxNWY1YWIwMTRmZCJ9"
+        },
+        {
+          "resource": "repo://docs/temporal.c4#L6337-L6337",
+          "version": "repo-lines-v1:sha256:783edbfd75c5da07f02c1e5a82f646020cc652839cc2cedc96f37769e8cad0a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzgzZWRiZmQ3NWM1ZGEwN2YwMmMxZTVhODJmNjQ2MDIwY2M2NTI4MzljYzJjZWRjOTZmMzc3NjllOGNhZDBhOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzgzZWRiZmQ3NWM1ZGEwN2YwMmMxZTVhODJmNjQ2MDIwY2M2NTI4MzljYzJjZWRjOTZmMzc3NjllOGNhZDBhOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmQzYWQ5MWE4ZGJkMzNjZTBkYWViNzVkYmQ1ZGQ5YTMzN2RjYjMyZWE5ZWJlZmE3MTRhZTZjMmQyMjNiZDNlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGZjMWFiODZiZWRkYzc1N2E5NWEwNTQ1N2UzMTlhZjVkN2NmMzg0ZGYwMzQ2NTM4NDVjZTFmYWZkMGQ2NTJmOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_16e50e0f5f2a4314b6792edf683ce646",
+      "statement": "docs/likec4.md codifies the authoring conventions for the dynamic views, including dynamic-view syntax, note callouts, include ordering, and modelling a request plus its directly following response as a single step.",
+      "evidence": [
+        {
+          "resource": "repo://docs/likec4.md#L1-L20",
+          "version": "repo-lines-v1:sha256:2d2341709249be6478d0e219a47e8b54da52e027e3eb748428451975a1c62997:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNDkwMzBiNTQxZTEzNDA3NTg3ZjAyNjk1M2U2ODkyNzhiNmEwYzM3MTBmNDY0ZDE1N2MzMGRhZjZmZDg0M2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5MWIwNmFhODE5YzBiMDA5MTExYzQzZThkNjk5NGFlYzdkNjZhNzBjMjdmYjk2MWJiYmM2Njc5NDBlOGFlOTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4ZDAwMDgxY2Y0YzYzMWY1MDU5YzBiZjRmYzdiZGQ2ZTJjMTIxZmU2OTVlMGJhMjhkNzc1ODE3NmZmYzg1YmMifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-09T19:35:35.072Z"
+  }
+}

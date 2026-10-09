@@ -1,0 +1,72 @@
+---
+type: architecture
+title: Deployment landscape
+description: The h4p.net production landscape modeled in docs/architecture.c4 — reverse proxy, auth (SAI agent, Solid-OIDC provider, FedCM), registry set, data, webid, account UI, workers, and their quadstore/postgres/S3 storage backends.
+tags: [architecture, deployment, solid, c4, h4p]
+verified:
+  - by: openwiki/0.7.1
+    at: 2026-10-09T19:35:35.072Z
+sources:
+  - id: openwiki-source-d0f68fe32d2ff3a73bba3cb6
+    resource: repo://docs/architecture.c4
+generated: { by: "pi", at: "2026-10-09T19:35:35.072Z" }
+---
+
+# Deployment landscape
+
+`docs/architecture.c4` is a LikeC4 model of the production **h4p.net** landscape.
+It is the architectural counterpart to the dynamic flow diagrams in
+`docs/temporal.c4` (see [Sequence and discovery flows](../temporal/sequence-views.md)) and
+the concrete NixOS/Podman deployment in
+[Production deployment](../operations/deployment.md).
+
+The model declares three element kinds (`system`, `container`, `component`) and a
+single top-level system `h4p` that contains the containers and components.
+
+## Containers and responsibilities
+
+| Container | Address | Role |
+| --- | --- | --- |
+| `ReverseProxy` | — | Caddy edge that fronts every other container |
+| `Auth` | `auth.h4p.net` | Solid-OIDC provider (CSS) plus the SAI agent and a FedCM IdP |
+| `Temporal` | — | Temporal server backing the workflow machinery |
+| `Quadstore` | — | Oxigraph RDF store |
+| `KVstore` | — | PostgreSQL key-value store |
+| `Workers` | — | Temporal workers (push sender + webhook sender) |
+| `Registry` | `reg.h4p.net` | Registry Set (authorization/agent/role registries) with ACP policy engine |
+| `WWW` | `www.h4p.net` | Public website |
+| `Data` | `*.data.h4p.net` | Data Registries with SAI policy engine and S3 (Garage) object storage |
+| `WebID` | `*.h4p.net` & `id.h4p.net` | WebID documents |
+| `Account` | `app.h4p.net` | Account management UI (authorization screen, credential management, social graph, pod/webid management) |
+
+The `Auth` container decomposes into three components: the **Solid-OIDC Provider**
+(Community Solid Server), the **SAI Agent** (`sai-js`), and a **FedCM IdP**
+(`liquid.surf`). `Registry` decomposes into a **Registry Set** (Authorization
+Registry, Agent Registry, Role Registry) plus an **ACP Policy Engine**, a
+**SPARQL endpoint**, and a Solid client; `Data` mirrors this with a Data
+Registry, **SAI Policy Engine**, SPARQL endpoint, S3 (Garage) client, and a
+Solid client. `Workers` hosts the **Push notifications sender** and the
+**Webhook sender**.
+
+## Relationships
+
+The edge routes everything through `ReverseProxy`; it fronts `Auth`, `Registry`,
+`WebID`, `Data`, `Account`, and `WWW`. On the service-to-service plane the
+notable edges are:
+
+- `Auth`, `Registry`, `Data`, and `WebID` each reach `Temporal` (workflow
+  dispatch) and `Auth`/`Registry`/`Data`/`Temporal` use `KVstore`.
+- `Auth` talks to `Data`, `WebID`, and `Registry`; `Registry` and `Data` and
+  `WebID` read the `Quadstore`; `Data` uses `GarageStorage` (S3).
+- `Account` depends on `Auth`; `WWW` depends on `Data` and `WebID`.
+
+## Views
+
+The model ships six LikeC4 views: a full `index` landscape plus scoped views for
+`auth`, `data`, `registry`, `set` (the Registry Set), `workers`, and `account`.
+The `account` view is the richest — it pulls in `Data`, `WebID`, and `Auth` and
+explicitly excludes the `Data -> WebID` edge while including `Auth -> Registry`.
+
+> The `docs/likec4.md` convention file governs authoring of `docs/temporal.c4`
+> (dynamic views, note callouts, include ordering); `docs/architecture.c4`
+> follows the same LikeC4 project scope.

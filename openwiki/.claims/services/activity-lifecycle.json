@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:e8509d1449b6f2e92a5c3c8520f97b0f7b4363f5cefa34948413f03ad670d6fa",
+  "claims": [
+    {
+      "id": "claim_2dbdd57724204bb28552ccc4b24a6ea5",
+      "statement": "ActivityData is a discriminated union of one member per activity RDF class, with an isActivityClass(activity, cls) check, and its definition documents the extension seam for adding a class.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/activities.ts#L494-L528",
+          "version": "repo-lines-v1:sha256:561e414c375eb91d4641df06503957d40007eb7669f08bd82654e11b8b690aca:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzYzhkZGJkYWViYTYwYWJlMmZjMzJlZThhMjU1OTkxOWM5ZmY1NDcxYjZkMDc1ODJlZDEwMjQ0YzRkYmQwZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNDI1MmFhZGIyMzNjNzFhNmEyYzFmYjhkODJlNmU4ZDk3YjAzMDA4MWY1M2QzMTI4N2U2OGMzZGUwNmQ1NjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNjFiOTdkZjFlZWI4ZmU3ZjVmYjYwNmU5Y2FkYzQzYTBiNDU4ODljZGVlNzJjZTE4MTAzYjc5NDJmODkyMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhMDgzMDc0MTAyMjk3MWU0MzAwNTFlYTU0MDgxNThhYzdlMGY2OTA3OThhYjEyYWFhZWYwZWQyNDFlOWEwMTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_38da0b28dc0641ac92ec5b06d5824101",
+      "statement": "ActivityWebhookHandler.handle acts only on Add notifications with an object, forwards to the events bus before dispatch, and routes owner channels to workflow dispatch while non-owner (admin) channels return 200 forwarding-only.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/ActivityWebhookHandler.ts#L90-L128",
+          "version": "repo-lines-v1:sha256:d6976c4f012ea4874681770ab2f5577886ecda348e99ae055f4ccfba710cf432:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjOTk4ZDA1ZDg1YTE4NTk2ZDc5YTliZmFjYmVmNTFjYmUwMmRhZWVjYjU2NDgwNzAyZTJjNGQ4MmI4ZDI4MTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExN2NmMmZhOTBlZTM4OGM1ODVkOGJiZTU3MzQ5OTZkMmY0NGQ4NDFiMjdjZmUyZmI1MjY3ZDQ3ZDNjYzQ5Y2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUwYTlmNWVkMzI1NWJjYTRiNDZkYzNmMTNhNDZiODI0MTEzN2RjNzdiMDAxN2Y5OGMzNGU1ODdmMzNlMGYyZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlMDM2MmY4ZmNlZjBkMWNhZjc5MjIxZGRiZjM5NTBjZmJmMzAyNzU0ZWFiYjE3ZDM2OWZhNDk1ODBjMDBiNDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a9c2c747c82940f9a013e558c4690a05",
+      "statement": "The owner-versus-observer decision compares session.registrySet.hasActivityRegistry.id to the channel topic, so an admin subscription forwards but does not run workflows.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/ActivityWebhookHandler.ts#L115-L124",
+          "version": "repo-lines-v1:sha256:7ed144b4c42161b5566aa3158c0774f9ce88c1f649687e8b4015e9dccf19cc80:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkNDMyMGM3OGQ4NmU4NjlkZWVmNTkyZjc4OTg5MTM2ZmMzNWNjOWIxYjBiMzZiODE2NjZmODNhOTFhZmQzMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlZDNkMzczYTExMWRjY2FjYjZiOThlMTJjNDI1ZmI4NjFlOTdiMDYwMGNiNzhkYjkyYzYzY2Q5MmE1ZDc3NTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1MTgxODc0ZThiNmI2YWEzZTgzYmYyNjE0YmFmOTEwNzkzZDcxNDIyNDg5ZmM2ZWM1NTQ2YjcyOTU2MTk4MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM2OGM0ZTY3NTViMjI5OWExNzdhODUyMzVlZDc3OWRhMGI0OGMxYjEyMTY2YTc1MmZiYzAyYzI0NmY3YmI3YzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_58335ac427204bb682fc90086b19f958",
+      "statement": "ActivityEvents is an in-memory WrappedSetMultiMap keyed by webId whose emit is fire-and-forget, and forwardActivity emits a status line that marks regular activities pending and ActivityCompleted ones done.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/ActivityEvents.ts#L20-L47",
+          "version": "repo-lines-v1:sha256:0abd30dd37d235dda5b07ec2a454947bf7dd1cbdcd79fc92c8782cecf36acc48:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmMmViMWUwZmFhMjVhZWNkMmU0MTA3ZWFmOWUxYWQyMDRhMjAxZjU5Mzg2MTkwNDA3MmEwYTc4MWNiNjYyNGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4Y2RkMDdmOGNjMGI3Y2RiMjljYTMxNDE5MDQ2OTVlN2RlZTkwNjg0MDUwYTc5YTRiNDdmMGQ3ZTU3MzhmZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0MTY1MGMzZThkZTExMDkzNTA3YzQwMTAyNTc4NTg2OGFjNzE2OGNmYTllZGEyMGEwOWIwMjUxYWZmMjk1MmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c01fa6038aa4429897a6f214b237376b",
+      "statement": "EventsHandler serves GET /.sai/events, flushes response headers with an initial heartbeat, and heartbeats every 30 seconds while the stream is open.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/EventsHandler.ts#L21-L83",
+          "version": "repo-lines-v1:sha256:3929989170be38b98b68d3c1ac8508df85eadbd47fdc1377ce8747616e8b70ec:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQwZjI0MDc0MjI1NTQwNjQzODFlYjgzY2U2MzI2ZDY5NWE5MDBlZDk2ZGY1ZWEwOGVmNjczNDI2ZDA3MTNhNTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxZDVkOWFjOGVhMjRjOTg0ZDU1NDZkMjgzYzk1NzYwZTdmMzI5YjViMjBkOTJlMDUzM2ZhYjk5MWM4MGM2NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1YTA3MWFlNjQxMTkwZjQ0ODk1MThlYjVmNDkyNTA3NTkyNmU2Nzg3MDllNDFmYmM5YzJjOTNkMTVhNjFhNzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFkZTQ3MDQ2MWNlOTQwMTk4ZDg1OTUzNzY0ZmI0ODU2NGNkZTA3M2MyMTU5NTM4OGI2MjE1NTkwNGE0NzQxMTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_20003b6b6c5243da8424ff0a1c344f36",
+      "statement": "reconcileActivities is a Temporal workflow that reprocesses every activity lacking a completion reference using the same owner-channel routing, acting as the unscheduled missed-delivery backstop.",
+      "evidence": [
+        {
+          "resource": "repo://packages/components/src/temporal/workflows/grants.ts#L431-L440",
+          "version": "repo-lines-v1:sha256:574e86d9ac3705fc7eb3a81e2c317c8c0dcc07416560c51ee2489973dd5ba1de:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjOTRlMTYzOWExMDIzMDE3Y2FjNWRhNDM1NGY1MzE1NDIzMjViYmFmMTM2NGE5NDdhMDJmMTJiMmFjZGJmNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhNGZhODgwNzk0NGEwOTAwYTk4ZTNkM2JhN2U2YjhkYzM5MDYxOTc3NzQ1MTRiYjkwNjU4ZmIwNjJkNWFkMTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MjUwMDEzZmRjMjllMGRkZWRkMWJmYzg4NGM4Y2MxOThkZjk3NTZmMzNiYTA3OTg3ZTM3ZDgwY2NjNTA3MmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3ZjcwZGQxOThmMmY1NDhhMmE0MTA4NjA0YzBkN2E4ZDc1YTE2ODdjZDkyNWEwZThlZWZiMGQ4ODYwMjEzMWEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-09T19:35:35.072Z"
+  }
+}

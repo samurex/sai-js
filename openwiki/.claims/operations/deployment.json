@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:dd155c9bd4fc7c88ad0caa346801ce2c228e28aedf14308629eab6586743d582",
+  "claims": [
+    {
+      "id": "claim_6ad365bb567b4686bdb7422b4b2103d5",
+      "statement": "flake.nix declares a ragenix input and multiple nixosConfigurations, with the h4p production host importing the ragenix module plus nix/caddy.nix and nix/podman.nix.",
+      "evidence": [
+        {
+          "resource": "repo://flake.nix#L6-L55",
+          "version": "repo-lines-v1:sha256:75d0425f93a30c183a282be6a5bab8cb0a6ed439e8de5ef035781f4068e202e9:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0ZGZhYzMxYzEyNGVkYmM4YjNkZTYzNjcwMWVkODZlMzQ4M2E2NzY3ODE2NDQwOGM3ZTAyZDc5MjUwMzY0Y2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiZTIwMmM0YTIwMjdiN2U5YzZjZGZjY2M0MmExNjQ0MmQwZDdjN2I1NjRhMjkzNjkwMzI1ZjYxZWQ4YzE3YzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3NjE1ZjJjZmQ2YzYxNDA5MzNkNzBkYjBmMzM3MjM0M2RhZjEwYWQ1YmI0YWFlNzY3MGU2ZmE1Njg4YzU4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmMTZkYmNjZWE5Njk5ZTA5YzZjNDBjYzE5ZjhjOTNhMjAyYjViYWZlNjBiYmQ4NDFhNmM5NTA3N2E5NzMxYjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cd0f465c708a4514ae54275ace63ae22",
+      "statement": "nix/podman.nix runs the service fleet as Podman OCI containers via virtualisation.oci-containers with backend podman, defaulting to systemd Restart always and forcing the one-shot Temporal setup jobs to never restart.",
+      "evidence": [
+        {
+          "resource": "repo://nix/podman.nix#L489-L519",
+          "version": "repo-lines-v1:sha256:cee3f09c09afb7d0e4923614e3c98a818b453c44f51a52ec7e9ef781b92b5c97:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0Mjg3ZDk4NGQ3OTE2ZDQ0YWQxMTdkZTU5MGYxNjEyMzZhMWVhMmQ0ODgwNjIzYjdhYzRmMDJiNWMwM2VlNzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkZTQ3NjcwY2ZhOWRmOWVjYTE0OTc4ODBjNTUzODQ1MTM0NzJiYzE4M2I0ZGRlMTA2YWIyNzc0YTA2NGFlMmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA4NzI2MmE3MjA1NGI1NjE0YjM2MjIzOWE5ZGVjZTUyZTcwMjEwMDUyZGMwNTQ1OTE3NzY0ZjE2YzBkNDFlMjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyOWNjOTlhODE1NWUyNzUxODY0NGU5NWU2ZTBhMjkwMTlhZDFmYmUyMWIzNGI1ZDA3YzdhOThkOTJiMzExYTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_06c50e4407ed404c9512c4b00c6f904e",
+      "statement": "nix/caddy.nix defines Caddy virtualHosts for *.id, data, registry, auth, and ui, acting as the production reverse proxy.",
+      "evidence": [
+        {
+          "resource": "repo://nix/caddy.nix#L104-L113",
+          "version": "repo-lines-v1:sha256:7f505b7edea73c86b990513d6fdd8f712ac5e51dd6393757f4f7805191bf0e4c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjYjM1YzcxOWEzMmZjZWNmOTRkMzhkMWU0YzhlNzQwOGM4YzVhOGFlNjFiMDMzNmQyNDU3YmViZWVkZjZkYzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiNTY5ZWU5ZmVmYjk4MWQxYWViMTAxMDk2M2YwMTBkZTEyODExMjZhYTI1YTM0YWE2ZTQxZWZmNzU3NzQzMjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiNDQ2MmQwNzIyZmRmYzA2YmE3YmZlNWMyMTA5ZThhM2RlZDY0N2U3MGNjYTY4MTU1NzBhOWU4MzE1ZDBkM2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_95a3721854de44cca6e951691344bf1f",
+      "statement": "nix/h4p.nix uses the Caddy Gandi DNS plugin for ACME DNS-01, mounts ragenix age.secrets.gandi and age.secrets.auth, and exposes the bearer token through a systemd EnvironmentFile.",
+      "evidence": [
+        {
+          "resource": "repo://nix/h4p.nix#L26-L65",
+          "version": "repo-lines-v1:sha256:1e858f40a860fae3ccbdc06a7cd0a2c7035d6a279cf9ff4594cc957a8149f48a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxYjc4ODkzZWMzNTk4OTVhNjQwMDhkYzJmOTE2MDg2ZGM3NzAwZGNiMTMzZDM2NmU1ZjU3Y2I2ODIxZjZkYjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmZDRlOGZiNTlkZmVjNmViZWI2NzRhNjdhZTJjMGI1YWEyNDE5ODczZmQ2YmM3ZGZhYWRkMzE3MzVlNmYwMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1NmVkYWJmMjc4ZGIwZWJlMmRlMTZlNDcwOGNmZDA5ODdlOTk4NmYxZmI3ZGQ5ODE1M2Y5MTQxZGViNjY3OWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1ODI2ZTk5MTQwYjIwZjA5NmEzMzYzZGUzNjE0Zjk5N2E0MzE3YTMzYmQ2OTYyMDIzZTcwMTJlNDE5ZjEwNDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c105f0d766e74558a3bf9383ba87b250",
+      "statement": "Node processes start OpenTelemetry through packages/components/src/tracing/preload.cjs and bootstrap.ts, exporting OTLP/HTTP to Tempo, with SAI_OTLP_ENDPOINT taking precedence over OTEL_EXPORTER_OTLP_ENDPOINT.",
+      "evidence": [
+        {
+          "resource": "repo://docs/opentelemetry.md#L45-L54",
+          "version": "repo-lines-v1:sha256:72eb54d72e77c7d41193f2b1b79126d57f216a9aa8ae1eb3be7b674eb45890e9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU5MjNkMDEzM2JkOWM1NDAyNmZiNTRhODMxOWIyMWEyMmU5NWE1YjA3ZDg3MDU5ZGNhYjViYjAzZTYzMjRmMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExZTc3YmQ0YzFhMDMyZjRjYzg4OTQwZjg4ZmVlMDA1OWZiNmQ2MjcwZmMxZTI5OTIwNmFiNzNjNjM5M2ZmMmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MTgwZWYyOTEzMmZmN2Q0N2E1MmNiMTI0OTk1OGI5MTVkMDM5MGZiNGIxYmU5ZjA2Y2RjZjI4ZGVkYzQzYWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjNzc0NjIwNmU1MjA5Yjc0ZTU2ZDdmYTE0NDAxZTgwNzg0Y2FhNmE0M2ZjZGU3MjVmMmJkNzE2NmFlYzk1YTkifQ"
+        },
+        {
+          "resource": "repo://packages/components/src/tracing/bootstrap.ts#L19-L30",
+          "version": "repo-lines-v1:sha256:dfe46d53b5aed37750eab494dabd2be6139ffa6eb0db65da5d7249a072c26a9a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3ZGI0YWQ0M2EwOGIzMTdlNTBiOWJhYzczZjNhMzQ1OTYyMWRhMGFhYmVkZTQyMzE5MmY4NGNkZmIxOWI0YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNDExMDk1YTVkNTI5ZWM4ZDE1NTVkYzg2ZmZmNTcyMDU0OGVlNDZjMTliMjAyNjgwZmE2YWE1ZjM2NDU4NzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkZTQ1YmJlZTQyNTZiOGNmZTcwOWY2MGE3MWU3NTM4NDY5YWJkNzQ3YTU4NTQ0MGU4MDM1NDM5OTllNzdkOTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3MTQ1YWMxYWU0NzEyOWUwN2Q4YjUzMTZhNTUzZWMzODk3YTY1ZDg5MmEwYTljMTJmMDA2MmU2OGI0OWFiNmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a9cce2891fa24d5683bd35ae71b5f302",
+      "statement": "tempo/tempo.yaml runs single-binary Tempo ingesting OTLP on 4317 (gRPC) and 4318 (HTTP) and serving the TraceQL/query API on 3200.",
+      "evidence": [
+        {
+          "resource": "repo://tempo/tempo.yaml#L2-L13",
+          "version": "repo-lines-v1:sha256:75b5bb1ffe4fafa07db1b8dba5236234ebd052960221514c10b1b5628db407c0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3NjVhZjI0MDY0ZjhhMTY5MGQ2NGJjNzdiZTIxOTFmMTExZWI3OTFmZDhlNDFlNjEwMGQ0OWE3YWI4Yjg0ZDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc4NzliZmMxODUwMjIwNjlkNDgyMWVhZmU1MDllNjU3ZDYzYzE3ODJiYjNlODUzYzk2ZjRlMGNhZTEyZjRkMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoxLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0ZWNiYWY3MzRmNmE3ODhkNTJlM2E5OTJmMTEzZDYyOTgyMzcxOGNjMDgyMTA4NjY5M2JhNjA4ZTVlZDU2ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczZDE2NzE3Mjg3NzhiYjBkN2M0ODJkYjk1NWU1MTkxYTEyMGQwNmY3OWRjYTdlZGUzYjY2OWMyYjRiMWMyMTkifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-09T19:35:35.072Z"
+  }
+}

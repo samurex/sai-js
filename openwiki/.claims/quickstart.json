@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:b5e23993633766873f0d3ab0f9fb8be7ef7ea23b8228766271c653d7b8db0f57",
+  "claims": [
+    {
+      "id": "claim_128945ceebdb43de9c58258b39f648ac",
+      "statement": "sai-js is a TypeScript monorepo implementing the Solid Application Interoperability specification, exposing application and authorization-agent packages as its intended dependents.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L7-L14",
+          "version": "repo-lines-v1:sha256:3c3ab064e2a08bdb73d3cd034158abdc2fd364e962882d2cd64e30fd474e2854:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGE3M2E3ZTQ0NDEyM2Q0MGM3MGM2ZWIyOTQyYzkxZDUyZjJhNmE4MGM2Y2NkYjg5M2M3N2VkMTYyNzVhMmRkMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDQzZTlkYzhhOThlYzQ4YWZlZjRiNjkxY2YyZjA0OGUyY2VkODkwMGY3NWEwMTcxNzg3YWMzNThmMzE5NTAyNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGZkOWIwYjUxMDA5NjU2MTdlNjc1OTQ5ZTZhNWI5MzIzZDc1YWIwMTYwMjdiZTY4NmU2ZjJiMzExMDI2ZWY4MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjdmMzIwMTgyZWE5YjEwYTNhNTE0OTlkOWI1YzY3MzkxYTE1Y2ZiNWFmNDIxOTBmMWFjYjU2MjI2NTVhYWIwOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5f86133f795d48fc8f38f05d5d4a9be8",
+      "statement": "The repository's npm workspaces group the packages under packages/*, the test integration suite under test, and the docs website under docs/website.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L31-L31",
+          "version": "repo-lines-v1:sha256:cc268dfa6df9b8f946629fd0b632867f297b2c32348e8ef5f04d5800d9255bc6:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2MyNjhkZmE2ZGY5YjhmOTQ2NjI5ZmQwYjYzMjg2N2YyOTdiMmMzMjM0OGU4ZWY1ZjA0ZDU4MDBkOTI1NWJjNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2MyNjhkZmE2ZGY5YjhmOTQ2NjI5ZmQwYjYzMjg2N2YyOTdiMmMzMjM0OGU4ZWY1ZjA0ZDU4MDBkOTI1NWJjNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDFiOWE5ZmViZmQ0OGQ0OWMyYzJhOTY4MjRmMWE5NzFkZmI5N2VjZTdlM2MzMTgzYmJlZDZkYzMyNzE4ZTA1NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzhiNWFiMjgzZWE3MGQ5ZWJjZDhiNjA3MzdmMjNhYTFjYjlhMDdlYTkyZDViZmExOWMwMmJkMDc4ZDg5Y2NkOCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-09T19:35:35.072Z"
+  }
+}

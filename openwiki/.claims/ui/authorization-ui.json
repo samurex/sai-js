@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:5f613a195bf923128f06dedca0c25c08fc16d5c6fefe611f99dfb67e9305b5a2",
+  "claims": [
+    {
+      "id": "claim_3b287ef42f2043e1a0d19ff409c2bba9",
+      "statement": "ui/authorization loads runtime config before mounting the Vue app, registers Vuetify/fluent-vue/router/Pinia plugins, and renders a static error page on config-load failure.",
+      "evidence": [
+        {
+          "resource": "repo://ui/authorization/src/main.ts#L16-L37",
+          "version": "repo-lines-v1:sha256:c7bb2e5abf87e1cb1414a0d0cb3353f5483dabe4a8ef4c0795db244d4ec7390b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkZjgxNzc4NGUwMTZlODg0ZTAyZDA4Nzk5MDU3MmI4M2UyODljOGY2MTM4OTZhMmE1MDFhZGY5NGRiNGM1ZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgxZWRmZTE3NmYwZWM4Y2ZiNDIzMmU2YTQ1YjY2MDYyNTZlNjJiMjA3NTcxNDkyNjk4YmZhYjNiOGEwNzE5NGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8307736804354243909b69d18801a262",
+      "statement": "The router defines the default layout with applications, social-agents, roles, role, data-registries, settings, and invitation children, plus the /authorize interaction resolver and /login routes, with a guard that redirects to login when getWebId fails.",
+      "evidence": [
+        {
+          "resource": "repo://ui/authorization/src/router/index.ts#L6-L94",
+          "version": "repo-lines-v1:sha256:ee4da9662124e3e748cbdf7e5aff3e7d69c719d9cbbab474131de0fdd2070cfd:eyJzZWxlY3RlZExpbmVDb3VudCI6ODksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2ZjgxZWUyZTI5YWMzMWE0NzhhODk4NTFmZjA5MTI0ZWVkMjc0ZWJiNTU4ZjhiMzVhNTlkMGNkZWM2ODM3ZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1ODBiNzY1MThkYWU5NzlmYWViZDAyMzY3YTI5MjkyYTUwZDk3NjA5MjI1MWEzOGE2Y2UzMDg4MGJhNDI4MjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiMmNhZTg0NTJjNzQyODMxYmZhOThhNjA0NWRiMzMwOTBhNTU2NzlmOTI4NGFjMGQ5YzIxMDRmMTM0YTBmZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjliMjE2YjBmNTAwNzJkZDczYmQwYzIwMWZlMzk1NzhiMmRhNDhiYzc5M2U0MTgyY2UzNjI0MmViMGVkZTFhMmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_356aec4f9134490dbb3d2974deedf855",
+      "statement": "The RPC client is an HttpRpcResolverNoStream whose requests are prefixed with the backendBaseUrl/.sai/api path and send credentials include, wrapped in UiTracingLive for OTLP traceparent propagation.",
+      "evidence": [
+        {
+          "resource": "repo://ui/authorization/src/effect.ts#L45-L78",
+          "version": "repo-lines-v1:sha256:dd66dc927e1e23e2f433325ab9a528af174eef7f9823f0897c1e729f890cd071:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhNWY1ZTU5MjMxNGU2YzU0ZGYzMmU4NGY2NGM1NjMzMzk4NDczZGYwMDY0YzM2MjgyZjVmN2Q1ZDhlYWYzNDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhZmJhMDUyN2MzOTUzYzRiNmUwZTViNTczOWJhODM2MTJmODA1M2JjZGM5NDY2NzMwMTkzY2QxZDU5MGI0MDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ1ZWVjMTI1YTkyNWVmZTlkZjk2NjU0NTc1YjAzYzljN2QzNmRiMmQwMzFmNjY1ZDQ5Nzc0YjAxOTkzZDRiNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzNGMxY2UzM2Y4ZGU2YWZlMzgwYWRjMjA5NjJmZTQzOTgzMDhjMDkxODUwNzNkM2U3ZGIxMTFjMjY5NGZhMTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b7b9192d49144ada893d9be9fce68ca9",
+      "statement": "The events client opens GET /.sai/events with cookie auth, runs fullRefresh on first connect and every reconnect, and handleActivity refreshes the relevant store per activity class filtered by actor === currentContext().",
+      "evidence": [
+        {
+          "resource": "repo://ui/authorization/src/events.ts#L173-L181",
+          "version": "repo-lines-v1:sha256:710f52b2550cac29592eb2a728969c715709fa99bbc5b1fbd87d24a6fb10169b:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTA5YjAzZjZiYWRiNmExMDU2MzFiYWRlZDRlYTg3MjVkN2EwODgyMzM2ZjE5MDQ2ZjM5YTViYWIzMDE2MjMxOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWZjNDkxNWE2ZmI0NWFiZTI3YjliYTA1NjRlMGYwZjM1YmJiNTk0ZTUxMGMxMzRmMjQ0NzRkODVkNDgzYTg3ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDc4NjU2YzJhMzg0ODJmZDE1ZjY4Yjg0OGQ4ZWFmMDg3NjUxNjI3ZTEyYjZmNjQ4OTIyZDRjZDk5NjQ4OWU2MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjc3NzYzMjE0YzgxY2Y4YThiNTFkZDRmODQzMjIzNjVjYWUxMWEzNWM1ZjIwYWMxNDRiMTAzYjNmYTM0MjZkMyJ9"
+        },
+        {
+          "resource": "repo://ui/authorization/src/events.ts#L47-L69",
+          "version": "repo-lines-v1:sha256:4b80af79cb789feece173f030da8c483d85af2a8935d715447f6badb3784949d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJlNjM0NjBkZGJkNTFkZTNlY2I4MmMwOGNiNjY4MmFhNWQwZDQ3ZWMwMTgwNjE5ODg2Y2ZmZGQ1ZGM5ZTYyM2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYzMGRiYThhNjljZWY4MjE1NDI4Zjg1NGZmZTBjMTI4ZjgzYmYzMTJlZWY1NzZlYzgwNjhlODYyMTRkOTZiMjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5N2ViODM1ZDNkMWEzODdlNjNhNjE3MDQ2NWZlNWI2NDg4YWQzODc0NWU5YjgzNzIyY2EyNWYwZjJmNTljNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2NTk1NGIxZTcxMmEzYzcyYWYxMGFmYzQzYjhjNTEyMmI0MDUxMjIyNmE4MzgxMTRjZDc1OWFhMzAxNmFlMTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a4f0bb21055f4723b7f4ad76f1203d23",
+      "statement": "The app store holds the registry caches and currentContext(), and switchContext reverts on error, with most actions passing currentContext() as the RPC context argument.",
+      "evidence": [
+        {
+          "resource": "repo://ui/authorization/src/store/app.ts#L185-L203",
+          "version": "repo-lines-v1:sha256:640bb5c7a4c1e5b09b9aca71248d98d424a1e53d1cdc0bd6fedacc20ca7f6246:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkNzhjNGE5NTNiNDIwMGM0NjRhOGU4Y2NmNTZiMmQzZDNmNWI4YjZhNmJlN2FmOGRlNTllN2QwZTc3NGIyOTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyYzc3MWQ4MmQ0ZTllNGFmZTc5YWIzYjEwZTllNjI0ZmFiZjUyMjUxYTJiOWIwNzFkYmIxNjdmNDEwNmMzMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEyMjg2NDAwNjc3MTg4YzdmNjBjN2JmYWI1ODE1ODAwMDBjYTIyYjhlYjMzOTFjMjFjNTRmZTQ5ZTU0ZTM4MGUifQ"
+        },
+        {
+          "resource": "repo://ui/authorization/src/store/app.ts#L30-L52",
+          "version": "repo-lines-v1:sha256:5e7c58eea8370f77829abb9f0a64018c85a86e7f80bf63bb54dc3f692cd9f1f5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3NjExNmIzZmVmYmFiNWFiMWI2MmNmMmMzMWQzYzQ2OTE3ODEzMGU2OTkwMGNmNzcxZTJhMGExNmI2ODU5MjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3ZjliMGZlODk1Y2Q0MGE4MzhmYjM0NGJlZWJhZmQxNTkyNDJlMWYxNTEyYTY1YWFmYzBhNWI4YjQ0OWIwZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM1NjU0OWE3ODRjNTYxYjkxOTYzNmJjZDhlNDliN2JjNGIxMGFlYjQ4YjJkOGFjYjY4ZDExZjMzYTIzZGVhNmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bc4b102028304a5a90eaac407ca40fd8",
+      "statement": "The PWA is configured in vite.config.ts via VitePWA with injectManifest, autoUpdate, and a share_target on /invitation, and src/sw.js handles web push.",
+      "evidence": [
+        {
+          "resource": "repo://ui/authorization/vite.config.ts#L23-L61",
+          "version": "repo-lines-v1:sha256:a2c15bbaa81863110cf14a7d6f0db5c17ae1b3bbafc73efddd4c9d650bc5bb61:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkY2FmM2YxNmU0ZDRmOThmOTZlNjk5NzZiNzk1Y2U0OWY1ZjlkN2M4ZGY2MDc5MzNjNWY4ZTcwYzkzMWQxNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5NzhlMjUwM2I4Y2YzN2EwNmY3ZDZmMGEzYTZiNmZlMzU2OTFmYmNhYjUwYjg3NzVjYWI2ZmFiYzcxYzU5MmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5NDcxMDY0ZTMwNGZmODA1N2M2NzA5MWMyNTg1OTQ1YjY4NjczM2YxNDk4OTllNGE1ZTFjYjJlYTY5YTI2MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI2MDFmN2YzOThhMDBkMDM0Yjc3YzA2OGNkOWQwNmE5YzY5NzA1NWEzYTY0MTU1YzY5NmIxNzJkNDdiZDk4MmIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-09T19:35:35.072Z"
+  }
+}

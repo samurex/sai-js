@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:83bf1df22f6d9442740c63730e4a5ea8d1352bea3419ad8cfb5c43e8b9e41fe5",
+  "claims": [
+    {
+      "id": "claim_0a654c6996364fdfbb807d9a29b08709",
+      "statement": "The data-model package exposes each entity both as a `type` (data shape) and as a namespace of helpers (fromJsonLd/toDataset) via its index.ts to avoid name collisions.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/index.ts#L1-L60",
+          "version": "repo-lines-v1:sha256:e8cd5cbcdbcb561ffe0896538260dbb17aff68fdfc4fca3010605757cf18454d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiN2QyN2RhNTQzNjhhMDM4ZGU3NjI4YzVhNjVlNTFhYmI3NTAwNmQ0ZDgyNDQ1NTU2ZTE2ODc0ZWJmNWNiNDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhOTBjODc1OTdlODI2Mjc4MGFkYTE0MTBiZmE0ODdjY2M3YWUwZTAwNDZhN2RhMmQ2MmM4YWI5ZDBhODlkMzEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2NjBiNjFiMGIzYWM2NGQ3NjFmNDAwYWQyY2NkNmE2MjU2YjVkNTE2NTViOTFmOGMxZTY0MzE3M2Y1MDgwZWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fffd113decab46678f68fb7447199294",
+      "statement": "RegistrySetData lists every registry a context owns, including authorization, grant, social-agent, application, invitation, role, data, and optional activity and access-request registries.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/registry-set.ts#L14-L39",
+          "version": "repo-lines-v1:sha256:81a268fa444a8c4f8eb6bbe9452d0ae2d0180bb5f40bfd58e20f9e8d1de3998e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlNWYxMjI1NWQwNWRkMGE5MDZmZTZjNzg1NWYxOGRjMWU2OGYzMGNmNWYxYzJlZjk3ZDgxNzI3NWQwZTE1OTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViNGNiZjdlZTg5ZGJmMmEyNzk3Y2ZkZjMxZWM2MTRhN2UzZWM3OTVjZjA5ODFkMzc1MWU4Y2EzN2VmNDgxYjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjNzNiYjlhODJhYWRjNWRkYTU3Y2NlNWJmY2I4MzJkMGExYTY3ZThmNWU4NDI2ZTY1ZTYyY2IwMTYxMjc3YzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyZjU3NDgyMDAxYzE2OTg1YjEwNDJkYTcwNTYxZTExMWU0MTEzMTk2NTgxM2FjZjk0YjdiNmQ2MmNlNTE1MDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_371ed8fef92846e1acc983780af706d9",
+      "statement": "ActivityData is a discriminated union of one member per RDF activity class, with an isActivityClass(activity, cls) membership check.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/activities.ts#L503-L528",
+          "version": "repo-lines-v1:sha256:caf34e49d44751f0b8df74b0b6c15c50fbbae9562db679a1987c09a2ffeb7acd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFlNjAyOWM3YjEyMmM1MmJlYzhkYzQxNTAyNjVlYzc0NjU4OWZhM2ZjNDQ0ZDdiZTU0NWI5YWQ0YTlmZmM5NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNDI1MmFhZGIyMzNjNzFhNmEyYzFmYjhkODJlNmU4ZDk3YjAzMDA4MWY1M2QzMTI4N2U2OGMzZGUwNmQ1NjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljOGJjNjg3NmRmY2RmODc3ZmIwOGM4ODc3NWI5Nzc3MDI3ODlmM2E0ZjY0NjY4YjIzZDMzOGE3NTRkNTQ3NDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlhMDgzMDc0MTAyMjk3MWU0MzAwNTFlYTU0MDgxNThhYzdlMGY2OTA3OThhYjEyYWFhZWYwZWQyNDFlOWEwMTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_920d6049fbc64127b1fc982d58531f0a",
+      "statement": "The shared dataModelContext is a JSON-LD 1.1 context that aliases id to @id and forces type into a set container so framed output always has type as a string array.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/context.ts#L49-L58",
+          "version": "repo-lines-v1:sha256:24012919ce2632ee9608db2bb89e178e655cc752d3081dac7f0ad402cdcfc039:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwZGJjYjY3YmU2YTYzZGZhZGMyYWZjZTM2ZGU5NTkyZThmZmU4NDlmYmY3ODhjMTIxYmMyMTRhZTU3NWQ3NWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjODIyZTA2MmI5OTk2MjE3N2U0MGE4ZDg5ZmZlODYwMDI2MDU5MzE3ODc1YzdlMjY5NzgzMThhNjAwMmE3ZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2MWQ4MGVmODA3YWNlYTA3NzVlMmZmNjQ3ZDM1ZWY5ZGM5YTkwZjRlY2FkZWI1MmYzMmE0MjljOWNiODgwNGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIyNjY5YTIxODU5ZmU1NmUyODRkYmQ0MjM4MzgxZDZjMjYzOWE5ODRhMDg3ZjlmOTdhOTEyNjdiY2RkY2MwYjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4a94a02ee7f3414d9b4bc28ce6478892",
+      "statement": "GrantData carries scope fields inheritsFromGrant, delegationOfGrant, and hasInheritingGrant for delegated-grant traversal.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/grant.ts#L9-L48",
+          "version": "repo-lines-v1:sha256:21d77abbd38459929d377a79942b17ce8e874a87ae161afd86d54b2f0d298588:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5ZjI3Y2EzZGI3ODg2NzZjMzcyNTAwZmQ0YTBiN2RhMmFjNzk3NTY0MGU3OGQzYTFjYWZjMTZhNzRiYWM2NzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcyYTM0M2Y5MjZiNmVhYjQxNTY4YTg1MzQ3M2E1ZTgyY2E1OTFkM2IxOGFjZTkxOGY0ODllZThkNGQwYjNmYTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzYTJiYWVmZTZkMWZjY2I1YjhhM2QzOThmMGQ5NWFmNGRhOWRmZGVjZjU2YzdiM2U2MzYwNGRjYzk1NmRiODIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6ecc48bc1a394e8581a986f378abf7ab",
+      "statement": "The templates directory exports ACP/ACR Turtle generators for the RegistrySet, agent-registration ACR, DataGrant ACR, WebID, and DataRegistry bootstrap resources.",
+      "evidence": [
+        {
+          "resource": "repo://packages/data-model/src/templates/index.ts#L1-L6",
+          "version": "repo-lines-v1:sha256:877282a302d39dafd878cc61d8f833c060a32b83dc71741d6af10173b0207fd1:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTcwMjI3YzY5M2I1ODZmZDExMDZlZWFlMWUxZDM0MjdmNjc5ZGU4YzdjZGZkNmI4ZDg4MGY2ZTkzNDExNGNlYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzYwYjA2MzU1ODRhMWYxYWU1ZDlmMTY1ZDE4NWFiMjY4N2M1YmI4ODFkNTg5MzViMzIwNDdjNjhlNmE3ZGEyMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-09T19:35:35.072Z"
+  }
+}

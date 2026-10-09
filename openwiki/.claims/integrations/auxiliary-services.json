@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6fdacd8a52125972390f7014738cca86d4aa09018a1b2b6a733082869c37eb8d",
+  "claims": [
+    {
+      "id": "claim_0b97b522438c41f6b1d20f9ebba9164d",
+      "statement": "services/id is a Hono service that serves WebID documents and derived Controlled Identifier Documents (CIDs) from a SPARQL store, reading ID_ORIGIN, DOC_ORIGIN, and CSS_SPARQL_ENDPOINT at startup.",
+      "evidence": [
+        {
+          "resource": "repo://services/id/server.ts#L13-L25",
+          "version": "repo-lines-v1:sha256:abbf7cc57cf15bb5008c89823064675b292686992552218b48794eb2014097df:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkzMzUxZjdlODY5MDRjNTc5YWUxNGVkYzNhZTc5YTBkN2IxOTYxYzkzYjVjN2JmY2U5ZjQ5MGFmMjI1YmM4OGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjOGJhMGYwYzE2YjA3N2ViMjExMGZmNjdiYjNlYTdlMmMwOGQ5NDk0ZDIxZDJmN2M0NjhlYTg4MjUwZWI1YjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkNTA1MTRiZWI5YTBiZTJiMDA2NjY3ZmI5MTU3N2MxMjU2NGMyNWZkNWU3ZGVkYzc5N2UwOWRiODNlZmNjMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmMjVkNTQ2MmFmZjY5ZjM1MjUzODdkNWJiODBhNjc5NmE2NmUyMGQ3ZjEwZTU5MTcyNjJhOTg5YTliYjQ2MzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_949a3b1bc64a43ecba606ea529dcdaa9",
+      "statement": "The services/id `GET /:handle` route CONSTRUCTs every triple in the requested graph, returns 404 for an empty graph, and content-negotiates application/ld+json, text/turtle, and default application/cid.",
+      "evidence": [
+        {
+          "resource": "repo://services/id/server.ts#L45-L70",
+          "version": "repo-lines-v1:sha256:d9bfdeb028fee41677642ac9205a17f47964a5b843f95adb6503003b80c8f2bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1MTFiZjA1YzcwZjRlM2Q2OGI1YWE4NjVhOTZiZTg0NDU2YmFlZTgzNDQyYjg0MjI5N2Y0MmFiYjg1NWNhZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1ODBiNzY1MThkYWU5NzlmYWViZDAyMzY3YTI5MjkyYTUwZDk3NjA5MjI1MWEzOGE2Y2UzMDg4MGJhNDI4MjUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MDk5Mzk3NDJlNTIyZDEwMDE0OTg4MWU4YjkwY2VmMTZhMjlmYzg2NTliMTBkZWEzZjExNzg2NzBkZjQ4OGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjYTllM2I3MTBiOGZjNTNiYmRmMDk1OWQzMjJkMWQ3ZWU2MThmYjQ3NWE2Njg2MzNhNjQwODQ1OWU2YmRkZDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7eb095f6fc8e400cbe931a30f3b07ec0",
+      "statement": "toCidDocument derives a CID with an n3 Reasoner that maps solid:oidcIssuer to an lws:OpenIdProvider did:service and interop:hasAuthorizationAgent to an interop:AuthorizationAgent did:service.",
+      "evidence": [
+        {
+          "resource": "repo://services/id/cid.ts#L19-L42",
+          "version": "repo-lines-v1:sha256:8a51164b6a1714d9aecbd0f707e02c7f7adcb9f3eb539c1aa0e6b65c2032ac46:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOGVjYTRmNGQ0OThiZGFhNTg2ZDE1OGZjZjZmMzFkZDM1MDczZTAwNDU4ZGQ5YWQ1M2RmNTM3ZDA1MDE0MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwNTA1ODQxOWVhODlhM2EyMzY5OGEwNWQ2MzRjMjEzM2I1ZGQ0Yjc3YWVhZTQwOWE1Njg1ZDk5NGUzZWRiZGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4Zjk5MWNkNTA4ZjlmNzdmNjEzMzI3Y2NhMWE3NjAxNjQ0ZTllYjVjNmYyMzViMzlhOTdiODVhZWY1YjYzYjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzYzViNzBkMzAwNzY2NjczZjFhNTJkZDY1M2E4YzkwNGI0NzA2NThkZmU0ZjhkMjg5Y2I2NzA3Y2I5YTk0MjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3a0d9aabeb6740098b8c16c40dfebf0c",
+      "statement": "The services/css instance configs are thin wrappers that import the css:config/http/server-factory/http.json base plus a sai:config/*.json graph from the components package for auth, registry, and data.",
+      "evidence": [
+        {
+          "resource": "repo://services/css/auth.json#L6-L7",
+          "version": "repo-lines-v1:sha256:b705c855f7732e4ba0dcd6a3c2e8212f905960ef3745747665367ec17aa01816:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTY0ZDhjMDczNDI5ODkzMTAxNTc2ZDg4ZDk5MTI3ZTg5ZDY4OTFkM2IxN2U4OWRmMDJlYzlhZTcwNzA1ZDhiZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTc1NGUxMTBmZjc4NTUyOWRiMDE0MDM4MzUzMDc3NmI5Zjk5MDEwNDQ5ZDUwYmIzNzMzZTUzODAxNmVjODE1ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTkxOTNiMDcwMGQ2ODZjZGIxMGFkNGQwZGFhMDMxYmZkN2M1NDYyZmUwMGEwMjBlYWFmYmZmYjgwZWYzOTJkZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGIxMzg3NzM5YjhlZWIzZWEwZTBkYjRkZGFiY2IwODQ5Y2ZiMjQ2Zjg1ZWE3Mjk3MGZlZWM4NTcwN2VjODI2MyJ9"
+        },
+        {
+          "resource": "repo://services/css/data.json#L6-L9",
+          "version": "repo-lines-v1:sha256:a55843859e4e79f3400dcd40a0db8d953dce37bfd30c26ce817776a112ba3bb4:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTY0ZDhjMDczNDI5ODkzMTAxNTc2ZDg4ZDk5MTI3ZTg5ZDY4OTFkM2IxN2U4OWRmMDJlYzlhZTcwNzA1ZDhiZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWNlN2JiNTQ0YzIwMTkzNjViN2NhNzNmZDFmNTAwMmNhNzFhNzEzZWU4NTkzNTJhMjM0Yjc5M2M5MWVmY2RlMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTkxOTNiMDcwMGQ2ODZjZGIxMGFkNGQwZGFhMDMxYmZkN2M1NDYyZmUwMGEwMjBlYWFmYmZmYjgwZWYzOTJkZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTg4YWJkNzM4MDYzMzkwYjYwNmUxMWI1ZjUxYzU4YjllYjQ4MWYwYWQyNDQ5ODg3MzE3MmQ5NjY0MmQ1MGJjOSJ9"
+        },
+        {
+          "resource": "repo://services/css/registry.json#L6-L7",
+          "version": "repo-lines-v1:sha256:d666a050ed6b16cba79c002a12dc2db5a913c436aaa821aa948c4c2b63718a0e:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTY0ZDhjMDczNDI5ODkzMTAxNTc2ZDg4ZDk5MTI3ZTg5ZDY4OTFkM2IxN2U4OWRmMDJlYzlhZTcwNzA1ZDhiZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFjOWRmMTMzMWIyM2M4YWFlMmFkNGYwYTFiMjYxOWI1NTY2ZGNjYmNlZTVhNzhjZTYzN2E3OGQxNmRlNGFiOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTkxOTNiMDcwMGQ2ODZjZGIxMGFkNGQwZGFhMDMxYmZkN2M1NDYyZmUwMGEwMjBlYWFmYmZmYjgwZWYzOTJkZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWQ2MTg3NmQzYzcyOGQyYjZmOTg3MzRlMzY3NmM4MjE5MTZkOGM0ZmExYzZkNDM2NGExMGJkYmRkMWMzMGIzYiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_195b32a61b5e4b599a018662732b4778",
+      "statement": "The shapetrees Cloudflare Pages worker serves shapes (ShEx) and trees (JSON-LD default plus Turtle) from static assets under https://shapetrees.hackers4peace.net via an onRequest handler that content-negotiates.",
+      "evidence": [
+        {
+          "resource": "repo://shapetrees/functions/%5Bcollection%5D/%5Bname%5D.js#L1-L28",
+          "version": "repo-lines-v1:sha256:3f0d6afc0807af48673d92f2e9d79ccb27e2987ca4ec689d8b8c9fc1bd0e2a2a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3ZmJmZWQ0NTc5ZjYyNzdhNTQ1Y2Y3OTNmYmVhZTdmYjViYzRhMzM3OGQ4Y2RmOGFhYjJhMDRjOWY5MGI5ODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4MGNiM2ZiMmFiZTA0Yzg2MjUyYjQzOTI4MGNjYTE5MDliZjU1YmM5OTQ0YzczMWRlMDllNzQxNDM3NzNkYjYifQ"
+        },
+        {
+          "resource": "repo://shapetrees/functions/%5Bcollection%5D/%5Bname%5D.js#L107-L177",
+          "version": "repo-lines-v1:sha256:b89631ba1e826b3f61132f0032bd19cfb0dfa62a695f0d56bf3a6225cb088279:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4ZDYwY2Q2ZWZkYTU4MzI3ZDIxMjU5ZGJhNTEwMTY1ZDRlMzY3N2ZkODM4Y2RmNDcxNDY5NDg4OWEyNGQ5MWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmY2NhZTk2ODQyNDJlYmEyYTAxODEwY2EwYzdlZDljOGJiMGY5OGY2ZjMyNjgwZGMwNDM5MzQwZWY2MTE5OWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-09T19:35:35.072Z"
+  }
+}

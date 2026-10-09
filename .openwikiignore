@@ -1,0 +1,11 @@
+node_modules/
+.git/
+.turbo/
+.devbox/
+dist/
+build/
+.next/
+coverage/
+.rollup.cache/
+*.tsbuildinfo
+.grafana/

@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:57e19bc8e9bdd2341f7b56e218c0c1c3dfbf38efd4008fd7566f22dd90794d0a",
+  "claims": [
+    {
+      "id": "claim_5965c5e97fbd4467b278f92b3397d866",
+      "statement": "The integration suite runs under Dagger via `npm run dagger:test` = `vitest run --no-file-parallelism`, executing one test file at a time in the test container.",
+      "evidence": [
+        {
+          "resource": "repo://.dagger/src/index.ts#L449-L517",
+          "version": "repo-lines-v1:sha256:79c81ee5e4d6147aba264cbabdef6826c78f61d542a4fb8ab08666b14e9994b6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlN2E3ZjVkNDc4N2RmOWMzNTE0MjlmMGQ2YzZiY2YyZTExMzM3ZDk4MGVkOGRmMjVmZGY0YWVlNGRlN2MwODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiZjM5YTg3MjM2NzBlYjBhMWFmYmExMzZhMTkwYTM3MjczNzZjMmJmZDAxMWYwZmVhMjEzNTc1NWI0ZjhkNjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNkMjkwNTNhYTkyYTU4MTlhNTA2YTVkYWJmYzA2OWFjZDI2N2ExYWY2ZGU5OTk4OTNlMTkxODAxOWNkYWY5NzQifQ"
+        },
+        {
+          "resource": "repo://test/package.json#L1-L8",
+          "version": "repo-lines-v1:sha256:5b4349c69da81a91e63e403a6cc00163fdcd5b0b49759c40a193f2b1f377814b:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTZmYjA4ZmRhMWFjYjk1N2I2MTE2YmQzNzgxMWExZmU0MWEwMTYxMWMwNjMxZWRiZjc4NmQ2ODg5YTI3YTU1YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ4MzNkNTk0OWMwM2E0MGNhOTUyNDkxNjEwYTY2NTk2NDRiM2FhNDY2MzYyZjc5OTAyMGRiZjE5ODE1NDdkYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTdmNmYwM2IzOWE1OWNiYTBkYjNlOWViYzI2YWM1MDdkMDliOWM3Y2Q0OTE5YmQyODUwMTFkMTQ5MjYyMGI1YSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8aab63797b664c829e1bc57e38588ee8",
+      "statement": "test/setup.ts re-seeds the Postgres key-value store and the oxigraph quadstore in a beforeEach, so every test starts from the pristine environments/data seed and leftover state is wiped.",
+      "evidence": [
+        {
+          "resource": "repo://test/setup.ts#L58-L104",
+          "version": "repo-lines-v1:sha256:359d3db86e0cc2586638a4e338f2a850ac5916acd5aec79597d2d88b0ea28f0c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0NjQzMmM0ZTg2ZTdmZGIwZjJjMjc3MDkyNmUwNmY0YWIzOTBiYTg2MTY1ZjAxYmI4Nzk3ODcxNGUzYWE1NTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMzUyNTg5YzM0ZDNjNjA2ODU5MzFiNmVjYzRkNTA5OTFhN2M1NmM4ZmJhMjg5NDExNDY1NzY5MDI3MmNhYzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiYWM3ZmY5N2JkZjVkNTcwYjE5M2Q0YjAzNWM1MjI0MzgxNzM0MjI2YWQyOTQyYWE5ZDI2MzM0YzNjZDUxODgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1ODBiNzY1MThkYWU5NzlmYWViZDAyMzY3YTI5MjkyYTUwZDk3NjA5MjI1MWEzOGE2Y2UzMDg4MGJhNDI4MjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b572d1eb82364d3e81a41a692cc48bd6",
+      "statement": "environments/data/registry.trig seeds every party's RegistrySet, registrations, and ACRs, while environments/data/kv.json seeds accounts, cookies, and pre-wired activityWebhook/reciprocalWebhook channels.",
+      "evidence": [
+        {
+          "resource": "repo://environments/data/registry.trig#L1-L20",
+          "version": "repo-lines-v1:sha256:ae6d7a129925804fcdfc57e0d907d5efe99456b9f2532894d31240324e807893:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3MDgxMGU3Y2U0ODE3NWEyYzY5ZmM3ZTViNDRiY2E3NDkwZGI5NzUyYzlhMTdkZWFlYjAxN2NkMWE5NTUyZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlZjI2YjEzMGMzYTY5MmViODRjY2ZiMTMyYzEzNGYwYTkxNzZhMmVhODkyNzRiZjQwZjExMTdjNzRkMTk0NTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlZGMwNmMwZGNkZjRjOTVhOTk3OGFiNTEwZjEwMzVjOWNkOTNkYWUzNWUwYzNiNDY4N2ZhOWMyNmQwYmUzYzIifQ"
+        },
+        {
+          "resource": "repo://test/setup.ts#L59-L65",
+          "version": "repo-lines-v1:sha256:5bf07cb48a75775c054984342e070a15d1da15b899163ac446f3f089ed83f700:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjljMGNiY2JmMzE1ZGFhZjYwYTlkOGI4ZjVhODFmZGY3NzNiNGY3MDA0Y2Y2MTI1YmU0NDFhNWNmNzRiMWE3NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzg0MTJjZjAzYmIxY2UxZjdkMmE3ZDc0Y2VhMTg1NzI0YzVkYWM1NzZjMTFmYWY0ZjU0ODNlMmYxM2I1OTJhZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzRmZjI4YjVkNmRlNWEyZjg0OWI4OTdhMDE2YTM2ODE5ZTZlZDg3ZDFhMzdlNzU3NzA0MmVhYTg2OTQxY2I1NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWYwMWI5NGY2ODczZmQwOWZhNDEwZGZkMWI0NjEwODczNTlkYzRlNjMxZjY2MmYwZjQ5ZDBmM2UwY2YxMDVmOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9c7043fee00f4940b50db53dc432a343",
+      "statement": "waitForQuiescence waits until none of the webIds has pending activities for two consecutive polls, treating a transient registry 500 as unsettled.",
+      "evidence": [
+        {
+          "resource": "repo://test/util.ts#L195-L237",
+          "version": "repo-lines-v1:sha256:aa9986ea32cc81773e7bac1da8b400cdfd6f7da59d81eb222810f87b3a0fa6ac:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3ZDg2YzlkYzEwY2U0NjZkNDAwYzU3ZjhiNjA2YWRlZmEyZTQwOGJjNzY0NTE3NzNmZDJjNDRlMzM4MzMxMzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOGU2NzRmMzZhMzYwMmQ0NzY2ZGE3M2RmNjJkNzFmZjljM2JlYzAwMGJmODVkMGQ1YjAzMjlhMTdhOGJhMDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyMDU3ZjZmOGI1YWUzYTEwMzIxYzMwMTRhMTE0YWM0ZGUxMmE5NWY0YmRmZGRkZTA1M2VmZTVmOWM2NmY1NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwMzg3YjUwYjg4ZTVhZmM3YmJkMjdhNGMxYjJiN2M1NjVkMWY2ODkzM2Q2NGY5MWQwOTk2NzE1MDgxZWFmMjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_85b58f24878c4f3aa25a79268928448b",
+      "statement": "awaitGrantCompletion is the listen-first barrier: it opens the registration notification stream, runs one RPC trigger, awaits the registration Update, then waits for quiescence because the Update fires mid-chain before the parent workflow's completion tail.",
+      "evidence": [
+        {
+          "resource": "repo://test/util.ts#L240-L254",
+          "version": "repo-lines-v1:sha256:e1b08cd5303499cda169cda607ac490afbec9d413863eacc4510c952247dff78:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlZGY5NGI2Zjk1M2M0YmViYzYzMTJjMGVkNDFiYTY3ZjkwMGRjYWU0ZDlhMmMyOTIwZTliYzc5NzUxYWU0NDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI2NTI2NjNhZDlkNTY0NjJmZmVjZTBhOTVhMGRjYzU2ZWZmY2JjYzY0NjJjMWQzMzI4MzJjMGIwY2IyNTc0MjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1MzljZjY4NWU5OGIzZGQyZGY2YTZhZTk2NjJhNWRmNWQ0YjJjODM3ZjQ2ZWM1OGU3NmMxNDUxMzAzODBiZTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ac8c577921ea469080717f1a6f487369",
+      "statement": "Temporal activity retries are disabled in the dev dynamic config (history.defaultActivityRetryPolicy maximumAttempts 1), making workflow failures one-shot.",
+      "evidence": [
+        {
+          "resource": "repo://temporal/dynamicconfig/development-sql.yaml#L7-L12",
+          "version": "repo-lines-v1:sha256:e8706552bd2202b4f83a61ca3ecee3637ae0444c4a3599ff90345c1050704876:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjhmZGZhZmFiZTk0Y2E5OWZjMzEwODZiZTA2YzU5NzUwMzRlY2RhYjA3ZTlmMTkyODYyNjFiYzUxNTc5ZWFjNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDk5Mjg4MmU3NTIzMWY4MDQ2YmNlOTAwNzczMDVmZWFlODY0MGM1ZjdkYWE2NGFmZDk0NWZhODQ5NmQ2YjRmMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTM5NzQ0MDNlNmM2OTUzN2RhM2JjYzM1ZDMxZTUwN2U0NjE3ZGY2YmZmNzFmYzcyYmRiMmU5OGNjMTc3NjI1ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.1",
+    "at": "2026-10-09T19:35:35.072Z"
+  }
+}
