@@ -20,7 +20,7 @@ import {
   withSparqlTracing,
 } from '@janeirodigital/interop-authorization-agent'
 import type { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
-import { discoverAuthorizationAgent, parseTurtle } from '@janeirodigital/interop-utils'
+import { discoverAuthorizationAgent, toStore } from '@janeirodigital/interop-utils'
 import type { ResolvedContext } from '../Context.js'
 
 // The transport abstraction + registry queries live in the
@@ -76,7 +76,7 @@ async function adminSparqlQuery(
     method: 'QUERY',
     headers: {
       'Content-Type': 'application/sparql-query',
-      Accept: 'application/sparql-results+json, text/turtle',
+      Accept: 'application/sparql-results+json, application/ld+json',
     },
     body: query,
   })
@@ -124,7 +124,7 @@ function termFromJson(term: Record<string, string>): SparqlBindingTerm {
 /**
  * Query runner against the org's `/sparql-admin` endpoint
  * (`AdminSparqlHandler`: SELECT → `application/sparql-results+json`,
- * CONSTRUCT → `text/turtle`; updates rejected).
+ * CONSTRUCT → `application/ld+json`; updates rejected).
  */
 function adminSparqlTransport(adminSession: AuthorizationAgent, orgWebId: string): SparqlTransport {
   return withSparqlTracing(
@@ -147,7 +147,7 @@ function adminSparqlTransport(adminSession: AuthorizationAgent, orgWebId: string
       },
       async fetchTriples(query) {
         const response = await adminSparqlQuery(adminSession, orgWebId, query)
-        return parseTurtle(await response.text())
+        return toStore((await response.json()) as Record<string, unknown>)
       },
     },
     `/.sai/sparql-admin/${Buffer.from(orgWebId).toString('base64url')}`

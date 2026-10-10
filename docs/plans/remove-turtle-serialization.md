@@ -1,103 +1,111 @@
 # Remove Turtle serialization — drop `parseTurtle` and `serializeTurtle`
 
-> **Status:** ⬜ not started — none of the four phases have landed: `toNQuads` does not exist and `parseTurtle`/`serializeTurtle` are still in production use (`sparql-update.ts` SPARQL patch path, `setAcr` in `crud/agent-registration.ts`, `notification-manager.ts`).
-
-> **Goal.** Delete `packages/utils/src/turtle-parser.ts` (`parseTurtle`) and — after the write path is converted — `packages/utils/src/turtle-serializer.ts` (`serializeTurtle`) entirely. After this plan the codebase is JSON-LD-first on both sides of the wire:
+> **Status:** ✅ Phases 0–6 landed — `parseTurtle`/`serializeTurtle` deleted; the codebase is JSON-LD-first on both sides of the wire. **Phase 7** (drop the `n3` dependency) remains ⬜.
 >
-> - **Reads** already go through `parseJsonld` / `fetchJsonLd` / `toStore` — all backed by `jsonld.toRDF`.
-> - **Writes** go through a new `toNQuads` helper — `jsonld.toRDF(doc, { format: 'application/n-quads' })` — producing N-Triples (all our patch datasets are default-graph, so N-Quads degenerates to N-Triples, which is valid Turtle) for SPARQL `INSERT/DELETE DATA { … }` bodies.
-> - The only remaining Turtle on the wire is the two ACR writes — `setAcr` (`agent-registration.ts`, a template→parse→serialize no-op round trip → write the template string directly, Phase 2) and the data-grant ACR PUT in `components/src/temporal/activities/grants.ts:420-429` (already writes `dataGrantTemplate(...)` directly, no parse/serialize — left as-is).
-> - **CSS notification streams** switch to a custom streaming HTTP emitter (in `@elfpavlik/sai-components`) that writes **NDJSON of expanded JSON-LD notifications** instead of Turtle chunks (§Phase 3).
+> **Goal.** Delete `packages/utils/src/turtle-parser.ts` (`parseTurtle`) and `packages/utils/src/turtle-serializer.ts` (`serializeTurtle`) entirely. After this plan the codebase is JSON-LD-first on both sides of the wire:
 >
-> **Why now.** Survey of every call site (below) shows the Turtle helpers are thin wrappers around N3 (`n3` `Parser`/`Writer`) used in exactly three production shapes:
+> - **SPARQL DATA bodies** come from a new `toNQuads` helper — `jsonld.toRDF(doc, { format: 'application/n-quads' })` — no N3 `Store`, no N3 `Writer`.
+> - **ACRs** are JSON-LD end to end: read via `fetchJsonLd` + frame, mutated in compacted/framed form, written via `putJsonLd` (expanded on the wire).
+> - **`/sparql-admin` CONSTRUCT** responses are `application/ld+json`; the org-context transport parses with `toStore`.
+> - **Reciprocal mirror** writes named-graph N-Quads produced by `toNQuads`.
+> - **Storage notifications** stream NDJSON of **expanded JSON-LD** instead of Turtle chunks.
 >
-> 1. **The SPARQL patch path** — `serializeTurtle` is embedded in `insertPatch`/`deletePatch` (`packages/utils/src/sparql-update.ts`), which feeds `applyPatch` (`Content-Type: application/sparql-update`) in `container.ts`, `agent-registration.ts`, and `activity-registry.ts`. Every dataset/quad in this path is **default-graph** (verified: all quads come from 3-arg `DataFactory.quad(s, p, o)` or `toStore` of flat JSON-LD docs). So the patch body can be produced directly from a JSON-LD doc via `jsonld.toRDF(..., { format: 'application/n-quads' })` — no `Store`, no N3 `Writer`.
-> 2. **The ACR template PUT** — `setAcr` parses a Turtle template string only to re-serialize it back to Turtle and PUT it. A no-op round trip.
-> 3. **CSS notification streams** — `notification-manager.ts` and `test/util.ts` parse stream payloads as Turtle. Stock CSS `8.0.0-alpha.2` **hardcodes Turtle server-side** (`generateChannel` in `StreamingHttp2023Util.js` sets `accept: 'text/turtle'`; the client's `Accept` header is ignored), so requesting `application/ld+json` is not enough. Instead: a custom streaming HTTP emitter (in `@elfpavlik/sai-components`, the existing custom-CSS-components package) that streams **NDJSON of expanded JSON-LD notifications**; the clients read NDJSON and parse each line with `parseJsonld`/`toStore` (expanded docs need no context resolution).
+> **Why.** Every remaining consumer is a thin wrapper around N3 `Parser`/`Writer` feeding either a SPARQL textual patch, an RDF/JS `Store`, or a Turtle HTTP body. The read side is already JSON-LD (`parseJsonld`/`fetchJsonLd`/`toStore`, backed by `jsonld.toRDF`), the storage backend is SPARQL (Oxigraph) so the ACR write `Content-Type` only selects a parser (CSS `QuadToRdfConverter` lists `application/ld+json`), and the notification pipeline's source serializer already emits JSON-LD (`JsonLdNotificationSerializer`).
 >
-> **Phase structure:**
-> 0. ⬜ — Add `toNQuads(doc, base?)` to `packages/utils/src/jsonld.ts` (wraps `jsonld.toRDF(doc, { format: 'application/n-quads' })`) with pinning unit tests (default graph → N-Triples, no graph labels, literal coercion semantics)
-> 1. ⬜ — Convert the SPARQL patch path: `insertPatch`/`deletePatch` accept a JSON-LD doc; `container.ts` helpers (`addStatement`/`removeStatement`/`replaceStatement`/`createContainer`) and crud modules build `withContext(dataModelContext, …)` docs instead of `DataFactory.quad` stores; update tests
-> 2. ⬜ — `setAcr` writes the ACR template string directly (drop the `parseTurtle`→`serializeTurtle` round trip)
-> 3. ⬜ — Custom CSS streaming HTTP emitter (`@elfpavlik/sai-components`): channel `accept` → `application/x-ndjson`, serializer emits expanded JSON-LD + `\n` per notification, emitter guarantees NDJSON framing; clients (`notification-manager.ts`, `test/util.ts`) read NDJSON and parse with `parseJsonld`/`toStore`
-> 4. ⬜ — Delete `turtle-parser.ts`, `turtle-serializer.ts`, `turtle-parser.test.ts`; remove the exports from `packages/utils/src/index.ts`; update the remaining tests that used them for fixtures
->
-> **Each phase ends green**: after every phase `npm run build` (turbo) + `npm test` (turbo, packages) must pass. Phases are ordered so the tests that pin a behavior change are added *before* the change that would break them. The `test/` integration workspace (dagger-only, §Verification) is verified by `tsc --noEmit` locally and the dagger suite as final gate.
+> **Each phase starts green and ends green:** `npm run build` (turbo) + `npm test` (turbo, packages) must pass before and after. Pin the new behavior with a test *before* changing the code that would break it. The `test/` integration workspace (dagger-only) resolves packages via workspace symlinks (root `node_modules/@janeirodigital/interop-utils -> ../../packages/utils`), so it sees source changes after a build — no publish needed; run it as the final gate per phase where it is exercised.
 
 ---
 
-## Current state (surveyed)
+## Decisions (resolved)
 
-### `parseTurtle` — `packages/utils/src/turtle-parser.ts`
+| # | Decision | Choice |
+|---|---|---|
+| 1 | ACR wire format | **JSON-LD.** Dedicated phase; internally compacted/framed, PUT expanded (mirrors the rest of the JSON-LD code). |
+| 2 | `/sparql-admin` CONSTRUCT wire format | **`application/ld+json`** (expanded). Server `jsonld.fromRDF`, client `toStore(await response.json())`. |
+| 3 | Reciprocal mirror named graphs | **JSON-LD named-graph N-Quads** via `toNQuads({ '@id': graphIri, '@graph': doc })`; drop the `GRAPH { }` wrapper. |
+| 4 | Published API removal | **Hard-remove** both helpers + `insertPatch`/`deletePatch` signature change; bump `@janeirodigital/interop-utils` to `1.0.0-rc.27` (internal `^1.0.0-rc.26` ranges still match). |
+| 5 | Storage notification stream | **Reimplement in `@elfpavlik/sai-components`**, NDJSON of **expanded JSON-LD**, reuse the existing `EventsHandler` NDJSON pattern, drop `text/turtle` streaming entirely. |
+| 6 | N3 dependency | **Drop it.** Replace N3 `Store` with `@rdfjs/dataset` and N3 `DataFactory` with `@rdfjs/data-model` (both already in the tree), remove `n3`/`@types/n3`; tests use `jsonld.fromRDF`/`@rdfjs/*`, not N3. |
 
-Exported from `packages/utils/src/index.ts:1` (`export * from './turtle-parser'`). Wraps N3 `Parser` + `Store`, forces the default graph, resolves via Promise.
+---
 
-| Consumer | Kind | Site | Notes |
+## Current state (authoritative inventory)
+
+### `parseTurtle` — `packages/utils/src/turtle-parser.ts`, exported at `packages/utils/src/index.ts:1`
+
+| Consumer | Kind | Site | Phase |
 |---|---|---|---|
-| `data-model/src/crud/agent-registration.ts` | production | `setAcr` (import :6, call :65) | parses `agentRegistrationAcrTemplate(...)` (Turtle string) then immediately re-serializes with `serializeTurtle` and PUTs `text/turtle` (:74) — **no-op round trip** |
-| `application/src/notification-manager.ts` | production | `handleStream` (import :7, call :89) | parses CSS notification stream payload; fetch to `receiveFrom` sets **no Accept header** → CSS defaults to Turtle |
-| `test/util.ts` (root, dagger-only) | production (test infra) | `awaitNotification` (import :5, call :64) | same shape as notification-manager (already TODO-noted as duplicated) |
-| `data-model/test/application-factory.test.ts` | test | :3, :31 | parses an invalid-grant Turtle snippet |
-| `utils/test/turtle-parser.test.ts` | test | whole file (7 tests) | dedicated suite — deleted with the parser |
-| `utils/test/turtle-serializer-test.ts` | test | :3, :14 | fixture construction |
-| `utils/test/match.test.ts` | test | :4, :23 | fixture construction |
-| `utils/test/sparql-update.test.ts` | test | :2, :18, :25 | fixture construction |
+| `data-model`-moved setAcr | production | `packages/authorization-agent/src/agent-registration.ts:32` `setAcr` | 2 |
+| Notification stream | production | `packages/application/src/notification-manager.ts:89` `handleStream` | 5 |
+| Admin ACR rewrite | production | `packages/components/src/temporal/activities/admin.ts:317` `syncAdminAcr` | 2 |
+| Org-context CONSTRUCT | production | `packages/components/src/services/queries/org.ts:150` `fetchTriples` | 3 |
+| Integration test infra | test | `test/util.ts:105` `awaitNotification` | 5 |
+| Integration tests | test | `test/revocation-rpc.test.ts:53`, `test/delegation-endpoint.test.ts:65` (grant-registry GET) | 3 |
+| Integration tests | test | `test/admin-events.test.ts:280`, `test/personal-admin.test.ts:106` (ACR GET) | 2 |
+| Unit tests | test | `utils/test/match.test.ts:23`, `utils/test/sparql-update.test.ts:52,59`, `utils/test/turtle-parser.test.ts` (whole file), `utils/test/turtle-serializer-test.ts` | 6 |
 
-### `serializeTurtle` — `packages/utils/src/turtle-serializer.ts`
+### `serializeTurtle` — `packages/utils/src/turtle-serializer.ts`, exported at `packages/utils/src/index.ts:4`
 
-Exported from `packages/utils/src/index.ts:4`. Wraps N3 `Writer` (`format: 'text/turtle'`), optional `trim` (named-graph → TriG).
-
-| Consumer | Kind | Site | Notes |
+| Consumer | Kind | Site | Phase |
 |---|---|---|---|
-| `utils/src/sparql-update.ts` | production | :2, :5, :9 | `insertPatch`/`deletePatch` embed `serializeTurtle(dataset)` in `INSERT DATA { … }` / `DELETE DATA { … }` |
-| `data-model/src/crud/agent-registration.ts` | production | `setAcr` (:7, :74) | PUT body — eliminated by Phase 2 (write template directly) |
-| `data-model/src/crud/container.ts` | transitive | `applyPatch` (:34-45, `application/sparql-update`), `addStatement` (:58), `removeStatement` (:67), `replaceStatement` (:78-79), `createContainer` (:104) | via `insertPatch`/`deletePatch` |
-| `data-model/src/crud/agent-registration.ts` | transitive | `replaceDataGrants` (:158-159) | via `insertPatch`/`deletePatch` |
-| `data-model/src/crud/activity-registry.ts` | transitive | `updateActivityStatus` (:128, :133) | via `insertPatch`/`deletePatch` |
-| `utils/test/turtle-serializer-test.ts`, `utils/test/sparql-update.test.ts`, `data-model/test/crud/container.test.ts` | test | — | assert patch strings / round trips |
+| SPARQL patch path | production | `packages/utils/src/sparql-update.ts:7,11` `insertPatch`/`deletePatch` | 1 |
+| setAcr | production | `packages/authorization-agent/src/agent-registration.ts:41` | 2 |
+| Admin ACR rewrite | production | `packages/components/src/temporal/activities/admin.ts:359` `syncAdminAcr` | 2 |
+| `/sparql-admin` CONSTRUCT | production | `packages/components/src/AdminSparqlHandler.ts:156` | 3 |
+| Reciprocal mirror | production | `packages/components/src/services/ReciprocalMirror.ts:116` (`GRAPH <iri> { … }`) | 4 |
+| Unit tests | test | `utils/test/sparql-update.test.ts`, `utils/test/turtle-serializer-test.ts` | 6 |
 
-**Key facts:**
-- Every dataset reaching `insertPatch`/`deletePatch` is **default-graph only**: `addStatement`/`removeStatement`/`replaceStatement` build `new Store([quad])` from 3-arg `DataFactory.quad` calls. **Update (dedicated-registries.md):** the agent-registry container link statements — `agent-registry.ts:133,167,201`, patching `hasApplicationRegistration`/`hasSocialAgentRegistration`/`hasSocialAgentInvitation` into the container — are **gone** (containment is server-managed `ldp:contains`; the extra container PATCH was deleted). The remaining production callers are registration-body statements only: `authorization-agent.ts` (`reciprocalRegistration`), `agent-registration.ts` (`addDataGrant` → `hasDataGrant`), `social-agent-registration.ts` (`setAccessNeedGroup` → `hasAccessNeedGroup`). The `createContainer` datasets listed below (`grant-registry.ts:22-24`, `role-registry.ts:79-81`, `data-registry.ts:101-103`, `agent-registry.ts:214-216`, `activity-registry.ts:54-56`, `authorization-registry.ts:98-100`) **predate reorganize-authz-agent-logic** — registries are seeded via `data-model/src/templates/RegistrySet.ts` and the only runtime `createContainer` sites are `application-registration.ts:24`, `social-agent-registration.ts:45` (type quad at :42), `data-registration.ts:22`; re-verify the whole site list when Phase 1 starts. N-Quads from `toRDF` therefore has no graph labels = N-Triples = valid Turtle = valid in SPARQL data blocks.
-- The whole-resource write path **already builds JSON-LD docs** (`withContext(dataModelContext, data)` → `toStore`): `data-registration.ts:64-68`, `application-registration.ts:79-82`. Phase 1 removes the intermediate `Store` there too (pass the doc straight to `createContainer`).
-- `dataModelContext` (`packages/data-model/src/context.ts`) already defines every predicate used by hand-built quads: `registeredAgent`, `hasDataGrant` (`@set`), `status`, `prefLabel`, `note`, plus `id`/`type` (`@id`/`@type`). The former `hasApplicationRegistration`/`hasSocialAgentRegistration` framing terms were **removed by dedicated-registries**, replaced by the RegistrySet-link terms `hasSocialAgentRegistry`/`hasApplicationRegistry`/`hasInvitationRegistry` — those appear only on the RegistrySet, never in hand-built registration quads. No context changes needed.
-- `parseJsonld` (`packages/utils/src/jsonld-parser.ts`) already wraps `jsonld.toRDF` and its `localDocumentLoader` ships the solid notifications context (`https://www.w3.org/ns/solid/notifications-context/v1`) — the JSON-LD read side is ready.
+### Transitive `insertPatch`/`deletePatch`/`addStatement`/`removeStatement`/`replaceStatement` callers (Phase 1)
 
-**Dependency note:** `n3` stays a dependency regardless — `parseJsonld` and `toStore` collect quads into an N3 `Store`, and `match.ts` operates on datasets. Only the N3 `Parser`/`Writer` usage in the Turtle helpers goes away.
+- `packages/utils/src/container.ts:40` — `createContainer(id, fetch, dataset)`.
+- `packages/authorization-agent/src/agent-registration.ts:57,71,109,110` — `addDataGrant`, `removeDataGrant`, `replaceDataGrants`.
+- `packages/authorization-agent/src/social-agent-registration.ts:75,76` — `replaceAdminGrantLinks`; `:40` hand-built type quad + `createContainer`.
+- `packages/authorization-agent/src/authorization-agent.ts:585-598` — `discoverAndUpdateReciprocal` (`addStatement`/`replaceStatement`).
+- `packages/authorization-agent/src/application-registration.ts:50`, `data-registration.ts:22` — `createContainer` (already via `toStore(withContext(...))`).
+- `packages/data-model/src/agent-registration.ts:14` `toDataset`, `packages/data-model/src/social-agent-registration.ts:67` `toDataset` — hand-built `DataFactory.quad` stores.
+
+**Note (stale in the old plan):** `packages/data-model/src/crud/` no longer exists; CRUD moved to `packages/authorization-agent/src/`. `data-model/src/activity-registry.ts` no longer builds quad stores.
+
+**Dependency (decision 6):** `n3` is currently used for `Store`/`DataFactory`/`Parser`/`Writer` across `utils`, `authorization-agent`, `data-model`, `components` (~30 files). Phases 1/3/4/6 remove the `Parser`/`Writer` and most hand-built quads; **Phase 7** replaces the remaining `Store`/`DataFactory` with `@rdfjs/dataset`/`@rdfjs/data-model` and removes the dependency. `@rdfjs/types` stays.
 
 ---
 
 ## Phase 0 — Add `toNQuads` helper (+ pinning tests)
 
-New export in **`packages/utils/src/jsonld.ts`**:
+New export in **`packages/utils/src/jsonld.ts`**, next to `toStore`:
 
 ```ts
 /**
  * Serialize a JSON-LD document (with embedded context) to N-Quads text via
- * jsonld.toRDF. For default-graph documents the output is N-Triples (valid
- * Turtle), suitable as a SPARQL INSERT/DELETE DATA block body.
+ * jsonld.toRDF. Default-graph documents yield N-Triples (valid Turtle data
+ * block body); a named-graph doc `{ '@id': graphIri, '@graph': doc }` yields
+ * N-Quads with the graph label in the 4th term.
  */
 export async function toNQuads(doc: Record<string, unknown>, base?: string): Promise<string> {
-  return jsonld.toRDF(doc, { format: 'application/n-quads', base, documentLoader })
+  return (await jsonld.toRDF(doc, {
+    format: 'application/n-quads',
+    base,
+    documentLoader,
+  })) as unknown as string
 }
 ```
 
-Pinning tests (new `packages/utils/test/to-nquads.test.ts`):
-- flat doc → pure N-Triples: every line `<s> <p> <o> .` with **no 4th term** (assert with a regex / by round-tripping through N3 `Parser` and checking all `graph.termType === 'DefaultGraph'`)
-- plain string literal stays `"plain"` (no `xsd:string` datatype in output)
-- JS number → `"42"^^xsd:integer`; JS boolean → `"true"^^xsd:boolean` (document the coercion)
-- IRI-valued term needs `@type: '@id'` in the context (documents the `dataModelContext` requirement)
-- empty doc (no properties) → `''` → `DELETE DATA {  }` is valid
-- base IRI resolution for relative IRIs
+Pinning tests — new `packages/utils/test/to-nquads.test.ts`:
+- flat doc → every line `<s> <p> <o> .` with **no 4th term** (round-trip through N3 `Parser`, assert all `graph.termType === 'DefaultGraph'`);
+- plain string literal stays `"plain"` (no `xsd:string` in output);
+- JS number → `"42"^^xsd:integer`, boolean → `"true"^^xsd:boolean`;
+- IRI-valued term needs `@type: '@id'` in the context (documents the requirement);
+- empty doc → `''`;
+- base IRI resolution for relative IRIs;
+- **named graph:** `{ '@id': g, '@graph': doc }` → each line carries `<g>` as the 4th term.
 
-**Done when:** `toNQuads` is exported, tests pass, nothing consumes it yet.
+**Done when:** `toNQuads` exported, tests pass, no consumer yet.
 
 ---
 
-## Phase 1 — Convert the SPARQL patch path to JSON-LD docs
+## Phase 1 — SPARQL patch path → JSON-LD docs
 
 ### 1a. `packages/utils/src/sparql-update.ts`
-
-Change `insertPatch`/`deletePatch` to accept a JSON-LD doc instead of `DatasetCore`:
 
 ```ts
 export async function insertPatch(doc: Record<string, unknown>, base?: string): Promise<string> {
@@ -108,145 +116,191 @@ export async function deletePatch(doc: Record<string, unknown>, base?: string): 
 }
 ```
 
-(Breaking change to the published `@janeirodigital/interop-utils` API — **accepted** (see Open questions); doc-only signature, no `DatasetCore` overload. Every caller converts in 1b/1c.)
+- `addStatement`/`removeStatement`/`replaceStatement` take `withContext(dataModelContext, …)` docs (not `Quad`s); drop `new Store([...])`.
+- `applyPatch` unchanged (SPARQL `PATCH`, description resource discovered via HEAD + Link).
+- Breaking API change to published `interop-utils` — accepted (decision 4); no `DatasetCore` overload.
 
-### 1b. `packages/data-model/src/crud/container.ts`
+### 1b. `packages/utils/src/container.ts`
 
-- `addStatement(iri, factory, doc)` / `removeStatement(iri, factory, doc)` / `replaceStatement(iri, factory, whichDoc, withDoc)` — take `withContext(dataModelContext, …)` docs instead of `Quad`s; drop the `new Store([quad])` construction.
-- `createContainer(iri, factory, doc)` — takes the doc; callers pass `withContext(dataModelContext, data)` **directly** (removes the intermediate `toStore` in `data-registration.ts:68` and `application-registration.ts:82`).
-- `applyPatch` is unchanged — still the SPARQL `PATCH` transport (`Content-Type: application/sparql-update`, description resource via HEAD + Link).
+- `createContainer(id, fetch, doc)` — pass the doc straight to `insertPatch`.
+- Callers pass `withContext(dataModelContext, data)` directly:
+  - `authorization-agent/src/application-registration.ts:50` (remove intermediate `toStore`),
+  - `authorization-agent/src/data-registration.ts:22` (remove intermediate `toStore`),
+  - `authorization-agent/src/social-agent-registration.ts:38-46` (replace `toDataset` + type quad with one doc).
 
-### 1c. crud modules — replace `DataFactory.quad` with docs
+### 1c. crud callers — replace `DataFactory.quad` with docs
 
-| Module (site) | Current | Doc |
+| Site | Now | Doc |
 |---|---|---|
-| `agent-registration.ts` `toDataset` (:35-48) | `Store` + quads for `registeredAgent`/`hasDataGrant` | `withContext(dataModelContext, { '@id': data.id, registeredAgent, hasDataGrant })` |
-| `agent-registration.ts` `addDataGrant`/`removeDataGrant`/`replaceDataGrants` (:101, :115, :152-159) | `DataFactory.quad(…, hasDataGrant, …)` + `new Store` | doc `{ '@id': id, hasDataGrant: iri }` / `{ '@id': id, hasDataGrant: [...] }` (empty set → key omitted → `DELETE DATA {  }`) |
-| type quads — **dedicated-registries removed the `agent-registry.ts:214-216` registry-type row** (registry containers are seeded via `templates/RegistrySet.ts`, no runtime `createContainer`); the remaining hand-built type quad is the social-agent registration: `social-agent-registration.ts:42` (`INTEROP.terms.SocialAgentRegistration`); re-verify the older `grant/role/data/activity/authorization-registry` refs at Phase 1 start | `quad(namedNode(id), RDF.type, INTEROP.terms.XRegistry)` | `{ '@id': id, type: INTEROP.terms.XRegistry }` — `@type` values are full IRIs (no `@vocab` in `dataModelContext`) |
-| link statements — **gone: dedicated-registries deleted the agent-registry container links** (`hasApplicationRegistration`/`hasSocialAgentRegistration`/`hasSocialAgentInvitation` — containment is server-managed; the predicates no longer exist); remaining registration-body statements per the key facts: `authorization-agent.ts` `reciprocalRegistration`, `agent-registration.ts` `addDataGrant`, `social-agent-registration.ts` `setAccessNeedGroup` | quads | `{ '@id': id, reciprocalRegistration: iri }` / `{ '@id': id, hasDataGrant: [...] }` / `{ '@id': id, hasAccessNeedGroup: iri }` |
-| `social-agent-registration.ts:100-106` | `prefLabel`/`note` literals | `{ '@id': node, prefLabel, note }` (plain literal terms) |
-| `activity-registry.ts:128-134` `updateActivityStatus` | delete old `status` literal + insert new | docs `{ '@id': iri, status }` for both (prior value read via `loadActivity`, same as today) |
+| `authorization-agent/src/agent-registration.ts:52-57` `addDataGrant` | `quad(id, hasDataGrant, grant)` | `{ '@id': id, hasDataGrant: grantIri }` |
+| `…:66-71` `removeDataGrant` | same | same |
+| `…:103-110` `replaceDataGrants` | remove/add quad sets | doc `{ '@id': id, hasDataGrant: [...] }` per direction |
+| `authorization-agent/src/social-agent-registration.ts:68-76` `replaceAdminGrantLinks` | remove/add quad sets | doc `{ '@id': id, hasAdminGrant: [...] }` |
+| `authorization-agent/src/authorization-agent.ts:585-598` `discoverAndUpdateReciprocal` | `reciprocalRegistration` quad + prior quad | `{ '@id': id, reciprocalRegistration: iri }` for add/replace |
+| `data-model/src/agent-registration.ts:14` `toDataset` | `Store` of `registeredAgent`/`hasDataGrant` | `withContext(dataModelContext, { '@id': data.id, registeredAgent, hasDataGrant })` |
+| `data-model/src/social-agent-registration.ts:67` `toDataset` | `Store` of `label` (language map), `note`, plus the `registrationToDataset` fields (`registeredAgent`/`hasDataGrant`/`reciprocalRegistration`) | `withContext(dataModelContext, { '@id': id, label: data.label, note, …registrationToDataset fields, type: data.type })` — `label` is a language map (`@container: '@language'`, `dataModelContext:167`); the old `prefLabel` key no longer exists |
 
-`removeStatement`/`replaceStatement` still need the **exact prior quad** — callers already track `priorQuad` (`social-agent-registration.ts:157,192`); they track the prior *doc* instead. Resulting quad is identical (default graph; plain literals get `xsd:string` under RDFJS, matching N3 `DataFactory.literal`).
+`removeStatement`/`replaceStatement` need the **exact prior statement** — callers already track the prior value (`authorization-agent.ts:591` priorQuad) → track the prior doc instead. Resulting quad is identical (default graph; plain literals get `xsd:string` under RDFJS, matching N3 `DataFactory.literal`).
 
 ### 1d. tests
 
-- `packages/utils/test/sparql-update.test.ts` — build expected patch strings via `toNQuads` (or assert round-trip: parse the body's data block back and compare quads).
-- `packages/data-model/test/crud/container.test.ts` — update `insertPatch`/`deletePatch` call shape.
-- data-model crud tests that assert patched stores — unchanged (they assert server-side effects, not bodies).
+- `packages/utils/test/sparql-update.test.ts` — build expected bodies via `toNQuads`, or assert round-trip (parse the data block back, compare quads).
+- `packages/data-model/test/crud/*` / authorization-agent tests asserting patched stores — unchanged (they assert server-side effects, not bodies).
+- `packages/authorization-agent` and `packages/data-model` package tests run green.
 
-**Done when:** no `DataFactory.quad` / `Store` construction remains in `packages/data-model/src/crud/*`; `serializeTurtle` has exactly one production consumer left (`setAcr`).
-
----
-
-## Phase 2 — `setAcr` writes the template directly
-
-`packages/data-model/src/crud/agent-registration.ts` `setAcr` (:65-74) currently:
-
-```ts
-const dataset = await parseTurtle(agentRegistrationAcrTemplate({ id, owner, peer }))
-const response = await factory.fetch(acrLocation, {
-  method: 'PUT',
-  body: await serializeTurtle(dataset),
-  headers: { 'Content-Type': 'text/turtle' },
-})
-```
-
-The template is already a Turtle string, so:
-
-```ts
-const response = await factory.fetch(acrLocation, {
-  method: 'PUT',
-  body: agentRegistrationAcrTemplate({ id, owner, peer }),
-  headers: { 'Content-Type': 'text/turtle' },
-})
-```
-
-(If a JSON-LD ACR write is ever wanted instead, `jsonld.fromRDF` + `application/ld+json` — but that's out of scope; the template stays Turtle on the wire.)
-
-**Done when:** `parseTurtle` and `serializeTurtle` have **zero production consumers**; `turtle-serializer.ts` remains only as a library export + its own tests.
+**Done when:** no `DataFactory.quad`/`new Store(` construction remains in `authorization-agent/src/{agent-registration,social-agent-registration,authorization-agent,application-registration,data-registration}.ts` or the two `data-model` `toDataset`s; `serializeTurtle` left only in `setAcr`, `syncAdminAcr`, `AdminSparqlHandler`, `ReciprocalMirror`.
 
 ---
 
-## Phase 3 — Custom CSS streaming HTTP emitter: NDJSON of expanded JSON-LD notifications
+## Phase 2 — ACRs → JSON-LD (decision 1 = B)
 
-### Server research (CSS `8.0.0-alpha.2`, `@solid/community-server`)
+> Start green: existing ACR tests (`test/admin-events.test.ts`, `test/personal-admin.test.ts`) pass against Turtle. End green: same tests pass reading/writing JSON-LD.
 
-The streaming pipeline and where Turtle is baked in:
+### 2a. ACP vocabulary + context
 
-| Piece | File (dist) | Turtle hardcoding |
-|---|---|---|
-| Channel generation | `server/notifications/StreamingHttpChannel2023/StreamingHttp2023Util.js` | **`generateChannel(topic)` returns `accept: 'text/turtle'`** — the single lever; a plain exported function, called from the two classes below |
-| receiveFrom endpoint | `…/StreamingHttpRequestHandler.js` | sends the **initial notification** through generator+serializer, sets response `Content-Type` to `channel.accept`, **ignores the client's `Accept` header** |
-| Activity listener | `…/StreamingHttpListeningActivityHandler.js` | calls `generateChannel(topic)` per event, then the notification handler chain |
-| Serializer chain | `notifications/serialize/ConvertingNotificationSerializer.js` + `JsonLdNotificationSerializer.js` | source serializer **already emits JSON-LD** (`JSON.stringify(notification)`); `ConvertingNotificationSerializer` converts to `channel.accept` via the RepresentationConverter |
-| Emitter | `…/StreamingHttp2023Emitter.js` | reads each serialized notification to a string and writes it as a **single chunk** per stream — already correct for NDJSON line framing |
+- Extend `ACP` in `packages/utils/src/namespaces.ts` (currently only `PublicAgent`/`PublicClient`) with `AccessControlResource`, `AccessControl`, `Policy`, `Matcher`, `apply`, `allow`, `anyOf`, `agent`, `client`, `resource`, `accessControl`, `memberAccessControl`; add `ACL.Control` to `ACL`.
+- Add a dedicated `acrContext` (`packages/data-model/src/context.ts` or a sibling) with `@version: 1.1`, `id`/`type` aliases, and the ACP/ACL terms (node-ref vs literal coercion per JSON-LD).
 
-Key facts:
-- The `Notification` object is **compacted JSON-LD** (`{ '@context': [activitystreams, notification/v1], id, type, object, state?, target?, published }`, e.g. from `ActivityNotificationGenerator.js`). **Expanded** form drops `@context` and uses full IRIs — parseable client-side with no context resolution.
-- **Local context inventory** (`packages/utils/src/jsonld-parser.ts` `localContexts`): only `oidc-context.jsonld` and `notifications-context/v1` (the **channel/subscription** context, used by `subscribeViaPush`/`AgentIdHandler`). The notification-**object** contexts — `https://www.w3.org/ns/solid/notification/v1` and `https://www.w3.org/ns/activitystreams` — are **absent**; `localDocumentLoader` would fall through to network `fetch` for them.
-- `https://www.w3.org/ns/solid/notification/v1` is **not resolvable publicly** (404 at `w3.org`, `solidproject.org`, `w3id.org`, GitHub raw — verified) — it exists only as the `CONTEXT_NOTIFICATION` constant in CSS source. **However, CSS vendors both notification contexts locally**: `@solid/community-server/templates/contexts/{notification,activitystreams}.jsonld`, mapped in `config/util/representation-conversion/converters/rdf-to-quad.json` (`https://www.w3.org/ns/solid/notification/v1` → `@css:templates/contexts/notification.jsonld`, `https://www.w3.org/ns/activitystreams` → `@css:templates/contexts/activitystreams.jsonld`). This is exactly how the stock Turtle stream works today (JSON-LD → RdfToQuadConverter with these contexts → quad-to-Turtle), and it pins the expanded-form IRIs (see 3a.2).
-- All pieces are Components.js components wired in `config/http/notifications/{base,streaming-http}/*.json` (`urn:solid-server:default:StreamingHttp2023Emitter`, `BaseNotificationSerializer`, `StreamingHttp2023RequestHandler`, `StreamingHttpListeningActivityHandler`).
-- `@elfpavlik/sai-components` is the established custom-components package for this CSS deployment (external npm dep, imported via `sai:config/registry.json`; ships `dist/components/components.jsonld` via `componentsjs-generator`) — the natural home for the custom emitter.
+### 2b. ACR model functions
 
-### 3a. Server: custom components (in `@elfpavlik/sai-components`)
+- Replace the Turtle string generators `packages/data-model/src/templates/AgentRegistration.acr.ts` and `DataGrant.acr.ts` with JSON-LD builders (`…AcrJsonLd({...}) → withContext(acrContext, {...})`), mirroring the existing `toJsonLd` pattern.
+- Keep `packages/data-model/src/templates/RegistrySet.ts` unchanged — the registry-set ACR is seeded via SPARQL named graphs, not an ACR PUT (used by `components/src/services/Account.ts:46`, `repl/add-user.ts:58`).
+- Reads: `fetchJsonLd(acrId, fetch)` + `frameNode`/`frameDoc`; internal code uses the compacted/framed form only.
 
-1. **Channel generation override.** Replace the two classes that call the hardcoded `generateChannel`:
-   - subclass/reimplement `StreamingHttpRequestHandler` and `StreamingHttpListeningActivityHandler` (or extract a shared channel factory) so the channel is `{ … , accept: 'application/x-ndjson' }`.
-   - **Optional superset:** negotiate from the request's `Accept` header (`application/x-ndjson` → NDJSON; `text/turtle` → Turtle) so existing Turtle consumers keep working. If skipped, the format is server-fixed to NDJSON.
-2. **Serializer: expanded JSON-LD + `\n`.** New `NotificationSerializer`:
-   - **required (not just preferred):** construct the expanded form **directly** — no context resolution, deterministic; `jsonld.expand` is not viable (`notification/v1` 404s publicly). **The IRIs are pinned from CSS's own vendored contexts** (`templates/contexts/{notification,activitystreams}.jsonld`, see research): `id` → `@id`; `type` → `@type` = `https://www.w3.org/ns/activitystreams#<Type>`; `object`/`target` → `https://www.w3.org/ns/activitystreams#{object,target}` as `{ '@id' }`; `published` → `https://www.w3.org/ns/activitystreams#published` as `{ '@type': xsd:dateTime, '@value' }`; `state` → `http://www.w3.org/ns/solid/notifications#state` as `{ '@value' }` (same IRI the client's local `notifications-context/v1` already maps).
-   - output `Content-Type: application/x-ndjson`; **bypass `ConvertingNotificationSerializer`** (its RepresentationConverter has no NDJSON target — wire the custom serializer directly, or make `accept` skip conversion).
-3. **Emitter: NDJSON framing.** New `StreamingHttp2023Emitter` subclass: guarantees exactly one JSON object per line (explicit `\n` terminator), sets `Content-Type: application/x-ndjson` on the streams, optional heartbeat. (The stock emitter already writes whole chunks — the serializer newline plus a thin emitter is sufficient.)
-4. **Config.** Components.js config in `sai-components` overriding `urn:solid-server:default:StreamingHttp2023Emitter`, `BaseNotificationSerializer`, `StreamingHttp2023RequestHandler`, `StreamingHttpListeningActivityHandler` (or a full streaming-http override that imports + overrides the base pieces).
+### 2c. Call sites
 
-### 3b. Client: NDJSON reader (fixes the multi-chunk bug)
+| Site | Change |
+|---|---|
+| `authorization-agent/src/agent-registration.ts:25-44` `setAcr` | `putJsonLd(acrLocation, fetch, agentRegistrationAcrJsonLd({ id, owner, peer }))` — removes the parse→serialize round trip |
+| `components/src/temporal/activities/grants.ts:380-441` `createAcr` | `putJsonLd(acrId, session.fetch, dataGrantAcrJsonLd({...}))` |
+| `components/src/temporal/activities/admin.ts:182-216` `createAdminGrantAcr` | `putJsonLd(acrId, session.fetch, dataGrantAcrJsonLd({...}))` |
+| `components/src/temporal/activities/admin.ts:295-402` `syncAdminAcr` | `fetchJsonLd(acrId)` → mutate framed JSON-LD (strip the `#fullAdminAccess` `acp:apply`/`acp:anyOf` subtree + `#root` wiring, re-add) → `putJsonLd` |
 
-`packages/application/src/notification-manager.ts` `handleStream` (:89) and `test/util.ts` `awaitNotification` (:64):
+`putJsonLd` (`packages/utils/src/jsonld.ts:412`) already expands before PUT; no new write helper needed.
 
-```ts
-// buffer chunks, split on newlines, JSON.parse per line (expanded JSON-LD)
-// each line: { '@id', '@type': [as:Type], 'as:object': { '@id' }, … }
-const doc = JSON.parse(line)
-const dataset = await toStore(doc) // or parseJsonld(JSON.stringify(doc)) — no context resolution needed
-const type = getOneMatchingQuad(dataset, null, RDF.terms.type)!.object.value
-const object = getOneMatchingQuad(dataset, null, AS.terms.object)!.object.value
-```
+### 2d. tests
 
-NDJSON forces buffering across chunk boundaries — the per-chunk `TextDecoder` decode in both files is a latent multi-chunk bug today; this fixes it as a side effect. (Dedupe the duplicated stream logic TODO between the two files while here.)
+- `test/admin-events.test.ts:280`, `test/personal-admin.test.ts:106` — read ACRs with `fetchJsonLd`/`toStore` instead of `Accept: text/turtle` + `parseTurtle`.
+- New unit test for `syncAdminAcr`'s rewrite (remove + re-add `#fullAdminAccess`, empty-admin case) at the JSON-LD level.
+- Verify CSS accepts the JSON-LD ACR PUT (integration/dagger).
 
-**Verification:** run services/css with the custom components, subscribe to a resource, assert the stream is `application/x-ndjson` with one expanded JSON-LD object per line; `test/policy-engine.test.ts` (dagger) exercises `awaitNotification` end-to-end.
-
-**Done when:** neither `notification-manager.ts` nor `test/util.ts` imports `parseTurtle`; the CSS deployment streams NDJSON expanded JSON-LD.
+**Done when:** `parseTurtle`/`serializeTurtle` have zero ACR consumers; the ACR tests pass on JSON-LD.
 
 ---
 
-## Phase 4 — Delete the Turtle helpers
+## Phase 3 — `/sparql-admin` CONSTRUCT → `application/ld+json` (decision 2 = C)
+
+- `packages/components/src/AdminSparqlHandler.ts:152-158` — CONSTRUCT branch: `payload = JSON.stringify(await jsonld.fromRDF(store))`, `mediaType = 'application/ld+json'`; drop the `serializeTurtle` import. (The internal hop still uses `fetch-sparql-endpoint`'s own Turtle parsing — unaffected, not our helper.)
+- `packages/components/src/services/queries/org.ts:76-86` — add `application/ld+json` to the `Accept` header.
+- `org.ts:149-151` — `fetchTriples`: `toStore((await response.json()) as Record<string, unknown>)`; drop `parseTurtle`.
+- Tests:
+  - `packages/components/test/data-registry.test.ts:88-89` — mock the CONSTRUCT response as `application/ld+json` with an expanded body.
+  - `test/revocation-rpc.test.ts:53`, `test/delegation-endpoint.test.ts:65` — grant-registry container GET: `Accept: application/ld+json` + `toStore`/`fetchJsonLd` instead of `parseTurtle`.
+- Leave `test/policy-engine.test.ts` Turtle alone — generic CSS fixture PUT/GET, not a helper consumer.
+
+**Done when:** neither `AdminSparqlHandler.ts` nor `org.ts` imports the helpers; component/unit tests green.
+
+---
+
+## Phase 4 — Reciprocal mirror → named-graph N-Quads (decision 3 = B)
+
+- `packages/components/src/services/ReciprocalMirror.ts`:
+  - `fetchGraph` returns the JSON-LD **doc** (drop the `toStore`/`Store`).
+  - grant IRIs via `documentValues(doc, reciprocalIri, INTEROP.hasDataGrant)` (`packages/utils/src/jsonld.ts:295`) — **note:** document-wide; use `frameNode` + `strs` scoped to `reciprocalIri` if subject-scoping must be preserved exactly.
+  - serialization: `toNQuads({ '@id': graphIri, '@graph': doc })`; assemble `INSERT DATA { <n-quads> }` without the `GRAPH { }` wrapper.
+- Add a unit test pinning `{ '@id': g, '@graph': doc }` → N-Quads with `<g>` graph terms (overlaps Phase 0 tests).
+
+**Done when:** `ReciprocalMirror.ts` no longer imports `serializeTurtle`/`toStore`; mirror behavior verified in the dagger suite.
+
+---
+
+## Phase 5 — NDJSON storage notifications (decision 5)
+
+> Start green: current Turtle streaming works. End green: NDJSON expanded JSON-LD streaming works; both clients read it; Turtle streaming is gone.
+
+### 5a. Server — `@elfpavlik/sai-components`
+
+Reimplement (do not subclass) the two thin CSS classes, reusing the existing NDJSON pattern from `packages/components/src/EventsHandler.ts` (`guardStream(new PassThrough())`, heartbeat, `application/x-ndjson`):
+
+1. **Channel factory + request handler.** A custom `StreamingHttpRequestHandler` whose channel is `{ …generateChannel fields, accept: 'application/x-ndjson' }`. CSS `StreamingHttp2023Util.js` hardcodes `accept: 'text/turtle'` and is not injectable, hence the reimplementation.
+2. **Activity listener.** Custom `StreamingHttpListeningActivityHandler` using the same NDJSON channel factory.
+3. **Serializer.** Custom `NotificationSerializer` that converts the compacted CSS `Notification` object into **expanded JSON-LD directly** (no `jsonld.expand` — `https://www.w3.org/ns/solid/notification/v1` 404s publicly), appends `\n`, and returns `application/x-ndjson`. Bypass `ConvertingNotificationSerializer` (its `RepresentationConverter` has no NDJSON target).
+   - Pinned IRIs (CSS vendored contexts `templates/contexts/{notification,activitystreams}.jsonld`):
+     `id→@id`; `type→@type` = `https://www.w3.org/ns/activitystreams#<Type>`; `object`/`target` → `https://www.w3.org/ns/activitystreams#{object,target}` as `{ '@id' }`; `published` → `https://www.w3.org/ns/activitystreams#published` as `{ '@type': xsd:dateTime, '@value' }`; `state` → `http://www.w3.org/ns/solid/notifications#state` as `{ '@value' }`.
+   - Notification shapes to cover: `ActivityNotificationGenerator` (`{id,type,object,state,published}`), `AddRemoveNotificationGenerator` (+`target`), `DeleteNotificationGenerator` (no `state`), and the initial `StateNotificationGenerator` notification sent through the same serializer.
+4. **Emitter.** Thin custom `StreamingHttp2023Emitter` guaranteeing exactly one JSON object per line + `application/x-ndjson` (the stock emitter already writes whole chunks).
+5. **Config.** New `sai:config/http/notifications/ndjson.json` overriding `urn:solid-server:default:StreamingHttp2023RequestHandler`, `…:BaseNotificationSerializer`, `…:StreamingHttp2023Emitter`, `…:StreamingHttpListeningActivityHandler`, `…:StreamingHttpNotificationHandler`; import it from `packages/components/config/{registry,data}.json` in place of relying on stock `css:config/http/notifications/streaming-http/http.json` values.
+
+Start with expanded JSON-LD (as-is); a compacted form can follow later if needed.
+
+### 5b. Client — NDJSON reader
+
+- `packages/application/src/notification-manager.ts` `handleStream` and `test/util.ts` `awaitNotification`/`openNotificationStream`:
+  - buffer across chunk boundaries, split on `\n`, `JSON.parse` per line, `toStore(doc)` (expanded → no context resolution);
+  - **discard the first _line_** (the initial notification), not the first chunk;
+  - dedupe the duplicated stream logic between the two files (existing TODO).
+- Keep the emitted `notification` event detail shape `{ type, object }`.
+
+### 5c. `examples/vuejectron`
+
+No code change expected — it consumes only `NotificationManager`'s `notification` event (`examples/vuejectron/src/store/app.ts:73-83`, compares `AS.Update`). Verify it still works against the NDJSON stream and update only if the event detail changes.
+
+### 5d. Verification
+
+- Run services/css with the custom components; subscribe to a resource; assert `Content-Type: application/x-ndjson` and one self-contained expanded JSON-LD object per line (initial + one per change).
+- `test/policy-engine.test.ts` (dagger) exercises `awaitNotification` end to end.
+
+**Done when:** neither `notification-manager.ts` nor `test/util.ts` imports `parseTurtle`; CSS streams NDJSON; no `text/turtle` streaming path remains.
+
+---
+
+## Phase 6 — Delete the Turtle helpers (decision 4 = A)
 
 1. Delete `packages/utils/src/turtle-parser.ts` and `packages/utils/src/turtle-serializer.ts`.
-2. Remove `export * from './turtle-parser'` (index.ts:1) and `export * from './turtle-serializer'` (index.ts:4).
-3. Delete `packages/utils/test/turtle-parser.test.ts`.
-4. Update remaining fixture construction that used `parseTurtle`:
-   - `packages/utils/test/turtle-serializer-test.ts` — **deleted** with the serializer (Phase 2 removes its production consumer; if the file outlives it, rewrite fixtures via `toNQuads` round-trip or direct `Store` + `DataFactory.quad`).
-   - `packages/utils/test/match.test.ts` — fixtures via `parseJsonld` or direct `Store` + `DataFactory.quad`.
-   - `packages/data-model/test/application-factory.test.ts` — `parseJsonld(JSON.stringify(...))` or direct Store.
-5. Grep for stragglers: `rg -n "parseTurtle|serializeTurtle" --glob '!**/node_modules/**'` should only hit docs.
+2. Remove `export * from './turtle-parser'` (`index.ts:1`) and `export * from './turtle-serializer'` (`index.ts:4`).
+3. Delete `packages/utils/test/turtle-parser.test.ts`; delete `packages/utils/test/turtle-serializer-test.ts` (or rewrite via `toNQuads`/direct `Store` if any case still matters).
+4. Migrate remaining fixture construction: `packages/utils/test/match.test.ts`, `packages/utils/test/sparql-update.test.ts` — via `parseJsonld`/`toStore` or direct `Store` + `DataFactory.quad`.
+5. Bump `packages/utils/package.json` version to `1.0.0-rc.27` (internal `^1.0.0-rc.26` ranges still satisfy it).
+6. Grep gate: `rg -n "parseTurtle|serializeTurtle" --glob '!**/node_modules/**' --glob '!**/dist/**'` hits only docs.
 
-**Done when:** both files and their exports are gone; full build + test pass.
+**Done when:** both files and their exports are gone; `npm run build` + `npm test` (turbo, packages) and the dagger `test/` suite pass.
 
-## Open questions / decisions
+---
 
-1. ✅ **decided — breaking API change accepted (Phase 1a).** `insertPatch`/`deletePatch` change from `DatasetCore` to a JSON-LD doc; no overload kept. In-repo `test/` and `examples/vuejectron` pin published `1.0.0-rc.26` — unaffected until the next publish; bump the package version with the change.
-2. **Data-grant ACR Turtle write (`grants.ts:420-429`).** A 4th Turtle-on-the-wire site, already template-direct (no parse/serialize) — stays as-is; the Goal text above acknowledges it.
-3. **Phase 3a.1 strategy.** `generateChannel` is called inline inside both handlers' `handle()` methods, so "subclass" means overriding `handle` wholesale (≈70 lines incl. auth). Decide: reimplement the two thin classes in `sai-components` (recommended) vs subclass. Also decide content negotiation (serve `application/x-ndjson` always vs negotiate from the client's `Accept` header).
-4. **Generator output-shape variance (3a.2).** Direct construction assumes `{id, type, object, state?, published}` from `ActivityNotificationGenerator`; verify the shapes of `AddRemoveNotificationGenerator`, `DeleteNotificationGenerator`, and the **initial** notification (`StateNotificationGenerator`, sent through the same serializer by `StreamingHttpRequestHandler`) — handle optional `target`/missing `state` before writing the serializer.
+## Phase 7 — Drop the `n3` dependency (decision 6)
+
+**Replacements** (both already present transitively at `@rdfjs/dataset@1.1.1` / `@rdfjs/data-model@1.3.4` — declare as direct deps):
+
+| Site | Now | Change |
+|---|---|---|
+| `utils/src/jsonld.ts` `toStore` | `new Store()` | `dataset()` from `@rdfjs/dataset`; return type `DatasetCore` |
+| `utils/src/jsonld-parser.ts` `parseJsonld` | `new Store()` | same |
+| `utils/src/match.ts` | `dataset.match(...)` | unchanged — `DatasetCore` has `match` |
+| `authorization-agent/src/sparql.ts` `localSparqlTransport` | `new Store()` + `addQuads` | `dataset()` + add each quad |
+| `authorization-agent/src/{access-description-set,authorization-agent}.ts` | `DataFactory` | `@rdfjs/data-model` |
+| `components/src/{SaiPermissionsEngine,AdminSparqlHandler,HybridDataAccessor}.ts` | `Store`/`DataFactory` | `@rdfjs/dataset`/`@rdfjs/data-model` |
+| `data-model/src/shape-tree.ts` | `DataFactory` | `@rdfjs/data-model` |
+| package deps | `n3` + `@types/n3` in `utils`/`authorization-agent`/`data-model`/`components`/`application`/`test-utils` | remove — `application`/`test-utils` have **no** usage at all (only `application/README.md:79`) |
+| tests | `DataFactory`/`Store`/`Parser` in `utils`/`authorization-agent`/`data-model`/`components` | `@rdfjs/*`; parsing via `jsonld.fromRDF` |
+
+**Caveats:**
+- `ReciprocalMirror`'s N3-only `getObjects` must be gone first (Phase 4).
+- `data-model/test/framing/helpers.ts:18` parses a **TriG** fixture with `new Parser({ format: 'application/trig' })` — the only non-N-Quads parse left. Convert the fixture to JSON-LD or parse with `jsonld.fromRDF`; there is no non-N3 TriG parser in the tree.
+- `fetch-sparql-endpoint` uses N3 internally — that is its dependency, not ours, and does not keep `n3` in our package manifests.
+
+**Done when:** `rg -n "from 'n3'" packages --glob '!**/node_modules/**' --glob '!**/dist/**'` returns nothing; `n3`/`@types/n3` gone from every `package.json`; build + tests green.
 
 ---
 
 ## Verification
 
-- Per phase: `npm run build` (turbo) + `npm test` (turbo, packages) green.
-- Phase 3 server check: run services/css with the custom `@elfpavlik/sai-components` emitter, subscribe to a resource, assert the stream is `application/x-ndjson` and every line is a self-contained expanded JSON-LD notification (initial notification + one per change) before flipping `notification-manager.ts` and `test/util.ts`.
-- Phase 3 client check: buffered NDJSON reader handles notifications split across chunk boundaries (the current per-chunk `TextDecoder` decode cannot).
-- Final gate: `test/` integration workspace (dagger) — notification-driven tests (`test/policy-engine.test.ts` uses `receivesNotification`/`awaitNotification` via `test/util.ts`) must pass with the NDJSON stream.
-- Wire-format sanity: SPARQL patch bodies are N-Triples (N-Quads without graph labels) — Oxigraph/CSS parse them as Turtle data blocks; the `application/sparql-update` mapping (`environments/css/oxigraph.nginx.conf`, `nix/images/sai-oxigraph.nix`) is unchanged.
+- Per phase: `npm run build` (turbo) + `npm test` (turbo, packages) green before and after; new pinning tests added first.
+- `test/` integration workspace (dagger): re-run after each phase that touches it (2, 3, 5); final gate after Phase 6. Build first so workspace symlinks see updated `dist/`.
+- Phase 5 server check: `application/x-ndjson`, expanded JSON-LD per line, initial notification + one per change, buffered reader survives chunk boundaries.
+- Wire-format sanity: SPARQL `INSERT/DELETE DATA` bodies are N-Triples (default-graph) or N-Quads (mirror); Oxigraph/CSS parse them as Turtle/N-Quads data blocks. The `application/sparql-update` mapping (`environments/css/oxigraph.nginx.conf`, `nix/images/sai-oxigraph.nix`) is unchanged.
+
+## Open questions
+
+1. **`syncAdminAcr` rewrite mechanics.** Compacted/framed JSON-LD mutation of the `#fullAdminAccess` `acp:apply`/`acp:anyOf` blank-node subtrees is fiddlier than the current N3 `Store` scan. Spike during Phase 2; if it proves brittle, fall back to building the whole ACR doc from the fetched framed node plus the freshly computed controls.
+2. **`ReciprocalMirror` `documentValues` semantics.** Document-wide predicate scan vs subject-scoped `frameNode` + `strs` on `reciprocalIri`. Pick during Phase 4.
+3. **Compacted notification form.** Out of scope initially — expanded JSON-LD first; revisit only if payload size warrants.

@@ -3,13 +3,12 @@ import type { SocialAgentRegistrationData } from '@janeirodigital/interop-data-m
 import {
   INTEROP,
   type WhatwgFetch,
+  documentValues,
   fetchJsonLd,
-  serializeTurtle,
-  toStore,
+  toNQuads,
 } from '@janeirodigital/interop-utils'
 import { arrayifyStream } from '@solid/community-server'
 import { type IBindings, SparqlEndpointFetcher } from 'fetch-sparql-endpoint'
-import { DataFactory, type Store } from 'n3'
 
 /**
  * Read-only local copies of peer-side registry data (org-context-sparql.md
@@ -42,13 +41,10 @@ import { DataFactory, type Store } from 'n3'
 
 const fetcher = new SparqlEndpointFetcher()
 
-/** Fetch a resource with the given credentials and convert it to quads. */
-async function fetchGraph(iri: string, fetch: WhatwgFetch): Promise<Store> {
-  const doc = (await fetchJsonLd(iri, fetch)) as Record<string, unknown>
-  return toStore(doc, iri)
+/** Fetch a resource with the given credentials as JSON-LD (expanded). */
+async function fetchDoc(iri: string, fetch: WhatwgFetch): Promise<unknown> {
+  return fetchJsonLd(iri, fetch)
 }
-
-const iriRef = DataFactory.namedNode
 
 /**
  * Replace the mirror graphs for `registration.reciprocalRegistration` with
@@ -80,11 +76,11 @@ export async function updateReciprocalMirror(
   const reciprocalIri = registration.reciprocalRegistration
   if (!reciprocalIri) throw new Error(`registration ${registration.id} has no reciprocal`)
 
-  const registrationStore = await fetchGraph(reciprocalIri, saiSession.fetch)
+  const reciprocalDoc = await fetchDoc(reciprocalIri, saiSession.fetch)
 
-  const grantIris = registrationStore
-    .getObjects(iriRef(reciprocalIri), INTEROP.terms.hasDataGrant, null)
-    .map((term) => term.value)
+  // document-wide scan — the reciprocal registration is the only node
+  // carrying `hasDataGrant` in its body
+  const grantIris = await documentValues(reciprocalDoc, reciprocalIri, INTEROP.hasDataGrant)
 
   // Existence oracle: the mirror's reciprocal graph lists the grants the last
   // sync wrote, and reciprocal + grants are written in one atomic UPDATE — so
@@ -102,18 +98,23 @@ export async function updateReciprocalMirror(
   const toInsert = [...grantIrisSet.difference(mirroredGrantSet)]
   const staleGraphs = [...mirroredGrantSet.difference(grantIrisSet)]
 
-  const grantStores = new Map<string, Store>()
+  const grantDocs = new Map<string, unknown>()
   for (const grantIri of toInsert) {
-    grantStores.set(grantIri, await fetchGraph(grantIri, saiSession.fetch))
+    grantDocs.set(grantIri, await fetchDoc(grantIri, saiSession.fetch))
   }
 
   const drops = [reciprocalIri, ...staleGraphs]
     .map((iri) => `DROP SILENT GRAPH <${iri}>;`)
     .join('\n')
 
+  // each document becomes a named graph (N-Quads carry the graph label in the
+  // 4th term, so no `GRAPH <…> { … }` wrapper is needed)
   const inserts: string[] = []
-  for (const [graphIri, store] of [[reciprocalIri, registrationStore], ...grantStores] as const) {
-    inserts.push(`GRAPH <${graphIri}> { ${await serializeTurtle(store)} }`)
+  for (const [graphIri, doc] of [[reciprocalIri, reciprocalDoc], ...grantDocs.entries()] as [
+    string,
+    unknown,
+  ][]) {
+    inserts.push(await toNQuads({ '@id': graphIri, '@graph': doc }))
   }
 
   await fetcher.fetchUpdate(sparqlEndpoint, `${drops}\nINSERT DATA {\n${inserts.join('\n')}\n}`)

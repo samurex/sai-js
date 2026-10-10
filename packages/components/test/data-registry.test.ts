@@ -15,11 +15,14 @@ const DATA_REG = `${DATA_REGISTRY}projects/`
 const SHAPE_TREE = 'https://shapetrees.example/Project'
 const STORAGE = 'https://yoyo.example/storage'
 
-/** The registration body served for the data-registration graph (CONSTRUCT). */
-const registrationTurtle = `PREFIX interop: <http://www.w3.org/ns/solid/interop#>
-<${DATA_REG}> a interop:DataRegistration ;
-  interop:registeredShapeTree <${SHAPE_TREE}> .
-`
+/** The registration body served for the data-registration graph (CONSTRUCT → application/ld+json). */
+const registrationDoc = [
+  {
+    '@id': DATA_REG,
+    '@type': ['http://www.w3.org/ns/solid/interop#DataRegistration'],
+    'http://www.w3.org/ns/solid/interop#registeredShapeTree': [{ '@id': SHAPE_TREE }],
+  },
+]
 
 /** Storage description doc — `storageIri` stays HTTP data-plane. */
 const storageDescriptionDoc = [
@@ -86,7 +89,7 @@ describe('getDataRegistries — org context lists own data registries via /sparq
           )
         }
         if (query.includes('CONSTRUCT')) {
-          return mockResponse(registrationTurtle, 200, 'text/turtle')
+          return mockResponse(registrationDoc, 200, 'application/ld+json')
         }
         throw new Error(`unexpected sparql-admin query: ${query}`)
       }

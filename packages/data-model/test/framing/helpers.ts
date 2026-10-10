@@ -1,9 +1,6 @@
 import { readFileSync } from 'node:fs'
-import * as jsonldNs from 'jsonld'
+import { jsonld } from '@janeirodigital/interop-utils'
 import { DataFactory, Parser, type Quad, type Term } from 'n3'
-
-// CJS/ESM interop — same pattern as utils' jsonld.ts.
-const jsonld = (jsonldNs as any).default ?? jsonldNs
 
 // The environments registry TriG. Each GRAPH is a resource document;
 // `meta:*` graphs carry the resource's rdf:type / properties (the CSS

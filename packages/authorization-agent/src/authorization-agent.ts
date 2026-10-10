@@ -24,6 +24,7 @@ import {
   type SocialAgentRegistryData,
   WebIdProfile,
   type WebIdProfileData,
+  dataModelContext,
   getDataGrantIris,
 } from '@janeirodigital/interop-data-model'
 // re-export so package consumers (components services, tests) keep importing
@@ -45,8 +46,8 @@ import {
   loader,
   putJsonLd,
   replaceStatement,
+  withContext,
 } from '@janeirodigital/interop-utils'
-import { DataFactory } from 'n3'
 import { replaceDataGrants } from './agent-registration'
 import { findRegistration as findRegistrationInAgentRegistry } from './agent-registry'
 import {
@@ -581,21 +582,18 @@ export class AuthorizationAgent {
   public async discoverAndUpdateReciprocal(data: SocialAgentRegistrationData): Promise<void> {
     const reciprocalRegistrationIri = await this.discoverReciprocal(data)
     if (!reciprocalRegistrationIri) return
-    const node = DataFactory.namedNode(data.id)
-    const quad = DataFactory.quad(
-      node,
-      INTEROP.terms.reciprocalRegistration,
-      DataFactory.namedNode(reciprocalRegistrationIri)
-    )
+    const doc = withContext(dataModelContext, {
+      id: data.id,
+      reciprocalRegistration: reciprocalRegistrationIri,
+    })
     if (data.reciprocalRegistration) {
-      const priorQuad = DataFactory.quad(
-        node,
-        INTEROP.terms.reciprocalRegistration,
-        DataFactory.namedNode(data.reciprocalRegistration)
-      )
-      await replaceStatement(data.id, this.fetch, priorQuad, quad)
+      const priorDoc = withContext(dataModelContext, {
+        id: data.id,
+        reciprocalRegistration: data.reciprocalRegistration,
+      })
+      await replaceStatement(data.id, this.fetch, priorDoc, doc)
     } else {
-      await addStatement(data.id, this.fetch, quad)
+      await addStatement(data.id, this.fetch, doc)
     }
     data.reciprocalRegistration = reciprocalRegistrationIri
   }

@@ -15,14 +15,16 @@ import {
   RDF,
   getNotificationChannel,
   getOneMatchingQuad,
-  parseTurtle,
+  toStore,
 } from '@janeirodigital/interop-utils'
 
 // TODO: deduplicate with notifications-manager from application package
 
 export interface NotificationStream {
-  reader: ReadableStreamDefaultReader<Uint8Array>
-  response: Response
+  /** Read the next NDJSON notification (expanded JSON-LD); `undefined` when the stream ends. */
+  next: () => Promise<Record<string, unknown> | undefined>
+  /** Release the reader and cancel the response body. */
+  close: () => Promise<void>
 }
 
 /**
@@ -78,11 +80,36 @@ export async function openNotificationStream(
   }
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
+  let buffer = ''
+  let initialDiscarded = false
 
-  // discard initial notification
-  await reader.read()
+  // The first line is the initial state notification — discarded lazily so a
+  // coalesced chunk cannot swallow a real event.
+  const next = async (): Promise<Record<string, unknown> | undefined> => {
+    while (true) {
+      const newlineIndex = buffer.indexOf('\n')
+      if (newlineIndex >= 0) {
+        const line = buffer.slice(0, newlineIndex).trim()
+        buffer = buffer.slice(newlineIndex + 1)
+        if (!line) continue
+        if (!initialDiscarded) {
+          initialDiscarded = true
+          continue
+        }
+        return JSON.parse(line) as Record<string, unknown>
+      }
+      const { done, value } = await reader.read()
+      if (done) return undefined
+      buffer += decoder.decode(value, { stream: true })
+    }
+  }
 
-  return { reader, response }
+  const close = async (): Promise<void> => {
+    reader.releaseLock()
+    await response.body!.cancel()
+  }
+
+  return { next, close }
 }
 
 /**
@@ -94,23 +121,17 @@ export async function awaitNotification(
   stream: NotificationStream,
   expectedType?: string
 ): Promise<boolean> {
-  const { reader, response } = stream
-  const decoder = new TextDecoder()
   try {
-    while (response.body.locked) {
-      const { done, value } = await reader.read()
-      if (done) return false
-      const notification = decoder.decode(value)
-      if (!notification) continue
-      const dataset = await parseTurtle(notification)
+    while (true) {
+      const doc = await stream.next()
+      if (!doc) return false
+      const dataset = await toStore(doc)
       const receivedType = getOneMatchingQuad(dataset, undefined, RDF.terms.type)!.object.value
       if (!expectedType || receivedType === expectedType) return true
     }
   } finally {
-    reader.releaseLock()
-    await response.body.cancel()
+    await stream.close()
   }
-  return false
 }
 
 /** Open the stream, await the first notification of the expected type (listen-first pattern). */

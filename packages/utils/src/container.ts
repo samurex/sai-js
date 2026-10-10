@@ -1,4 +1,3 @@
-import type { DatasetCore } from '@rdfjs/types'
 import { applyPatch, insertPatch } from './sparql-update'
 import type { WhatwgFetch } from './whatwg-fetch'
 
@@ -23,12 +22,12 @@ export function iriForContained(
  * Community Solid Server ignores the PUT body when creating containers, so
  * creation is: PUT an empty container, discover its description resource
  * (HEAD + Link header), then PATCH the description resource with the given
- * dataset serialized as `INSERT DATA { ... }`.
+ * JSON-LD document serialized as `INSERT DATA { ... }`.
  */
 export async function createContainer(
   id: string,
   fetch: WhatwgFetch,
-  dataset: DatasetCore
+  doc: Record<string, unknown>
 ): Promise<void> {
   // create empty container, CSS ignores body!
   const response = await fetch(id, { method: 'PUT' })
@@ -37,5 +36,5 @@ export async function createContainer(
     throw new Error('failed to create empty container')
   }
 
-  await applyPatch(id, fetch, await insertPatch(dataset))
+  await applyPatch(id, fetch, await insertPatch(doc))
 }

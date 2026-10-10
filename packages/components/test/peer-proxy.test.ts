@@ -567,17 +567,21 @@ describe('sparqlTransportFor — org context routes via /sparql-admin', () => {
     expect(bindings[0].label).toMatchObject({ termType: 'Literal', value: 'Peer', language: 'en' })
   })
 
-  test('CONSTRUCT triples: turtle parsed into a store, framed registration built', async () => {
+  test('CONSTRUCT triples: JSON-LD parsed into a store, framed registration built', async () => {
     const { session } = sparqlAdminSession(() =>
       jsonResponse(
-        `PREFIX interop: <http://www.w3.org/ns/solid/interop#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-<https://yoyo.example/registrations/peer> a interop:SocialAgentRegistration ;
-  interop:registeredAgent <https://peer.example/profile/card#me> ;
-  skos:prefLabel "Peer" .
-`,
+        [
+          {
+            '@id': 'https://yoyo.example/registrations/peer',
+            '@type': ['http://www.w3.org/ns/solid/interop#SocialAgentRegistration'],
+            'http://www.w3.org/ns/solid/interop#registeredAgent': [
+              { '@id': 'https://peer.example/profile/card#me' },
+            ],
+            'http://www.w3.org/2004/02/skos/core#prefLabel': [{ '@value': 'Peer' }],
+          },
+        ],
         200,
-        'text/turtle'
+        'application/ld+json'
       )
     )
     const ctx = fakeCtx(session, YOYO_WEBID, DAN_WEBID)

@@ -12,6 +12,7 @@
     "css:config/http/handler/default.json",
     "css:config/http/middleware/default.json",
     "css:config/http/notifications/all.json",
+    "sai:config/http/notifications/ndjson.json",
     "css:config/http/static/default.json",
     "css:config/identity/access/public.json",
     "css:config/identity/email/default.json",

@@ -1,7 +1,6 @@
-export * from './turtle-parser'
 export * from './jsonld-parser'
+export { jsonld } from './jsonld-lib'
 export * from './jsonld'
-export * from './turtle-serializer'
 export * from './sparql-update'
 export * from './container'
 export * from './match'

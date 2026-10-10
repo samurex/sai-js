@@ -2,8 +2,8 @@ import type { Agent, ResourceServer } from '@/models'
 import { getRuntimeConfig } from '@/runtime-config'
 import { getDefaultSession } from '@inrupt/solid-client-authn-browser'
 import { Application, NotificationManager } from '@janeirodigital/interop-application'
-import { loadWebIdProfile } from '@janeirodigital/interop-data-model'
-import { AS, RequestError } from '@janeirodigital/interop-utils'
+import { WebIdProfile } from '@janeirodigital/interop-data-model'
+import { AS, RequestError, loader, pickLanguage } from '@janeirodigital/interop-utils'
 import { commitData, changeData as ldoChangeData } from '@ldo/connected'
 //@ts-ignore
 import { type SolidLdoDataset, createSolidLdoDataset } from '@ldo/connected-solid'
@@ -18,6 +18,8 @@ import type { Project } from '../../ldo/Project.typings'
 import { TaskShapeType } from '../../ldo/Task.shapeTypes'
 import type { Task } from '../../ldo/Task.typings'
 import { useCoreStore } from './core'
+
+const loadWebIdProfile = loader(WebIdProfile.fromJsonLd)
 
 const scopes = {
   project: 'https://shapetrees.hackers4peace.net/trees/Project',
@@ -99,7 +101,7 @@ export const useAppStore = defineStore('app', () => {
 
     agents.value = profiles.map((profile) => ({
       id: profile.id,
-      label: profile.label ?? 'unknown', // TODO think of a better fallback
+      label: pickLanguage(profile.label) ?? 'unknown', // TODO think of a better fallback
     }))
   }
 

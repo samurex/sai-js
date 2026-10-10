@@ -8,8 +8,9 @@ import type {
 import {
   AdminAuthorization,
   Grant,
-  dataGrantTemplate,
+  dataGrantAcrJsonLd,
   dataModelContext,
+  rewriteFullAdminAccess,
 } from '@janeirodigital/interop-data-model'
 const loadGrant = loader(Grant.fromJsonLd)
 
@@ -24,9 +25,7 @@ import {
   iriForContained,
   linkedIrisJsonLd,
   loader,
-  parseTurtle,
   putJsonLd,
-  serializeTurtle,
   withContext,
 } from '@janeirodigital/interop-utils'
 import { buildSessionManager } from '../../builders/sessionManager.js'
@@ -110,15 +109,6 @@ export async function deleteAdminAuthorizationAtId(payload: {
   await session.deleteAdminAuthorization(payload.authorization.id)
 }
 
-const acp = {
-  AccessControl: 'http://www.w3.org/ns/solid/acp#AccessControl',
-  anyOf: 'http://www.w3.org/ns/solid/acp#anyOf',
-  apply: 'http://www.w3.org/ns/solid/acp#apply',
-  accessControl: 'http://www.w3.org/ns/solid/acp#accessControl',
-  memberAccessControl: 'http://www.w3.org/ns/solid/acp#memberAccessControl',
-}
-const ACL_READ_WRITE_CONTROL = 'acl:Read, acl:Write, acl:Control'
-
 /**
  * Build the admin's grant payloads in the org's GrantRegistry: the
  * RegistrySet-scoped admin marker first, then one Read-only DataRegistry-
@@ -191,28 +181,22 @@ export async function createAdminGrantAcr(payload: { grant: AdminGrantData }): P
   const acrId = getAcl(headResponse.headers.get('link'))
   if (!acrId) throw new Error(`no acl link on admin grant: ${payload.grant.id}`)
 
-  const acr = dataGrantTemplate({
-    id: acrId,
-    resource: payload.grant.id!,
-    owner: {
-      agent: session.webId,
-      client: session.agentId,
-    },
-    peer: {
-      agent: payload.grant.grantee,
-      client: uasId,
-    },
-  }).replaceAll('\n', '')
-  const response = await session.fetch(acrId, {
-    method: 'PUT',
-    body: acr,
-    headers: {
-      'content-type': 'text/turtle',
-    },
-  })
-  if (!response.ok) {
-    throw new Error(`${response.status} - ${acrId}`)
-  }
+  await putJsonLd(
+    acrId,
+    session.fetch,
+    dataGrantAcrJsonLd({
+      id: acrId,
+      resource: payload.grant.id!,
+      owner: {
+        agent: session.webId,
+        client: session.agentId,
+      },
+      peer: {
+        agent: payload.grant.grantee,
+        client: uasId,
+      },
+    })
+  )
 }
 
 /** Set the admin's registration hasAdminGrant links to exactly `grantIds`. */
@@ -293,110 +277,19 @@ export async function syncAdminAcr(payload: { webId: SocialAgentId }): Promise<v
 
   const admins = await session.adminAuthorizations(session.registrySet.hasAuthorizationRegistry)
 
-  const matchers: string[] = []
+  const matchers: { agent: string; client: string }[] = []
   for (const admin of admins) {
     const uasId = await discoverAuthorizationAgent(admin.grantee, fetch)
     if (!uasId) throw new Error(`no authorization agent for admin: ${admin.grantee}`)
-    matchers.push(
-      `      [ a acp:Policy;
-        acp:allow ${ACL_READ_WRITE_CONTROL};
-        acp:anyOf [
-          a acp:Matcher;
-          acp:agent <${admin.grantee}>;
-          acp:client <${uasId}>
-        ]
-      ]`
-    )
+    matchers.push({ agent: admin.grantee, client: uasId })
   }
 
   const headResponse = await session.fetch(session.registrySet.id, { method: 'HEAD' })
   const acrId = getAcl(headResponse.headers.get('link'))
   if (!acrId) throw new Error(`no acl link on registry set: ${session.registrySet.id}`)
 
-  const acrResponse = await session.fetch(acrId, { headers: { Accept: 'text/turtle' } })
-  const store = await parseTurtle(await acrResponse.text(), acrId)
-
-  // remove the current #fullAdminAccess access control (its policies and
-  // matchers) and its #root wiring (acp:accessControl / acp:memberAccessControl
-  // refs) — both are re-added below exactly once (idempotent remove-then-add)
-  const toRemove = new Set<string>()
-  for (const quad of store) {
-    if (
-      quad.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
-      quad.object.value === acp.AccessControl &&
-      quad.subject.value.endsWith('#fullAdminAccess')
-    ) {
-      toRemove.add(quad.subject.value)
-    }
-  }
-  for (const node of [...toRemove]) {
-    for (const quad of store) {
-      if (quad.subject.value === node && quad.predicate.value === acp.apply) {
-        toRemove.add(quad.object.value)
-      }
-    }
-  }
-  for (const node of [...toRemove]) {
-    for (const quad of store) {
-      if (quad.subject.value === node && quad.predicate.value === acp.anyOf) {
-        toRemove.add(quad.object.value)
-      }
-    }
-  }
-  const fullAdminAccess = `${acrId}#fullAdminAccess`
-  for (const quad of [...store]) {
-    if (
-      (quad.subject.value === `${acrId}#root` &&
-        (quad.predicate.value === acp.accessControl ||
-          quad.predicate.value === acp.memberAccessControl) &&
-        quad.object.value === fullAdminAccess) ||
-      toRemove.has(quad.subject.value)
-    ) {
-      store.delete(quad)
-    }
-  }
-
-  const base = await serializeTurtle(store)
-
-  if (admins.length === 0) {
-    // personal-context last-admin demotion (Phase 5): zero admins → zero
-    // admin access — write the ACR with the #fullAdminAccess control removed
-    // entirely (the owner of a personal registry set remains an operator)
-    const response = await session.fetch(acrId, {
-      method: 'PUT',
-      body: base,
-      headers: {
-        'content-type': 'text/turtle',
-      },
-    })
-    if (!response.ok) {
-      throw new Error(`${response.status} - ${acrId}`)
-    }
-    return
-  }
-
-  const body = `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-PREFIX acp: <http://www.w3.org/ns/solid/acp#>
-
-${base}
-<${acrId}#fullAdminAccess>
-  a acp:AccessControl;
-  acp:apply
-${matchers.join(',\n')}.
-
-<${acrId}#root>
-  acp:accessControl <${acrId}#fullAdminAccess>;
-  acp:memberAccessControl <${acrId}#fullAdminAccess>.
-`
-
-  const response = await session.fetch(acrId, {
-    method: 'PUT',
-    body,
-    headers: {
-      'content-type': 'text/turtle',
-    },
-  })
-  if (!response.ok) {
-    throw new Error(`${response.status} - ${acrId}`)
-  }
+  // idempotent remove-then-add of the #fullAdminAccess control (and its #root
+  // wiring) — an empty admin list removes the control entirely
+  const doc = await fetchJsonLd(acrId, session.fetch)
+  await putJsonLd(acrId, session.fetch, rewriteFullAdminAccess(doc, acrId, matchers))
 }

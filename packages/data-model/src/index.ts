@@ -13,7 +13,6 @@ export {
   type SocialAgentRegistrationId,
   type SocialAgentId,
   getAdminGrantIris,
-  toDataset,
 } from './social-agent-registration'
 export type { SocialAgentInvitationData, SocialAgentInvitationId } from './social-agent-invitation'
 export * as SocialAgentInvitation from './social-agent-invitation'
@@ -36,6 +35,7 @@ export * from './authorization-structures'
 export * as RegistrySet from './registry-set'
 export type { RegistrySetData } from './registry-set'
 export * from './templates'
+export * from './acr'
 export type { DataInstanceData, ChildInfo } from './data-instance'
 export {
   childIris,
@@ -53,7 +53,7 @@ export type { AccessNeedData, AccessNeedId } from './access-need'
 export * as AccessNeed from './access-need'
 export type { AccessNeedGroupData, AccessNeedGroupId } from './access-need-group'
 export * as AccessNeedGroup from './access-need-group'
-export { dataModelContext } from './context'
+export { acrContext, dataModelContext } from './context'
 export type { GrantData, GrantId, FinalGrantData, GeneratedGrants } from './grant'
 export * as Grant from './grant'
 export { toJsonLd } from './grant'

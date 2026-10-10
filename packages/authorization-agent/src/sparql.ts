@@ -13,7 +13,7 @@ import {
   type SocialAgentRegistrationData,
   dataModelContext,
 } from '@janeirodigital/interop-data-model'
-import { AS, INTEROP, LDP, type LanguageMap, frameDoc } from '@janeirodigital/interop-utils'
+import { AS, INTEROP, LDP, type LanguageMap, frameDoc, jsonld } from '@janeirodigital/interop-utils'
 import { SpanStatusCode, trace } from '@opentelemetry/api'
 /**
  * Registry-plane SPARQL transport + queries, shared by the AuthorizationAgent
@@ -24,13 +24,7 @@ import { SpanStatusCode, trace } from '@opentelemetry/api'
  */
 import type { DatasetCore } from '@rdfjs/types'
 import { type IBindings, SparqlEndpointFetcher } from 'fetch-sparql-endpoint'
-import * as jsonldNs from 'jsonld'
 import { Store } from 'n3'
-
-// CJS/ESM interop: jsonld is a CJS package; in an ESM bundle the namespace
-// has the full exports only on .default, while in CJS the namespace is the
-// module object directly.
-const jsonld = (jsonldNs as any).default ?? jsonldNs
 
 const fetcher = new SparqlEndpointFetcher()
 

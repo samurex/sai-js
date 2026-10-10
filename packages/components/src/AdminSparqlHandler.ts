@@ -1,4 +1,4 @@
-import { serializeTurtle } from '@janeirodigital/interop-utils'
+import { jsonld } from '@janeirodigital/interop-utils'
 import {
   BadRequestHttpError,
   BasicRepresentation,
@@ -16,7 +16,6 @@ import type {
 } from '@solid/community-server'
 import { type IBindings, type IUpdateTypes, SparqlEndpointFetcher } from 'fetch-sparql-endpoint'
 import { getLoggerFor } from 'global-logger-factory'
-import { Store } from 'n3'
 import type { SessionManager } from './SessionManager'
 import { orgWebIdFromPath, requireOrgAdmin } from './services/adminGate.js'
 
@@ -67,7 +66,7 @@ function termToJson(term: IBindings[string]): Record<string, unknown> {
  * Queries are forwarded to the internal endpoint variable
  * (`urn:solid-server:default:variable:sparqlEndpoint`); SELECT/ASK results
  * come back as `application/sparql-results+json`, CONSTRUCT/DESCRIBE as
- * `text/turtle`.
+ * `application/ld+json`.
  */
 export class AdminSparqlHandler extends OperationHttpHandler {
   protected readonly logger = getLoggerFor(this)
@@ -151,10 +150,9 @@ export class AdminSparqlHandler extends OperationHttpHandler {
       }
       case 'CONSTRUCT': {
         const triplesStream = await this.fetcher.fetchTriples(this.sparqlEndpoint, query)
-        const store = new Store()
-        store.addQuads(await arrayifyStream(triplesStream))
-        payload = await serializeTurtle(store)
-        mediaType = 'text/turtle'
+        const quads = await arrayifyStream<unknown>(triplesStream)
+        payload = JSON.stringify(await jsonld.fromRDF(quads))
+        mediaType = 'application/ld+json'
         break
       }
       default:

@@ -1,4 +1,6 @@
 import {
+  ACL,
+  ACP,
   AS,
   INTEROP,
   type JsonLdContext,
@@ -175,4 +177,39 @@ export const dataModelContext: JsonLdContext = {
 
   // nfo
   fileName: { '@id': NFO.fileName },
+}
+
+/**
+ * JSON-LD context for Access Control Resources (ACP). ACRs are JSON-LD now
+ * (previously Turtle templates): built compacted, PUT expanded, read framed.
+ * `allow` values are the `acl:` access modes (compact terms `Read`/`Write`/
+ * `Control`); `apply`/`anyOf` carry blank-node `Policy`/`Matcher` objects.
+ */
+export const acrContext: JsonLdContext = {
+  '@version': 1.1,
+  id: '@id',
+  type: { '@id': '@type', '@container': '@set' },
+
+  // acl — access modes referenced by acp:allow
+  Read: { '@id': ACL.Read },
+  Write: { '@id': ACL.Write },
+  Control: { '@id': ACL.Control },
+
+  // acp — node references
+  resource: iriTermDef(ACP, 'resource'),
+  accessControl: iriTermDef(ACP, 'accessControl', { set: true }),
+  memberAccessControl: iriTermDef(ACP, 'memberAccessControl', { set: true }),
+  agent: iriTermDef(ACP, 'agent'),
+  client: iriTermDef(ACP, 'client'),
+  allow: iriTermDef(ACP, 'allow', { set: true }),
+
+  // acp — node objects (blank nodes)
+  apply: { '@id': ACP.apply, '@container': '@set' },
+  anyOf: { '@id': ACP.anyOf, '@container': '@set' },
+
+  // acp — classes
+  AccessControlResource: { '@id': ACP.AccessControlResource },
+  AccessControl: { '@id': ACP.AccessControl },
+  Policy: { '@id': ACP.Policy },
+  Matcher: { '@id': ACP.Matcher },
 }

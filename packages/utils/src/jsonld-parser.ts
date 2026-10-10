@@ -1,11 +1,6 @@
 import type { DatasetCore, Quad } from '@rdfjs/types'
-import * as jsonldNs from 'jsonld'
 import { Store } from 'n3'
-
-// CJS/ESM interop: jsonld is a CJS package; in the ESM bundle the namespace
-// has the full exports only on .default, while named exports like `toRDF` are
-// hoisted.  Grab the full object so that `documentLoaders` is available.
-const jsonld = (jsonldNs as any).default ?? jsonldNs
+import { jsonld } from './jsonld-lib'
 
 // Local type for the document loader result compatible with jsonld's RemoteDocument
 interface RemoteDocument {

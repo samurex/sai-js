@@ -1,0 +1,47 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^8.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/asynchronous-handlers/^1.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@elfpavlik/sai-components/^1.0.0/components/context.jsonld"
+  ],
+  "import": [],
+  "@graph": [
+    {
+      "comment": "Serializes notifications as NDJSON of expanded JSON-LD (one object per line) — replaces the stock Turtle-converting serializer.",
+      "@id": "urn:sai:default:NdjsonNotificationSerializer",
+      "@type": "NdjsonNotificationSerializer"
+    },
+    {
+      "comment": "Streaming HTTP receiveFrom handler advertising application/x-ndjson (reimplements CSS's StreamingHttpRequestHandler, whose channel accept is hardcoded to text/turtle).",
+      "@id": "urn:sai:default:NdjsonStreamingHttpRequestHandler",
+      "@type": "NdjsonStreamingHttpRequestHandler",
+      "streamMap": { "@id": "urn:solid-server:default:StreamingHttpMap" },
+      "route": { "@id": "urn:solid-server:default:StreamingHTTP2023Route" },
+      "generator": { "@id": "urn:solid-server:default:BaseNotificationGenerator" },
+      "serializer": { "@id": "urn:sai:default:NdjsonNotificationSerializer" },
+      "credentialsExtractor": { "@id": "urn:solid-server:default:CredentialsExtractor" },
+      "permissionReader": { "@id": "urn:solid-server:default:PermissionReader" },
+      "authorizer": { "@id": "urn:solid-server:default:Authorizer" }
+    },
+    {
+      "comment": "Point the StreamingHTTPChannel2023 router at the NDJSON request handler (Override replaces the single `handler` value; a plain re-definition would concatenate).",
+      "@id": "urn:sai:default:OverrideStreamingHttpRouter",
+      "@type": "Override",
+      "overrideInstance": { "@id": "urn:solid-server:default:StreamingHttp2023Router" },
+      "overrideParameters": {
+        "@type": "OperationRouterHandler",
+        "handler": { "@id": "urn:sai:default:NdjsonStreamingHttpRequestHandler" }
+      }
+    },
+    {
+      "comment": "Use the NDJSON serializer on the activity-driven stream too (the stock listener's channel accept is ignored by the serializer).",
+      "@id": "urn:sai:default:OverrideStreamingNotificationSerializer",
+      "@type": "Override",
+      "overrideInstance": { "@id": "urn:solid-server:default:StreamingHttpNotificationHandler" },
+      "overrideParameters": {
+        "@type": "ComposedNotificationHandler",
+        "serializer": { "@id": "urn:sai:default:NdjsonNotificationSerializer" }
+      }
+    }
+  ]
+}

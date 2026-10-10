@@ -1,22 +1,21 @@
 import {
   SocialAgentRegistration,
   type SocialAgentRegistrationData,
+  dataModelContext,
   getAdminGrantIris,
-  toDataset,
 } from '@janeirodigital/interop-data-model'
 const loadSocialAgentRegistration = loader(SocialAgentRegistration.fromJsonLd)
 
 import {
   INTEROP,
-  RDF,
   type WhatwgFetch,
   applyPatch,
   createContainer,
   deletePatch,
   insertPatch,
   loader,
+  withContext,
 } from '@janeirodigital/interop-utils'
-import { DataFactory, Store } from 'n3'
 
 /**
  * Lazily load the peer's reciprocal registration — only consumers that need its
@@ -35,15 +34,11 @@ export async function createSocialAgentRegistration(
   data: SocialAgentRegistrationData,
   fetch: WhatwgFetch
 ): Promise<void> {
-  const dataset = toDataset(data)
-  dataset.add(
-    DataFactory.quad(
-      DataFactory.namedNode(data.id),
-      RDF.terms.type,
-      INTEROP.terms.SocialAgentRegistration
-    )
-  )
-  await createContainer(data.id, fetch, dataset)
+  const doc = withContext(dataModelContext, {
+    ...data,
+    type: [...new Set([...(data.type ?? []), INTEROP.SocialAgentRegistration])],
+  })
+  await createContainer(data.id, fetch, doc)
 }
 
 /**
@@ -64,16 +59,21 @@ export async function replaceAdminGrantLinks(
   const added = targetSet.difference(currentSet)
   if (removed.size === 0 && added.size === 0) return
 
-  const node = DataFactory.namedNode(data.id)
-  const removeQuads = [...removed].map((iri) =>
-    DataFactory.quad(node, INTEROP.terms.hasAdminGrant, DataFactory.namedNode(iri))
-  )
-  const insertQuads = [...added].map((iri) =>
-    DataFactory.quad(node, INTEROP.terms.hasAdminGrant, DataFactory.namedNode(iri))
-  )
   const sparqlUpdate = [
-    ...(removed.size ? [await deletePatch(new Store(removeQuads))] : []),
-    ...(added.size ? [await insertPatch(new Store(insertQuads))] : []),
+    ...(removed.size
+      ? [
+          await deletePatch(
+            withContext(dataModelContext, { id: data.id, hasAdminGrant: [...removed] })
+          ),
+        ]
+      : []),
+    ...(added.size
+      ? [
+          await insertPatch(
+            withContext(dataModelContext, { id: data.id, hasAdminGrant: [...added] })
+          ),
+        ]
+      : []),
   ].join(';')
   await applyPatch(data.id, fetch, sparqlUpdate)
   data.hasAdminGrant = [...grantIris]

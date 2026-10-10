@@ -16,7 +16,7 @@
     "@janeirodigital/interop-authorization-agent": "1.0.0-rc.26",
     "@janeirodigital/interop-data-model": "1.0.0-rc.26",
     "@janeirodigital/interop-test-utils": "1.0.0-rc.26",
-    "@janeirodigital/interop-utils": "1.0.0-rc.26"
+    "@janeirodigital/interop-utils": "1.0.0-rc.27"
   },
   "dependencies": {
     "rdf-vocabulary": "^1.0.1",

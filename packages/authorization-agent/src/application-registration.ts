@@ -4,12 +4,7 @@ import {
   type ApplicationRegistryData,
   dataModelContext,
 } from '@janeirodigital/interop-data-model'
-import {
-  type WhatwgFetch,
-  createContainer,
-  toStore,
-  withContext,
-} from '@janeirodigital/interop-utils'
+import { type WhatwgFetch, createContainer, withContext } from '@janeirodigital/interop-utils'
 import { addApplicationRegistration, findApplicationRegistration } from './agent-registry'
 import type { DataModelDependencies } from './types'
 
@@ -43,9 +38,8 @@ export async function createApplicationRegistration(
   data: ApplicationRegistrationData,
   fetch: WhatwgFetch
 ): Promise<void> {
-  // build the dataset via jsonld.toRDF (withContext + toStore) — the rdf:type
-  // quad comes from `data.type` (captured from framing on read), no hand-built
-  // DataFactory quads; only the container.create hand-off stays N3-based
-  const dataset = await toStore(withContext(dataModelContext, data))
-  await createContainer(data.id, fetch, dataset)
+  // the document is the POJO with the shared context — the rdf:type quad comes
+  // from `data.type` (captured from framing on read); createContainer PUTs the
+  // container and patches its description resource with `INSERT DATA`
+  await createContainer(data.id, fetch, withContext(dataModelContext, data))
 }

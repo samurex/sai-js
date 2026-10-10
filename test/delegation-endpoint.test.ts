@@ -1,6 +1,6 @@
 import { buildOidcSession, issuanceUrl } from '@elfpavlik/sai-components'
 import type { IncomingGrantData } from '@janeirodigital/interop-data-model'
-import { ACL, INTEROP, LDP, parseTurtle } from '@janeirodigital/interop-utils'
+import { ACL, INTEROP, LDP, toStore } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
 import { SOLIDTREES } from './vocabularies'
 
@@ -59,10 +59,10 @@ const issuancePayload = (grants: IncomingGrantData[]): string =>
 async function countGrants(): Promise<number> {
   const session = await buildOidcSession(acmeId)
   const response = await session.authFetch(grantRegistry, {
-    headers: { Accept: 'text/turtle' },
+    headers: { Accept: 'application/ld+json' },
   })
   expect(response.status).toBe(200)
-  const dataset = await parseTurtle(await response.text())
+  const dataset = await toStore((await response.json()) as Record<string, unknown>)
   return Array.from(dataset).filter((quad) => quad.predicate.value === LDP.contains).length
 }
 

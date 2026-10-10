@@ -17,11 +17,14 @@ const INVITATION_REGISTRY = 'https://registry/yoyo/invitation/'
 const APP_REG = `${APPLICATION_REGISTRY}p9xnub/`
 const APP_WEBID = 'https://projectron.example/#app'
 
-/** The registration body served for the application's graph (CONSTRUCT). */
-const appRegistrationTurtle = `PREFIX interop: <http://www.w3.org/ns/solid/interop#>
-<${APP_REG}> a interop:ApplicationRegistration ;
-  interop:registeredAgent <${APP_WEBID}> .
-`
+/** The registration body served for the application's graph (CONSTRUCT → application/ld+json). */
+const appRegistrationDoc = [
+  {
+    '@id': APP_REG,
+    '@type': ['http://www.w3.org/ns/solid/interop#ApplicationRegistration'],
+    'http://www.w3.org/ns/solid/interop#registeredAgent': [{ '@id': APP_WEBID }],
+  },
+]
 
 /** The app's client-id document (webid/client-id profiles stay HTTP). */
 const clientIdDocument = {
@@ -99,7 +102,7 @@ describe('getApplications — org context lists applications via /sparql-admin',
           )
         }
         if (query.includes('CONSTRUCT')) {
-          return mockResponse(appRegistrationTurtle, 200, 'text/turtle')
+          return mockResponse(appRegistrationDoc, 200, 'application/ld+json')
         }
         throw new Error(`unexpected sparql-admin query: ${query}`)
       },
@@ -131,21 +134,20 @@ describe('getSocialAgentInvitations — org context lists invitations via /sparq
   const SETTLED_IRI = `${INVITATION_REGISTRY}settled`
   const CAPABILITY = 'https://yoyo.example/invitations/zi1nic'
 
-  const inviteTurtle = (
-    iri: string,
-    registeredAgent?: string
-  ) => `PREFIX interop: <http://www.w3.org/ns/solid/interop#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-<${iri}> a interop:SocialAgentInvitation ;
-  interop:hasCapabilityUrl <${CAPABILITY}> ;
-  skos:prefLabel "Invite" ;
-  skos:note "A note"${
-    registeredAgent
-      ? ` ;
-  interop:registeredAgent <${registeredAgent}>`
-      : ''
-  } .
-`
+  const inviteDoc = (iri: string, registeredAgent?: string) => [
+    {
+      '@id': iri,
+      '@type': ['http://www.w3.org/ns/solid/interop#SocialAgentInvitation'],
+      'http://www.w3.org/ns/solid/interop#hasCapabilityUrl': [{ '@id': CAPABILITY }],
+      'http://www.w3.org/2004/02/skos/core#prefLabel': [{ '@value': 'Invite' }],
+      'http://www.w3.org/2004/02/skos/core#note': [{ '@value': 'A note' }],
+      ...(registeredAgent
+        ? {
+            'http://www.w3.org/ns/solid/interop#registeredAgent': [{ '@id': registeredAgent }],
+          }
+        : {}),
+    },
+  ]
 
   test('ldp:contains listing + per-invitation body; settled invitations excluded', async () => {
     const session = {
@@ -172,10 +174,10 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
         if (query.includes('CONSTRUCT')) {
           return mockResponse(
             query.includes(`GRAPH <${INVITE_IRI}>`)
-              ? inviteTurtle(INVITE_IRI)
-              : inviteTurtle(SETTLED_IRI, 'https://dan.example/profile/card#me'),
+              ? inviteDoc(INVITE_IRI)
+              : inviteDoc(SETTLED_IRI, 'https://dan.example/profile/card#me'),
             200,
-            'text/turtle'
+            'application/ld+json'
           )
         }
         throw new Error(`unexpected sparql-admin query: ${query}`)

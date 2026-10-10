@@ -143,7 +143,8 @@ export const ACL = createVocabulary(
   'Delete',
   'Read',
   'Update',
-  'Write'
+  'Write',
+  'Control'
 )
 
 export const SHAPETREES = createVocabulary(
@@ -180,7 +181,19 @@ export const SKOS = createVocabulary(
 export const ACP = createVocabulary(
   'http://www.w3.org/ns/solid/acp#',
   'PublicAgent',
-  'PublicClient'
+  'PublicClient',
+  'AccessControlResource',
+  'AccessControl',
+  'Policy',
+  'Matcher',
+  'apply',
+  'allow',
+  'anyOf',
+  'agent',
+  'client',
+  'resource',
+  'accessControl',
+  'memberAccessControl'
 )
 
 export const SOLID = createVocabulary(

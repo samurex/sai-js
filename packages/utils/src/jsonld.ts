@@ -1,15 +1,10 @@
 import { SpanStatusCode, trace } from '@opentelemetry/api'
 import type { DatasetCore, Quad } from '@rdfjs/types'
-import * as jsonldNs from 'jsonld'
 import { Store } from 'n3'
+import { jsonld } from './jsonld-lib'
 import { localDocumentLoader } from './jsonld-parser'
 import type { WhatwgFetch } from './whatwg-fetch'
 export { localDocumentLoader }
-
-// CJS/ESM interop: jsonld is a CJS package; in the ESM bundle the namespace
-// has the full exports only on .default.  Grab the full object so that all
-// properties (fromRDF, compact, toRDF, expand, …) are available.
-const jsonld = (jsonldNs as any).default ?? jsonldNs
 
 export type JsonLdContext = Record<string, unknown>
 
@@ -340,6 +335,21 @@ export async function toStore(doc: Record<string, unknown>, base?: string): Prom
     store.add(quad)
   }
   return store as Store
+}
+
+/**
+ * Serialize a JSON-LD document (with embedded context) to N-Quads text via
+ * `jsonld.toRDF`. Default-graph documents yield N-Triples (valid Turtle data
+ * block bodies for SPARQL `INSERT DATA`/`DELETE DATA`); a named-graph document
+ * `{ '@id': graphIri, '@graph': doc }` yields N-Quads with the graph label in
+ * the 4th term.
+ */
+export async function toNQuads(doc: Record<string, unknown>, base?: string): Promise<string> {
+  return (await jsonld.toRDF(doc, {
+    format: 'application/n-quads',
+    base,
+    documentLoader,
+  })) as unknown as string
 }
 
 /**

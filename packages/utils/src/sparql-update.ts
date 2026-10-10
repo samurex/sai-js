@@ -1,15 +1,18 @@
-import type { DatasetCore, Quad } from '@rdfjs/types'
-import { Store } from 'n3'
 import { discoverDescriptionResource } from './discovery'
-import { serializeTurtle } from './turtle-serializer'
+import { toNQuads } from './jsonld'
 import type { WhatwgFetch } from './whatwg-fetch'
 
-export async function insertPatch(dataset: DatasetCore): Promise<string> {
-  return `INSERT DATA { ${await serializeTurtle(dataset)} }`
+/**
+ * Serialize a JSON-LD document (with embedded context) as a SPARQL
+ * `INSERT DATA` block body. Default-graph documents yield N-Triples (valid
+ * Turtle); a named-graph document yields N-Quads.
+ */
+export async function insertPatch(doc: Record<string, unknown>, base?: string): Promise<string> {
+  return `INSERT DATA { ${await toNQuads(doc, base)} }`
 }
 
-export async function deletePatch(dataset: DatasetCore): Promise<string> {
-  return `DELETE DATA { ${await serializeTurtle(dataset)} }`
+export async function deletePatch(doc: Record<string, unknown>, base?: string): Promise<string> {
+  return `DELETE DATA { ${await toNQuads(doc, base)} }`
 }
 
 /**
@@ -44,34 +47,31 @@ export async function applyPatch(
   }
 }
 
-/** Add a statement to a container via SPARQL patch. */
+/** Add a statement (JSON-LD document) to a container via SPARQL patch. */
 export async function addStatement(
   containerIri: string,
   fetch: WhatwgFetch,
-  quad: Quad
+  doc: Record<string, unknown>
 ): Promise<void> {
-  await applyPatch(containerIri, fetch, await insertPatch(new Store([quad])))
+  await applyPatch(containerIri, fetch, await insertPatch(doc))
 }
 
-/** Remove a statement from a container via SPARQL patch. */
+/** Remove a statement (JSON-LD document) from a container via SPARQL patch. */
 export async function removeStatement(
   containerIri: string,
   fetch: WhatwgFetch,
-  quad: Quad
+  doc: Record<string, unknown>
 ): Promise<void> {
-  await applyPatch(containerIri, fetch, await deletePatch(new Store([quad])))
+  await applyPatch(containerIri, fetch, await deletePatch(doc))
 }
 
-/** Replace a statement in a container via SPARQL patch. */
+/** Replace a statement (JSON-LD document) in a container via SPARQL patch. */
 export async function replaceStatement(
   containerIri: string,
   fetch: WhatwgFetch,
-  whichQuad: Quad,
-  withQuad: Quad
+  whichDoc: Record<string, unknown>,
+  withDoc: Record<string, unknown>
 ): Promise<void> {
-  const sparqlUpdate = [
-    await deletePatch(new Store([whichQuad])),
-    await insertPatch(new Store([withQuad])),
-  ].join(';')
+  const sparqlUpdate = [await deletePatch(whichDoc), await insertPatch(withDoc)].join(';')
   await applyPatch(containerIri, fetch, sparqlUpdate)
 }

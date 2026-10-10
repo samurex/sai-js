@@ -33,7 +33,7 @@ import {
   type RoleData,
   type RoleId,
   type SocialAgentId,
-  dataGrantTemplate,
+  dataGrantAcrJsonLd,
   dataModelContext,
   getDataGrantIris,
   isActivityClass,
@@ -287,7 +287,7 @@ export async function getExistingGrants(payload: {
  * HTTP-DELETE grant resources using the webId's session.
  *
  * Internal to the data owner's revocation handler only (DD14): the
- * dataGrantTemplate ACR is read-only for everyone but the owner, so a
+ * data-grant ACR is read-only for everyone but the owner, so a
  * grantor's direct DELETE of grant resources in another peer's registry is
  * ACR-blocked. Idempotent: 404 is tolerated (already gone).
  */
@@ -417,27 +417,22 @@ export async function createAcr(payload: FinalGrantData): Promise<void> {
     method: 'HEAD',
   })
   const acrId = getAcl(headResponse.headers.get('link'))
-  const acr = dataGrantTemplate({
-    id: acrId,
-    resource: payload.id,
-    owner: {
-      agent: session.webId,
-      client: session.agentId,
-    },
-    grantor,
-    peer,
-    client,
-  }).replaceAll('\n', '')
-  const response = await session.fetch(acrId, {
-    method: 'PUT',
-    body: acr,
-    headers: {
-      'content-type': 'text/turtle',
-    },
-  })
-  if (!response.ok) {
-    throw new Error(`${response.status} - ${acrId}`)
-  }
+  if (!acrId) throw new Error(`no acl link on grant: ${payload.id}`)
+  await putJsonLd(
+    acrId,
+    session.fetch,
+    dataGrantAcrJsonLd({
+      id: acrId,
+      resource: payload.id,
+      owner: {
+        agent: session.webId,
+        client: session.agentId,
+      },
+      grantor,
+      peer,
+      client,
+    })
+  )
 }
 
 /** Request delegated grants from the data owner; returns the assigned GrantIds. */

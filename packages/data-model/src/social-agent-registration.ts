@@ -1,12 +1,5 @@
-import {
-  type JsonLdContext,
-  type LanguageMap,
-  SKOS,
-  frameNode,
-  opt,
-} from '@janeirodigital/interop-utils'
-import { DataFactory, type Store } from 'n3'
-import { type AgentRegistrationId, toDataset as registrationToDataset } from './agent-registration'
+import { type JsonLdContext, type LanguageMap, frameNode, opt } from '@janeirodigital/interop-utils'
+import type { AgentRegistrationId } from './agent-registration'
 import { dataModelContext } from './context'
 
 export type SocialAgentRegistrationId = AgentRegistrationId
@@ -62,26 +55,6 @@ export async function fromJsonLd(doc: unknown, id: string): Promise<SocialAgentR
     note: opt(node, 'note'),
     reciprocalRegistration: opt(node, 'reciprocalRegistration'),
   }
-}
-
-export function toDataset(data: SocialAgentRegistrationData): Store {
-  const store = registrationToDataset(data)
-  const node = DataFactory.namedNode(data.id)
-  for (const [lang, value] of Object.entries(data.label)) {
-    store.add(
-      DataFactory.quad(
-        node,
-        SKOS.terms.prefLabel,
-        // the untagged entry (`@none`) is a plain literal, the rest carry
-        // their language tag
-        lang === '@none' ? DataFactory.literal(value) : DataFactory.literal(value, lang)
-      )
-    )
-  }
-  if (data.note) {
-    store.add(DataFactory.quad(node, SKOS.terms.note, DataFactory.literal(data.note)))
-  }
-  return store
 }
 
 export function getAdminGrantIris(data: SocialAgentRegistrationData): string[] {

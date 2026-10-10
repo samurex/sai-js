@@ -1,11 +1,15 @@
 import { randomUUID } from 'node:crypto'
-import { replaceAdminGrantLinks } from '@janeirodigital/interop-authorization-agent'
+import {
+  createSocialAgentRegistration,
+  replaceAdminGrantLinks,
+} from '@janeirodigital/interop-authorization-agent'
 import {
   SocialAgentRegistration,
+  type SocialAgentRegistrationData,
   getAdminGrantIris,
   getDataGrantIris,
 } from '@janeirodigital/interop-data-model'
-import { loader } from '@janeirodigital/interop-utils'
+import { INTEROP, type WhatwgFetch, jsonld, loader } from '@janeirodigital/interop-utils'
 const loadSocialAgentRegistration = loader(SocialAgentRegistration.fromJsonLd)
 
 import { fetch, statelessFetch } from '@janeirodigital/interop-test-utils'
@@ -119,5 +123,46 @@ describe('admin grant links (R1)', () => {
     await replaceAdminGrantLinks(socialAgentRegistration, statefulDeps.fetch, [grantOne, grantTwo])
 
     expect(mockedFetch).not.toHaveBeenCalled()
+  })
+})
+
+describe('createSocialAgentRegistration', () => {
+  test('patches a valid registration document carrying the registration type', async () => {
+    const registration: SocialAgentRegistrationData = {
+      id: 'https://auth.alice.example/new-registration/',
+      type: [INTEROP.SocialAgentRegistration],
+      registeredAgent: 'https://acme.example/#corp',
+      hasDataGrant: [],
+      hasAdminGrant: [],
+      label: { '@none': 'ACME' },
+    }
+
+    let patchBody = ''
+    const recordingFetch = (async (_url: string, options?: RequestInit) => {
+      if (options?.method === 'PATCH') patchBody = options.body as string
+      return {
+        ok: true,
+        headers: {
+          get: (name: string) =>
+            name === 'Link' ? '<http://just.en.example/description>; rel="describedby"' : undefined,
+        },
+        text: async () => '',
+        status: 200,
+      } as unknown as Response
+    }) as WhatwgFetch
+
+    await createSocialAgentRegistration(registration, recordingFetch)
+
+    // the body must be a valid SPARQL data block — parse it back as N-Quads
+    expect(patchBody.startsWith('INSERT DATA { ')).toBe(true)
+    const inner = patchBody.replace(/^INSERT DATA \{ /, '').replace(/ \}$/, '')
+    const nodes = await jsonld.fromRDF(inner, { format: 'application/n-quads' })
+    const node = nodes.find((n) => n['@id'] === registration.id)
+    expect(node).toBeDefined()
+    expect(node!['@type']).toContain(INTEROP.SocialAgentRegistration)
+    expect(node!['http://www.w3.org/ns/solid/interop#registeredAgent']).toEqual([
+      { '@id': 'https://acme.example/#corp' },
+    ])
+    expect(node!['http://www.w3.org/2004/02/skos/core#prefLabel']).toEqual([{ '@value': 'ACME' }])
   })
 })

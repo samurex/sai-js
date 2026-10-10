@@ -20,12 +20,14 @@ const orgProfileDoc = {
   'http://www.w3.org/ns/solid/interop#hasAuthorizationAgent': { '@id': ORG_AA },
 }
 
-const roleTurtle = `PREFIX interop: <http://www.w3.org/ns/solid/interop#>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-<${ROLE_IRI}> a interop:Role ;
-  skos:prefLabel "Admins" ;
-  interop:hasMember <${MEMBER}> .
-`
+const roleDoc = [
+  {
+    '@id': ROLE_IRI,
+    '@type': ['http://www.w3.org/ns/solid/interop#Role'],
+    'http://www.w3.org/2004/02/skos/core#prefLabel': [{ '@value': 'Admins' }],
+    'http://www.w3.org/ns/solid/interop#hasMember': [{ '@id': MEMBER }],
+  },
+]
 
 function mockResponse(body: unknown, status = 200, contentType = 'application/ld+json'): Response {
   return {
@@ -54,9 +56,9 @@ const sparqlAdminUrl = `${new URL(ORG_AA).origin}/.sai/sparql-admin/${Buffer.fro
 /**
  * Session answering: org webid profile → ORG_AA; /sparql-admin queries by
  * operation: SELECT → W3C JSON results (the listing), CONSTRUCT → the role
- * graph as turtle (or an empty turtle for a gone role).
+ * graph as JSON-LD (or an empty graph for a gone role).
  */
-function sparqlAdminSession(roleDoc: string): {
+function sparqlAdminSession(roleDoc: unknown): {
   session: AuthorizationAgent
   requests: { url: string; init?: RequestInit }[]
 } {
@@ -80,8 +82,8 @@ function sparqlAdminSession(roleDoc: string): {
         )
       }
       if (query.includes('CONSTRUCT')) {
-        // turtle — what fetchTriples parses (parseTurtle(response.text()))
-        return mockResponse(roleDoc, 200, 'text/turtle')
+        // JSON-LD — what fetchTriples parses (toStore(response.json()))
+        return mockResponse(roleDoc, 200, 'application/ld+json')
       }
       throw new Error(`unexpected sparql-admin query: ${query}`)
     },
@@ -95,7 +97,7 @@ function sparqlAdminSession(roleDoc: string): {
 
 describe('getRoles — org context lists roles via /sparql-admin', () => {
   test('listContained on the role registry, then one graph read per role', async () => {
-    const { session, requests } = sparqlAdminSession(roleTurtle)
+    const { session, requests } = sparqlAdminSession(roleDoc)
 
     const roles = await getRoles(orgCtx(session), 'en')
 
@@ -108,7 +110,7 @@ describe('getRoles — org context lists roles via /sparql-admin', () => {
   })
 
   test('skips roles whose graph no longer exists (empty CONSTRUCT)', async () => {
-    const { session } = sparqlAdminSession('')
+    const { session } = sparqlAdminSession([])
 
     const roles = await getRoles(orgCtx(session), 'en')
 

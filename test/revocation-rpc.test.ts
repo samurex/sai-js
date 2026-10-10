@@ -1,6 +1,6 @@
 import { buildOidcSession, buildSessionManager } from '@elfpavlik/sai-components'
 import { getDataGrantIris } from '@janeirodigital/interop-data-model'
-import { LDP, parseTurtle } from '@janeirodigital/interop-utils'
+import { LDP, toStore } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
 
 const rpcEndpoint = 'https://auth/.sai/api'
@@ -47,10 +47,10 @@ async function rpcCall(payload: unknown, cookie: string) {
 async function countGrants(): Promise<number> {
   const session = await buildOidcSession(acmeId)
   const response = await session.authFetch(grantRegistry, {
-    headers: { Accept: 'text/turtle' },
+    headers: { Accept: 'application/ld+json' },
   })
   expect(response.status).toBe(200)
-  const dataset = await parseTurtle(await response.text())
+  const dataset = await toStore((await response.json()) as Record<string, unknown>)
   return Array.from(dataset).filter((quad) => quad.predicate.value === LDP.contains).length
 }
 

@@ -1,22 +1,21 @@
 import {
   type AgentRegistrationData,
-  agentRegistrationAcrTemplate,
+  agentRegistrationAcrJsonLd,
+  dataModelContext,
   getDataGrantIris,
 } from '@janeirodigital/interop-data-model'
 import type { AgentAndClient } from '@janeirodigital/interop-data-model'
 import {
-  INTEROP,
   type WhatwgFetch,
   addStatement,
   applyPatch,
   deletePatch,
   discoverAccessResource,
   insertPatch,
-  parseTurtle,
+  putJsonLd,
   removeStatement,
-  serializeTurtle,
+  withContext,
 } from '@janeirodigital/interop-utils'
-import { DataFactory, Store } from 'n3'
 
 // ──────────────────────────
 // Behavior functions (replacing class methods)
@@ -29,19 +28,12 @@ export async function setAcr(
   peer: AgentAndClient
 ): Promise<void> {
   const acrLocation = await discoverAccessResource(data.id, fetch)
-  const dataset = await parseTurtle(
-    agentRegistrationAcrTemplate({
-      id: data.id,
-      owner: creator,
-      peer,
-    })
+  if (!acrLocation) throw new Error(`no access resource for ${data.id}`)
+  await putJsonLd(
+    acrLocation,
+    fetch,
+    agentRegistrationAcrJsonLd({ id: data.id, owner: creator, peer })
   )
-  const response = await fetch(acrLocation, {
-    method: 'PUT',
-    body: await serializeTurtle(dataset),
-    headers: { 'Content-Type': 'text/turtle' },
-  })
-  if (!response.ok) throw new Error(await response.text())
 }
 
 export async function addDataGrant(
@@ -49,12 +41,11 @@ export async function addDataGrant(
   fetch: WhatwgFetch,
   grantIri: string
 ): Promise<void> {
-  const quad = DataFactory.quad(
-    DataFactory.namedNode(data.id),
-    INTEROP.terms.hasDataGrant,
-    DataFactory.namedNode(grantIri)
+  await addStatement(
+    data.id,
+    fetch,
+    withContext(dataModelContext, { id: data.id, hasDataGrant: grantIri })
   )
-  await addStatement(data.id, fetch, quad)
   data.hasDataGrant = [...(data.hasDataGrant ?? []), grantIri]
 }
 
@@ -63,12 +54,11 @@ export async function removeDataGrant(
   fetch: WhatwgFetch,
   grantIri: string
 ): Promise<void> {
-  const quad = DataFactory.quad(
-    DataFactory.namedNode(data.id),
-    INTEROP.terms.hasDataGrant,
-    DataFactory.namedNode(grantIri)
+  await removeStatement(
+    data.id,
+    fetch,
+    withContext(dataModelContext, { id: data.id, hasDataGrant: grantIri })
   )
-  await removeStatement(data.id, fetch, quad)
   data.hasDataGrant = (data.hasDataGrant ?? []).filter((iri) => iri !== grantIri)
 }
 
@@ -98,16 +88,21 @@ export async function replaceDataGrants(
   const added = targetSet.difference(currentSet)
   if (removed.size === 0 && added.size === 0) return
 
-  const node = DataFactory.namedNode(data.id)
-  const removeQuads = [...removed].map((iri) =>
-    DataFactory.quad(node, INTEROP.terms.hasDataGrant, DataFactory.namedNode(iri))
-  )
-  const insertQuads = [...added].map((iri) =>
-    DataFactory.quad(node, INTEROP.terms.hasDataGrant, DataFactory.namedNode(iri))
-  )
   const sparqlUpdate = [
-    ...(removed.size ? [await deletePatch(new Store(removeQuads))] : []),
-    ...(added.size ? [await insertPatch(new Store(insertQuads))] : []),
+    ...(removed.size
+      ? [
+          await deletePatch(
+            withContext(dataModelContext, { id: data.id, hasDataGrant: [...removed] })
+          ),
+        ]
+      : []),
+    ...(added.size
+      ? [
+          await insertPatch(
+            withContext(dataModelContext, { id: data.id, hasDataGrant: [...added] })
+          ),
+        ]
+      : []),
   ].join(';')
   await applyPatch(data.id, fetch, sparqlUpdate)
   data.hasDataGrant = [...grantIris]

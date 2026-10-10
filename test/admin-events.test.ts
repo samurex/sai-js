@@ -6,10 +6,11 @@ const loadGrant = loader(Grant.fromJsonLd)
 import {
   INTEROP,
   LDP,
+  fetchJsonLd,
   getAcl,
   linkedIrisJsonLd,
   loader,
-  parseTurtle,
+  toStore,
 } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
 import { awaitEvent, openEventsStream, waitForRoleCreatedCompletion } from './util'
@@ -263,21 +264,19 @@ const acp = {
 }
 
 /** HEAD the registry set for its ACR and fetch it as the webid — 4xx fails the test. */
-async function fetchRegistrySetAcr(webId: string): Promise<{ acrId: string; turtle: string }> {
+async function fetchRegistrySetAcr(webId: string): Promise<{ acrId: string; doc: unknown }> {
   const manager = buildSessionManager()
   const session = await manager.getSession(webId)
   const headResponse = await session.fetch(session.registrySet.id, { method: 'HEAD' })
   const acrId = getAcl(headResponse.headers.get('link') ?? '')
   if (!acrId) throw new Error(`no acl link on registry set: ${session.registrySet.id}`)
-  const response = await session.fetch(acrId, { headers: { Accept: 'text/turtle' } })
-  expect(response.ok).toBe(true)
-  return { acrId, turtle: await response.text() }
+  return { acrId, doc: await fetchJsonLd(acrId, session.fetch) }
 }
 
 /** `acp:agent` values of every matcher under the registry set's `#fullAdminAccess`. */
 async function fullAdminAccessAgents(webId: string): Promise<string[]> {
-  const { acrId, turtle } = await fetchRegistrySetAcr(webId)
-  const store = await parseTurtle(turtle, acrId) // throws when the stored ACR is invalid Turtle
+  const { acrId, doc } = await fetchRegistrySetAcr(webId)
+  const store = await toStore(doc as Record<string, unknown>, acrId)
   const policies = new Set<string>()
   const matchers = new Set<string>()
   for (const quad of store) {
@@ -395,8 +394,8 @@ describe('org context — ACR + completion integrity (phase 4 guards)', () => {
     const session = await manager.getSession(danId)
     const registration = await session.findSocialAgentRegistration(bobId)
     expect(registration?.hasAdminGrant ?? []).toHaveLength(0)
-    const { turtle } = await fetchRegistrySetAcr(danId)
-    expect(turtle).not.toContain('#fullAdminAccess')
+    const { doc } = await fetchRegistrySetAcr(danId)
+    expect(JSON.stringify(doc)).not.toContain('#fullAdminAccess')
   })
 
   test('demotion removes the admin from the ACR while keeping the remaining admin', async () => {

@@ -48,7 +48,7 @@ async function common(
 
   const headers: Record<string, string> = {
     'Content-Type': acceptsTurtle ? 'text/turtle' : 'application/ld+json',
-    Link: `<http://just.en.example/description-resource>; rel="describedby", <${STORAGE_DESCRIPTION_IRI}>; rel="http://www.w3.org/ns/solid/terms#storageDescription`,
+    Link: `<${strippedUrl}.acr>; rel="acl", <http://just.en.example/description-resource>; rel="describedby", <${STORAGE_DESCRIPTION_IRI}>; rel="http://www.w3.org/ns/solid/terms#storageDescription`,
   }
 
   // @ts-ignore

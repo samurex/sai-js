@@ -4,7 +4,7 @@ import {
   discoverWebPushService,
   getNotificationChannel,
   getOneMatchingQuad,
-  parseTurtle,
+  toStore,
 } from '@janeirodigital/interop-utils'
 import type { NotificationChannel } from '@solid-notifications/types'
 
@@ -80,21 +80,34 @@ export class NotificationManager extends EventTarget {
     // TODO remove from map on error or close, and reconnect
     const reader = response.body.getReader()
     const decoder = new TextDecoder()
-    // discard initial notification
-    await reader.read()
+    let buffer = ''
+    let initialDiscarded = false
     try {
       while (response.body.locked) {
-        const notification = await reader.read().then(({ value }) => decoder.decode(value))
-        if (!notification) continue
-        const dataset = await parseTurtle(notification)
-        this.dispatchEvent(
-          new CustomEvent('notification', {
-            detail: {
-              type: getOneMatchingQuad(dataset, null, RDF.terms.type)!.object.value,
-              object: getOneMatchingQuad(dataset, null, AS.terms.object)!.object.value,
-            },
-          })
-        )
+        const { done, value } = await reader.read()
+        if (done) break
+        buffer += decoder.decode(value, { stream: true })
+        while (true) {
+          const newlineIndex = buffer.indexOf('\n')
+          if (newlineIndex < 0) break
+          const line = buffer.slice(0, newlineIndex).trim()
+          buffer = buffer.slice(newlineIndex + 1)
+          if (!line) continue
+          // discard the initial state notification (first line)
+          if (!initialDiscarded) {
+            initialDiscarded = true
+            continue
+          }
+          const dataset = await toStore(JSON.parse(line) as Record<string, unknown>)
+          this.dispatchEvent(
+            new CustomEvent('notification', {
+              detail: {
+                type: getOneMatchingQuad(dataset, null, RDF.terms.type)!.object.value,
+                object: getOneMatchingQuad(dataset, null, AS.terms.object)!.object.value,
+              },
+            })
+          )
+        }
       }
     } finally {
       reader.releaseLock()

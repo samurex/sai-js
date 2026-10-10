@@ -6,10 +6,10 @@ import {
   documentValues,
   fetchJsonLd,
   frameNode,
+  jsonld,
   withContext,
 } from '@janeirodigital/interop-utils'
 import type { NamedNode } from '@rdfjs/types'
-import * as jsonldNs from 'jsonld'
 import { DataFactory } from 'n3'
 import type { ShapeTreeDescriptionData } from '.'
 import { dataModelContext } from './context'
@@ -40,10 +40,6 @@ export type ShapeTreeData = ShapeTreeId & {
   descriptionLanguages: string[]
   references: ShapeTreeReference[]
 }
-
-// CJS/ESM interop: jsonld is a CJS package; in the ESM bundle the namespace
-// has the full exports only on .default (same pattern as interop-utils).
-const jsonld = (jsonldNs as any).default ?? jsonldNs
 
 // ──────────────────────────
 // Document helpers (expanded form, no N3)
