@@ -1,4 +1,4 @@
-import type { NotificationChannel } from '@solid-notifications/types'
+import type { NotificationChannel } from '@janeirodigital/interop-utils'
 import {
   ACCOUNT_TYPE,
   Initializer,

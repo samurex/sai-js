@@ -11,9 +11,12 @@ import type {
 import { SocialAgentRegistration } from '@janeirodigital/interop-data-model'
 const loadSocialAgentRegistration = loader(SocialAgentRegistration.fromJsonLd)
 
-import { discoverAuthorizationAgent, loader } from '@janeirodigital/interop-utils'
-import { SubscriptionClient } from '@solid-notifications/subscription'
-import { ChannelType } from '@solid-notifications/types'
+import {
+  ChannelType,
+  discoverAuthorizationAgent,
+  loader,
+  subscribeToNotificationChannel,
+} from '@janeirodigital/interop-utils'
 import { ReciprocalWebhookStore } from '../../ReciprocalWebhookStore.js'
 import { buildAccountLoginStorage } from '../../builders/accountLoginStorage.js'
 import { buildSessionManager } from '../../builders/sessionManager.js'
@@ -188,8 +191,8 @@ export async function reciprocalWebhook(payload: ReciprocalWebhookInput): Promis
 
   const manager = buildSessionManager()
   const session = await manager.getSession(payload.webId)
-  const subscriptionClient = new SubscriptionClient(session.fetch)
-  const channel = await subscriptionClient.subscribe(
+  const channel = await subscribeToNotificationChannel(
+    session.fetch,
     payload.topic,
     ChannelType.WebhookChannel2023,
     webhookTargetUrl()

@@ -6,7 +6,7 @@ import {
   getOneMatchingQuad,
   toStore,
 } from '@janeirodigital/interop-utils'
-import type { NotificationChannel } from '@solid-notifications/types'
+import type { NotificationChannel } from '@janeirodigital/interop-utils'
 
 export class NotificationManager extends EventTarget {
   public webPushService?: { id: string; vapidPublicKey: string }

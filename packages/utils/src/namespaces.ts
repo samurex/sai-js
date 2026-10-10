@@ -116,8 +116,7 @@ export const INTEROP = createVocabulary(
 export const NOTIFY = createVocabulary(
   'http://www.w3.org/ns/solid/notifications#',
   'vapidPublicKey',
-  // terms used by the notifications ecosystem (@solid-notifications/*) directly at
-  // the top level — missing entries made buildChannel emit undefined predicates
+  // notification channel terms (subscription + storage description)
   'topic',
   'sendTo',
   'channelType',
