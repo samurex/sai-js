@@ -23,9 +23,15 @@
   },
   "license": "MIT",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
   "files": [
-    "dist/",
     "src/"
   ],
   "directories": {
@@ -33,9 +39,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "tsc -b . && cp ./src/data.json ./dist/data.json",
-    "test": "vitest run",
-    "clean": "rimraf dist tsconfig.tsbuildinfo"
+    "test": "vitest run"
   },
   "dependencies": {
     "@janeirodigital/interop-utils": "^1.0.0-rc.26",

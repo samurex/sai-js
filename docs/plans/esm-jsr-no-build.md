@@ -1,17 +1,16 @@
-# ESM-only, no build step, tsgo typecheck, JSR publishing
+# ESM-only, no build step, tsgo typecheck (Bun runtime)
 
-> **Status:** 📋 planning — **all active decisions resolved** (D1 ✅A, D2 ✅B,
-> D3 ✅A, D5 ✅A, D9 ✅A, D10 ✅B; D4/D6/D7/D8 deferred with JSR). Evaluation done
-> against the tree at the time of writing (no source changes yet). This plan
-> tracks the move of the publishable packages to **ESM-only source with no build
-> step**, running **everything under Bun** (native TS, incl. production OCI
-> images), and type-checking with **`tsgo --noEmit`**
-> (`@typescript/native-preview`).
+> **Status:** ✅ **complete** — all in-scope phases implemented (0–4, 7, 8, 10).
+> The deferred follow-ups were split into their own plans:
+> [`production-consumer-cleanup.md`](production-consumer-cleanup.md) (Phase 5),
+> [`jsr-publishing.md`](jsr-publishing.md) (Phase 6 + §6 + the JSR decisions
+> D4/D6/D7/D8), and
+> [`extract-temporal-workflows.md`](extract-temporal-workflows.md) (Phase 9).
 >
-> **JSR publishing is deferred** (decided during D4). It stays the long-term
-> goal and is documented in §7 "Future work — JSR publishing (deferred)"; none of
-> the phases below depend on it. For now the packages keep their npm names and
-> npm dependency ranges.
+> This plan tracked the move of the publishable packages to **ESM-only source
+> with no build step**, running **everything under Bun** (native TS, incl.
+> production OCI images), and type-checking with **`tsgo --noEmit`**
+> (`@typescript/native-preview`).
 
 ## 1. Goal
 
@@ -19,7 +18,7 @@
 2. **No build step** for the interop library packages (and, where feasible, everything else).
 3. **Dev/test on Bun** loading `.ts` natively.
 4. **Typecheck with `tsgo --noEmit`.**
-5. **Publish packages to JSR** (`jsr.io`) instead of / alongside npm.
+5. **Publish packages to JSR** (`jsr.io`) instead of / alongside npm — **split out to [`jsr-publishing.md`](jsr-publishing.md)**; not part of this plan.
 
 ## 2. Current state (evidence)
 
@@ -99,11 +98,11 @@ Each decision is listed with options, a recommendation, and a placeholder for th
 | D1 | `@elfpavlik/sai-components` strategy | keep on npm with its build | ✅ **A** — keep on npm with its build |
 | D2 | TypeScript strictness under tsgo | `strict: true` migration (~121 fixes) | ✅ **B** — pin `strict: false` now; **Phase 7** migrates to `strict: true` |
 | D3 | Module/resolution mode + import extensions | `module: preserve` + `moduleResolution: bundler` + explicit `.ts` imports | ✅ **A** — `module: preserve` + `moduleResolution: bundler`; imports stay mixed; normalization deferred to **Phase 8** |
-| D4 | JSR cross-package dependency specifiers | publish-time rewrite to `jsr:` | ✅ **deferred with JSR** — keep npm names/ranges for now |
+| D4 | JSR cross-package dependency specifiers | publish-time rewrite to `jsr:` | ↪ moved to [`jsr-publishing.md`](jsr-publishing.md) |
 | D5 | Production runtime for CSS/worker/services | pending D1 | ✅ **A** — Bun everywhere, including the production OCI images in `flake.nix` |
-| D6 | npm publishing | keep npm for `components` only (per D1) | ⏸️ deferred with JSR |
-| D7 | Slow types | fix utils/auth-agent/components; `--allow-slow-types` for `api-messages` | ⏸️ deferred with JSR |
-| D8 | JSR publish trigger + version source of truth | GitHub Actions on release, `jsr.json`/`package.json` synced by script | ⏸️ deferred with JSR |
+| D6 | npm publishing | keep npm for `components` only (per D1) | ↪ moved to [`jsr-publishing.md`](jsr-publishing.md) |
+| D7 | Slow types | fix utils/auth-agent/components; `--allow-slow-types` for `api-messages` | ↪ moved to [`jsr-publishing.md`](jsr-publishing.md) |
+| D8 | JSR publish trigger + version source of truth | GitHub Actions on release, `jsr.json`/`package.json` synced by script | ↪ moved to [`jsr-publishing.md`](jsr-publishing.md) |
 | D9 | Test runner under Bun | keep vitest, run via `bunx --bun` | ✅ **A** — keep vitest, run via `bunx --bun` |
 | D10 | npm publish/release behavior while JSR is deferred | keep npm releases via a publish-time build; no build in dev/test | ✅ **B** — pause npm releases for the 5 interop libs; only `components` keeps publishing |
 
@@ -146,18 +145,8 @@ Each decision is listed with options, a recommendation, and a placeholder for th
 
 **Resolution:** ✅ **A** — `module: "preserve"` + `moduleResolution: "bundler"` + `allowImportingTsExtensions: true`. To keep the initial diff small, the existing mixed imports (`.js` + extensionless) are left as-is; `bundler` resolves all three. Normalizing every relative import to explicit `.ts` is deferred to **Phase 8** (same pattern as D2 → **Phase 7**).
 
-### D4 — JSR cross-package dependency specifiers
-
-`package.json` cross-deps are npm ranges. JSR resolves those to the **npm** registry; a JSR-native graph needs `jsr:` specifiers, which npm/Bun cannot install locally.
-
-**Options**
-- **A. Publish-time rewrite** — a script stages each package (temp dir) with cross-deps rewritten to `jsr:@scope/pkg@^x`, merges `jsr.json`, and runs `jsr publish`. Repo keeps npm ranges for local install.
-- **B. Keep npm ranges** — JSR packages depend on the npm-published versions (dual publish). Simplest; registry graph stays mixed.
-- **C. Drop npm publishing, use `jsr:` in package.json** — breaks local `npm install`/`bun install` (verified).
-
-**Recommendation:** A (B as fallback).
-
-**Resolution:** ✅ **Deferred with JSR publishing.** JSR is now a future goal, not part of this effort. The packages keep their npm names and npm dependency ranges. When JSR publishing is picked up, resolve this as **A** (publish-time staging/rewrite) — see §7.
+> **D4, D6, D7, D8** (all JSR-related) moved to
+> [`jsr-publishing.md`](jsr-publishing.md).
 
 ### D10 — npm publish/release behavior while JSR is deferred
 
@@ -224,49 +213,10 @@ maintain. Implications:
   must be validated before the no-build cutover.
 - The nix packages/images (`nix/packages/sai-*.nix`, `nix/images/sai-*.nix`)
   currently use `pkgs.nodejs` + `buildNpmPackage` against published npm deps and
-  run built `dist`; they must be reworked to ship the repo source and use Bun
-  (Phase 6).
+  run built `dist`; they must be reworked to ship the repo source and use Bun —
+  see [`production-consumer-cleanup.md`](production-consumer-cleanup.md).
 - Production no longer depends on npm releases, which is consistent with
   D10 = B.
-
-### D6 — npm publishing
-
-> ⏸️ Deferred with JSR (D4) — superseded for now by **D10**. Kept for the JSR
-> phase.
-
-**Options**
-- **A. Stop npm publishing for the 5 interop libs; keep npm for `components`** (D1).
-- **B. Dual-publish everything** (npm + JSR).
-
-**Recommendation:** A.
-
-**Resolution:** ⏸️ deferred with JSR.
-
-### D7 — Slow types
-
-> ⏸️ Deferred with JSR (D4). See §7.
-
-**Options**
-- **A. Fix all fixable** (utils, authorization-agent, components) and use `--allow-slow-types` only for `api-messages`.
-- **B. `--allow-slow-types` everywhere** for the first publish, fix later.
-- **C. Refactor `api-messages`** away from `effect/Schema` class expressions so it can pass without the flag.
-
-**Recommendation:** A; C as optional follow-up.
-
-**Resolution:** ⏸️ deferred with JSR.
-
-### D8 — JSR publish trigger + version source of truth
-
-> ⏸️ Deferred with JSR (D4). See §7.
-
-**Options**
-- Publish on release/tag vs on every push to `main` (JSR no-ops if the version is unchanged).
-- Version source: `package.json` vs `jsr.json` (JSR reads `jsr.json`; npm reads `package.json`); sync via a script.
-- One-time per-package repo linking on jsr.io is required for OIDC.
-
-**Recommendation:** GitHub Actions on `main` (JSR skips unchanged versions), `package.json` as the source, generated `jsr.json` versions.
-
-**Resolution:** ⏸️ deferred with JSR.
 
 ### D9 — Test runner under Bun
 
@@ -276,18 +226,15 @@ maintain. Implications:
 
 **Recommendation:** A.
 
-**Resolution:** ✅ **A** — keep vitest. **G1 runs via `bunx vitest run` (Node
-runtime), which is green** (70/70 files). The Bun-runtime variant,
-`bunx --bun vitest`, does **not** apply `vi.mock` — verified on the three files
-that use it: `packages/components/test/grants.test.ts`,
-`packages/components/test/invitation-activity.test.ts`,
-`packages/authorization-agent/test/authorization-agent.test.ts` — and diverges on
-env handling (missing `CSS_ENCODED_PRIVATE_JWK`). Making those files
-Bun-runtime-compatible is deferred to **Phase 10**; then G1 can move to `--bun`.
+**Resolution:** ✅ **A** — keep vitest. Originally G1 ran on the Node runtime
+because `bunx --bun vitest` (Bun) did not apply `vi.mock`. **Phase 10 fixed
+this by upgrading to vitest 5**, so G1 now runs on the **Bun runtime**
+(`bunx --bun vitest run`) — and `bunx vitest run` (Node) is also green.
 
 ## 4. Verification & phased implementation plan
 
-> All active decisions are resolved; only the JSR-related ones are deferred.
+> All decisions resolved (the JSR-related D4/D6/D7/D8 moved to
+> [`jsr-publishing.md`](jsr-publishing.md)).
 > **Verification is the organizing principle:** the runtime switch must land
 > before the no-build switch, so `dagger call test` stays runnable throughout.
 
@@ -299,7 +246,7 @@ in place) and — until Phase 4 — `packages/components/dist` built
 
 | Gate | Command | Notes |
 |---|---|---|
-| **G1 — unit tests** | `bunx vitest run` | Runs vitest under Node (`bunx` resolves the bin; `--bun` selects the Bun runtime). **Green: 70/70 files, 298 passed, 0 failed.** Not `bunx --bun` — see D9. |
+| **G1 — unit tests** | `bunx --bun vitest run` | Runs vitest under **Bun** (vitest 5, Phase 10). **Green: 70/70 files, 298 passed, 0 failed.** `bunx vitest run` (Node runtime) is also green. |
 | **G2 — typecheck** | `npx tsgo --noEmit -p packages/<pkg>/tsconfig.json` (or a root `typecheck` script) | Activates in **Phase 2**. Before that, the `tsc` build is the de-facto type gate. |
 | **G3 — integration** | `dagger call test` | Runs `test/` against the CSS + worker + id services. Requires `packages/components/dist`. User-run. |
 
@@ -404,16 +351,21 @@ Goal: **G3 runs under Bun before any no-build change.**
   (dropped `composite`/`rootDir`/`outDir`; `data-model` keeps `typeRoots`).
 - ✅ Removed stale interop `dist/` + `tsconfig.tsbuildinfo` — G1/G2 still green,
   proving nothing consumes them.
-- **`turbo.json` unchanged (deviation from the draft):** `components` (D1) and
-  `test-utils` still have build scripts, so the `build` task and root
-  `npm run build` stay; interop packages are simply skipped by turbo. `test`
-  keeps `dependsOn: ["build"]` so `test-utils` dist is produced.
-- **Validated:** G2 exit 0; G1 70/70 files / 298 passed; `npm test` (turbo) 8/8;
-  `npm run build -- --force` 3/3 (components + test-utils + docs-website) with no
-  interop `dist`; `npm run check` green.
+- ✅ **`test-utils` also converted to no-build** (later fix): its
+  `main`/`types`/`exports` → `./src/index.ts`, build/clean scripts removed, and
+  its `tsconfig` simplified. This was required because CI runs `typecheck`
+  **before** `build`, and `packages/repl` imports
+  `@janeirodigital/interop-test-utils` — whose types pointed at the not-yet-built
+  `dist/` (`TS2307`).
+- **`turbo.json` unchanged (deviation from the draft):** `components` (D1) still
+  has a build script, so the `build` task and root `npm run build` stay; interop
+  packages and `test-utils` are simply skipped by turbo.
+- **Validated:** G2 exit 0; G1 70/70 files / 298 passed (Bun + Node); `npm test`
+  (turbo) 7/7; `npm run build -- --force` 2/2 (components + docs-website) with no
+  interop/`test-utils` `dist`; `npm run check` green.
 - **Gate:** ✅ G1 + G2 green; ⏳ G3 (`dagger call test`) — user to run.
 
-### Phase 4 — components exception (keep build)
+### Phase 4 — components exception (keep build) — ✅ confirmed
 
 Per D1: keep `build:ts` + `build:components`, `dist` + `lsd:*`, npm publishing.
 Confirm `tsc` still resolves the now-TS interop packages and that the generated
@@ -421,26 +373,11 @@ Confirm `tsc` still resolves the now-TS interop packages and that the generated
 
 - **Gate:** G1 + G3 green; `components` is still excluded from G2 (D2 = B).
 
-### Phase 5 — production + consumer cleanup
-
-- nix packages/images (`nix/packages/sai-*.nix`, `nix/images/sai-*.nix`) → Bun +
-  repo source (drop `buildNpmPackage` against published npm `dist`).
-- `services/id`, `ui/authorization`, `docs/website`, `README.md` dev
-  instructions, `.dagger`, `docker-compose.yaml`.
-- **Gate:** G1 + G2 + G3 green.
-
-### Phase 6 — JSR publishing (deferred — future goal, not on the critical path)
-
-> Deferred per D4. Documented in §6 below. Do not start as part of the current
-effort.
-
-- `jsr.json` per interop lib: `name`, `version`, `exports: { ".": "./src/index.ts" }`, `publish.include: ["src/**/*.ts","README.md","LICENSE"]` (excludes `test/`).
-- Version sync script (`package.json` → `jsr.json`).
-- Slow types (per D7); validate each with `npx jsr publish --dry-run --allow-dirty`.
-- Dependency staging (per D4).
-- Publish order: `utils` → `data-model` → `authorization-agent` → `application`, `api-messages`.
-- `.github/workflows/publish-jsr.yml` (OIDC, per-package repo link).
-- Prerequisite: own/create the `@janeirodigital` scope on jsr.io.
+> **Phase 5** (production + consumer cleanup) was split into its own plan:
+> [`production-consumer-cleanup.md`](production-consumer-cleanup.md).
+>
+> **Phase 6** (JSR publishing) was split into its own plan:
+> [`jsr-publishing.md`](jsr-publishing.md).
 
 ### Phase 7 — strict-mode migration (follow-up) — ✅ implemented (components still excluded)
 
@@ -483,141 +420,44 @@ effort.
   3/3; `npm run check` green.
 - **Gate:** ✅ G1 + G2 green; ⏳ G3 (`dagger call test`) — user to run.
 
-### Phase 9 — extract Temporal code; shrink `components` to Components.js-only (deferred follow-up)
+> **Phase 9** (extract Temporal code; shrink `components` to Components.js-only)
+> was split into its own plan:
+> [`extract-temporal-workflows.md`](extract-temporal-workflows.md). It is not
+> part of this plan.
 
-**Goal:** `packages/components` should contain only the minimum needed for
-`componentsjs-generator` to emit `dist/components/*.jsonld`. Everything else
-(above all the Temporal code) moves to dedicated packages.
+### Phase 10 — Bun-runtime vitest compatibility — ✅ implemented
 
-**Audit (done while planning; re-verify when starting).** Registered Components.js
-classes currently living in the package (keep): ActivityEvents,
-ActivityWebhookHandler, ActivityWebhookStore, AdminPermissionReader,
-AdminSparqlHandler, AgentIdHandler, ApiHandler, CustomWebIdStore, EnvJwkGenerator,
-EventsHandler, GrantIssuanceHandler, GrantRevocationHandler, HybridDataAccessor,
-InvitationHandler, NdjsonNotification, PostgresKeyValueStorage, ProxyAdminHandler,
-ReciprocalWebhookHandler, ReciprocalWebhookStore, S3DataAccessor,
-SaiAuthorizationManager, SaiPermissionsEngine, SessionManager,
-UiPushSubscriptionStore — plus same-file helper classes the generator emits
-(SessionAcquirer, HybridResourceStore, NdjsonNotificationSerializer,
-NdjsonStreamingHttpRequestHandler, CompactedNotification, S3DataAccessorArgs,
-SparqlStoreEntry, ClientIdHandler) and `config/`.
-
-**Move to a new `packages/temporal-workflows`** (name e.g.
-`@elfpavlik/sai-temporal-workflows`, private):
-
-- `src/temporal/workflows/*` (7 files) — must stay isolated (`@temporalio/workflow`,
-  `@temporalio/common`, pure data).
-- `src/temporal/activities/*` (6 files) — Node-side; currently import
-  `builders/*`, `services/ReciprocalMirror`, `ReciprocalWebhookStore`,
-  `util/uriTemplates`.
-- `src/temporal/client.ts` and `src/workers/main.ts` (the worker entrypoint the
-  dagger/nix commands run).
-- worker-only tracing: `src/tracing/otel-state.ts`; decide `tracing/preload.cjs`.
-
-**Other non-component code to relocate (destinations to decide when starting):**
-
-| Code | Used by | Suggested destination |
-|---|---|---|
-| `src/services/*` (route handlers + domain helpers; ~15 files) | `ApiHandler` (component) **and** activities (`services/ReciprocalMirror`) | new `packages/sai-services`, or fold into `@janeirodigital/interop-authorization-agent` — overlaps `components-tweaks.md` |
-| `src/builders/*` (`sessionManager`, `accountLoginStorage`) | activities + component tests | same destination as `services/*` |
-| `src/SelfIssuedSession.ts`, `src/SessionManager.ts` | `SessionManager` is a component; `SelfIssuedSession` is its glue | keep with components (or move to the services package if `SessionManager` stays thin) |
-| `src/tracing/bootstrap.ts`, `src/tracing/effect-tracer.ts` | `index.ts`, `workers/main.ts`, `test/`, `services/id` | small shared `tracing` package/module |
-| `src/tracing/preload.cjs` | dagger/compose CSS `--preload` | keep as the package's non-component preload, or move to the shared tracing location |
-| `src/util/uriTemplates.ts` | components + activities | shared location if components keep needing it |
-| `src/messages.ts` | **no importers found** in `src` | confirm dead code, delete |
-
-**`src/index.ts`** is then reduced to component exports (drop
-`./services/Account.js`, `./tracing/bootstrap.js`, `./util/uriTemplates.js` if they
-move).
-
-**Open decisions to resolve when starting** (this phase is why it is deferred):
-
-1. Destination of shared services/builders/tracing: a new package vs moving into
-   `interop-authorization-agent` (coordinate with `components-tweaks.md`, which
-   already plans to move residual SAI domain logic to the AA).
-2. Whether `temporal-workflows` is private (likely) and whether it affects the
-   JSR plan.
-3. Whether `config/` still needs to live in `components` (yes, Components.js
-   configs must ship with the descriptors) and how the lsd `importPaths` change.
-
-**Gate:** G1 + G3 green, and `componentsjs-generator` output is unchanged —
-diff `dist/components/*.jsonld` before/after (only expected path changes).
-
-### Phase 10 — Bun-runtime vitest compatibility (deferred follow-up)
-
-Only needed if/when G1 should run on the **Bun runtime** (`bunx --bun vitest`)
-instead of the current Node runtime (D9). `vi.mock` is currently not applied by
-Bun-runtime vitest; the three affected files are
-`packages/components/test/grants.test.ts`,
-`packages/components/test/invitation-activity.test.ts`, and
-`packages/authorization-agent/test/authorization-agent.test.ts`.
-
-- Refactor those to dependency injection / `vi.spyOn` (no module interception),
-  or bump vitest once Bun-runtime mocking is supported.
-- **Gate:** `bunx --bun vitest run` green (0 failures), then switch the G1 command.
+- ✅ **Upgraded `vitest` 3.2.4 → 5.0.3** — vitest 5 applies `vi.mock` under the
+  Bun runtime (verified: 3.2.4 does not, 5.0.3 does).
+- ✅ Replaced the deprecated `vitest.workspace.ts` (ignored by vitest 5, which
+  then swept in the whole repo incl. `test/`) with a root `vitest.config.ts`:
+  `test.projects: ['packages/*']`.
+- ✅ Fixed the two now-fatal unawaited assertions in
+  `packages/authorization-agent/test/agent-registry.test.ts`
+  (`expect(...).rejects.toThrow(...)` → `await expect(...)`); vitest 3 only
+  warned about these.
+- **Validated:** `bunx --bun vitest run` (Bun) **70/70, 298 passed**;
+  `bunx vitest run` (Node) also 70/70; `npm test` (turbo) 8/8; G2 exit 0;
+  `npm run build -- --force` 3/3; `npm run check` green.
+- **Gate:** ✅ G1 on the Bun runtime green; ⏳ G3 (`dagger call test`) — user to
+  run (its container already uses `bunx --bun vitest`).
+- **Note:** CI still runs `npm test` (turbo → Node-runtime vitest); adding Bun to
+  CI to run `bunx --bun vitest` there is optional and not done here.
 
 ## 5. Risks
 
 | Risk | Impact | Mitigation |
 |---|---|---|
 | Bun cannot run CSS / Temporal worker | would block the entire runtime story (no Node fallback after D5=A) | ✅ **spike passed** (§8); residual: see §8 caveats |
-| `api-messages` slow types | JSR publish blocked (future) | D7 — `--allow-slow-types` |
-| JSR npm-compat drops `lsd:*` | `components` unusable from JSR | D1 — keep `components` on npm |
-| 121 strict errors | large diff, schedule risk | D2 — hybrid or pin non-strict |
-| Version divergence `package.json` vs `jsr.json` | wrong publish | D8 — sync script + CI check |
-| Pre-release semver ranges (`^1.0.0-rc.x`) | dependency resolution surprises | validate with a staged dry-run publish |
+| Strict-mode migration changes runtime behavior | null/undefined paths now guard/throw | ✅ fixed in Phase 7; G1 + G2 + build green |
+
+JSR-specific risks (slow types, npm-compat `lsd:*`, version divergence,
+prerelease ranges) moved to [`jsr-publishing.md`](jsr-publishing.md).
 
 ## 6. Future work — JSR publishing (deferred)
 
-Long-term goal: publish the interop libraries to JSR as TypeScript source. The
-evaluation for this is already done and recorded above (slow-type counts, name
-limits, `jsr.json` requirements, sloppy imports, npm-compat cachets). Keep in
-mind:
-
-- **D4 as A** — stage each package with cross-deps rewritten to
-  `jsr:@janeirodigital/*@<range>` (npm/Bun cannot install `jsr:` deps locally).
-- **Slow types** — fix `utils` (24), `authorization-agent` (3), `components`
-  (14); `api-messages` (92, incl. 27 `unsupported-super-class-expr`) likely
-  needs `--allow-slow-types`.
-- **`jsr.json`** per package + version sync; publish order `utils` →
-  `data-model` → `authorization-agent` → `application`, `api-messages`.
-- **`components` stays npm** (D1) because of `lsd:*` + generated descriptors.
-- **Publish trigger** — GitHub Actions + OIDC; one-time per-package repo link;
-  create/own the `@janeirodigital` scope.
-- **Prerequisite for Node consumers** — JSR's npm-compat layer transpiles TS, so
-  JSR-only publishing is what makes "publish TS source" safe for Node consumers;
-  this is also why D10 (npm publishing) and JSR are coupled.
-
-### Consumer-side facts (from `jsr.io/docs/using-packages`)
-
-Captured so the future publishing/consumer phases don't re-derive them:
-
-- JSR packages are ESM-only and usable from Deno, Node, Bun, Cloudflare Workers,
-  and Vite/esbuild/Webpack/Rollup.
-- **How consumers install differs by package manager** (important for this repo,
-  which uses npm workspaces + Bun):
-  - `deno add`, **pnpm 10.9+**, **yarn 4.9+**: dependency entry is the direct
-    specifier — `"@luca/cases": "jsr:@luca/cases@^1.0.1"`.
-  - **npm, Bun, older pnpm/yarn**: dependency entry is an aliased npm form —
-    `"@luca/cases": "npm:@jsr/luca__cases@^1.0.1"` — where the JSR scope
-    `@luca` becomes `@jsr/luca` and the `/` becomes `__`
-    (e.g. `@janeirodigital/interop-utils` → `@jsr/janeirodigital__interop-utils`),
-    plus a checked-in `.npmrc` line `@jsr:registry=https://npm.jsr.io`.
-    For this repo that means **Bun/npm consumers of our JSR packages would use
-    the `npm:@jsr/...` alias + `.npmrc`**, not `jsr:` (consistent with the
-    earlier probe that `jsr:` deps don't install under Bun).
-- **`jsr add` appends a `.npmrc` that must be checked into source control** —
-  without it later `npm install`/`bun install` cannot resolve `@jsr/*`.
-- **Semver ranges**: `@1` (major only), `@1.0`, `@1.0.1` (exact), `@^1.0.1`
-  (allow updates) all work in `jsr:` / package.json dependency entries. Our
-  versions are `1.0.0-rc.x` prereleases — validate the exact range (e.g.
-  `^1.0.0-rc.27`) during a staged dry-run.
-- **Entrypoints** map 1:1 to the config `exports`; subpaths are importable only
-  if listed (`jsr:@std/path@1/join` → `@std/path/join`). Packages without a
-  default `.` export require an explicit entrypoint. Ours keep a single `.`
-  export.
-- `bunx jsr add`/`npx jsr add` is the install path for Bun/npm; it writes the
-  `@jsr` alias entry and `.npmrc` for you.
+Moved to [`jsr-publishing.md`](jsr-publishing.md) — together with decisions
+D4/D6/D7/D8 and the consumer-side facts.
 
 ## 7. Appendix — validation commands
 
@@ -634,10 +474,10 @@ dagger call test
 
 # Bun native TS
 bun packages/repl/cmd.ts --help
-
-# JSR dry run for one package (after adding jsr.json)
-cd packages/utils && npx -y jsr@latest publish --dry-run --allow-dirty
 ```
+
+(The JSR `publish --dry-run` command lives in
+[`jsr-publishing.md`](jsr-publishing.md).)
 
 ## 8. Bun feasibility spike results (D5 = A) — ✅ passed
 
@@ -654,6 +494,6 @@ Run against the tree at planning time (Bun 1.4.2, no source changes).
 **Caveats / follow-ups (not blockers):**
 
 - `oidc-provider` prints `WARNING: Unsupported runtime. Use Node.js … LTS` under Bun. It is a soft warning and CSS still booted; watch it for OIDC flows.
-- The dagger/compose commands use Node's `--require=…/tracing/preload.cjs`; Bun has no `--require` (use `--preload`). Phase 6.
+- The dagger/compose commands used Node's `--require=…/tracing/preload.cjs`; Bun uses `--preload` (done in Phase 1). The nix images still need it — see [`production-consumer-cleanup.md`](production-consumer-cleanup.md).
 - The spike did not run a live Temporal server or a full authenticated CSS flow; the external services (Postgres/SPARQL/garage/Temporal) were not started.
 - Bun was validated; `bun test` vs vitest is still D9 = A (vitest under Bun).

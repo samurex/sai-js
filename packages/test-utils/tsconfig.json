@@ -1,14 +1,4 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "composite": true,
-    "outDir": "dist",
-    "rootDir": "src",
-    // Still emits (`build` = tsc -b .), so opt out of the typecheck-only base.
-    "module": "esnext",
-    "noEmit": false,
-    "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true
-  },
   "include": ["src"]
 }

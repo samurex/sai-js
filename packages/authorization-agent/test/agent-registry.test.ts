@@ -126,7 +126,7 @@ describe('addSocialAgentRegistration', () => {
 
   test('throws if registration already exists', async () => {
     const socialAgentIri = 'https://acme.example/#corp'
-    expect(
+    await expect(
       AgentRegistry.addSocialAgentRegistration(
         socialAgentRegistry,
         deps,
@@ -175,7 +175,7 @@ describe('addApplicationRegistration', () => {
 
   test('throws if registration already exists', async () => {
     const applicationIri = 'https://projectron.example/#app'
-    expect(
+    await expect(
       AgentRegistry.addApplicationRegistration(
         applicationRegistry,
         deps,
