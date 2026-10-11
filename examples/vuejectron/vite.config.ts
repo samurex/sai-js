@@ -1,13 +1,13 @@
 import { existsSync, unlinkSync } from 'node:fs'
 import { extname, join, resolve } from 'node:path'
 import { URL, fileURLToPath } from 'node:url'
+
 // Plugins
 import vue from '@vitejs/plugin-vue'
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
-
 // Utilities
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 // https://vitejs.dev/config/
 export default defineConfig({

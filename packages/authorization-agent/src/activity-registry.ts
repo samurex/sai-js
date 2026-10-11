@@ -25,6 +25,7 @@ import {
   putJsonLd,
   withContext,
 } from '@janeirodigital/interop-utils'
+
 import type { DataModelDependencies } from './types'
 
 /** The activity resources currently in the registry (ldp:contains). */

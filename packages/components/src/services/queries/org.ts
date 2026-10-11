@@ -21,6 +21,7 @@ import {
 } from '@janeirodigital/interop-authorization-agent'
 import type { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
 import { discoverAuthorizationAgent, toStore } from '@janeirodigital/interop-utils'
+
 import type { ResolvedContext } from '../Context.js'
 
 // The transport abstraction + registry queries live in the

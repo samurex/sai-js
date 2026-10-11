@@ -12,6 +12,7 @@ const loadShapeTree = loader(ShapeTree.fromJsonLd)
 const loadDataRegistration = loader(DataRegistration.fromJsonLd)
 
 import { INTEROP, discoverAuthorizationAgent, loader } from '@janeirodigital/interop-utils'
+
 import type { ResolvedContext } from './Context.js'
 
 /**

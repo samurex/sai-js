@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs'
+
 import type { WhatwgFetch } from '@janeirodigital/interop-utils'
 
 const STORAGE_DESCRIPTION_IRI = 'https://fake.example/storage-desription'

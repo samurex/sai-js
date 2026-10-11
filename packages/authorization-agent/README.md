@@ -28,23 +28,24 @@ It expects:
   - `randomUUID()` - random UUID generator conforming to the [specification](https://wicg.github.io/uuid/)
 
 ```ts
-import { randomUUID } from 'crypto';
-import { getSessionFromStorage, Session } from '@inrupt/solid-client-authn-node';
-import { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent';
+import { randomUUID } from 'crypto'
 
-import { storage } from './oidc-storage';
+import { getSessionFromStorage, Session } from '@inrupt/solid-client-authn-node'
+import { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
 
-const webId = 'https://alice.example/#id';
-const agentId = 'https://authz.alice.example/';
-const registryId = 'https://reg.example/alice';
+import { storage } from './oidc-storage'
+
+const webId = 'https://alice.example/#id'
+const agentId = 'https://authz.alice.example/'
+const registryId = 'https://reg.example/alice'
 
 // we assume that webId was used as sessionId the when session was created
-const session = await getSessionFromStorage(webId, storage);
+const session = await getSessionFromStorage(webId, storage)
 
 const agent = AuthorizationAgent.build(webId, clientId, registryId, {
   fetch: oidcSession.fetch,
-  randomUUID
-});
+  randomUUID,
+})
 ```
 
 ## Agent Registry
@@ -66,8 +67,8 @@ for await (const registration of agent.applicationRegistrations) {
 finds an application registration based on `client_id`, if one exists
 
 ```ts
-const clientId = 'https://projectron.example/#app';
-const registration = await agent.findApplicationRegistration(clientId);
+const clientId = 'https://projectron.example/#app'
+const registration = await agent.findApplicationRegistration(clientId)
 ```
 
 ### Social Agent Registrations
@@ -85,8 +86,8 @@ for await (const registration of agent.socialAgentRegistrations) {
 finds a social registration based on `webid`, if one exists
 
 ```ts
-const webId = 'https://alice.example/#id';
-const registration = await agent.findSocialAgentRegistration(webId);
+const webId = 'https://alice.example/#id'
+const registration = await agent.findSocialAgentRegistration(webId)
 ```
 
 ## Access Authorization
@@ -99,24 +100,24 @@ Since access authorization is immutable, it is required to create a new one to r
 
 ```ts
 type AccessAuthorizationStructure = {
-  grantee: string; // webid or clientid
-  hasAccessNeedGroup: string; // iri
-  dataAuthorizations: DataAuthorizationData[];
-};
+  grantee: string // webid or clientid
+  hasAccessNeedGroup: string // iri
+  dataAuthorizations: DataAuthorizationData[]
+}
 ```
 
 ```ts
 type DataAuthorizationData = {
-  grantee: string; // webid or clientid
-  registeredShapeTree: string;
-  scopeOfAuthorization: string;
-  accessMode: string[];
-  dataOwner?: string; // webid
-  hasDataRegistration?: string;
-  inheritsFromAuthorization?: string;
-  creatorAccessMode?: string[];
-  hasDataInstance?: string[];
-};
+  grantee: string // webid or clientid
+  registeredShapeTree: string
+  scopeOfAuthorization: string
+  accessMode: string[]
+  dataOwner?: string // webid
+  hasDataRegistration?: string
+  inheritsFromAuthorization?: string
+  creatorAccessMode?: string[]
+  hasDataInstance?: string[]
+}
 ```
 
 ## Access Grant
@@ -128,11 +129,9 @@ Based on existing Access Authorization the Data Grants can be created
 This method updates the appropriate agent registration to reference the newly created data grants.
 
 ```ts
-const authorizationData: AccessAuthorizationStructure = {
-  /* all the data */
-};
-const authorization = await agent.recordAccessAuthorization(authorizationData);
-await agent.generateDataGrants(authorization.iri);
+const authorizationData: AccessAuthorizationStructure = {/* all the data */}
+const authorization = await agent.recordAccessAuthorization(authorizationData)
+await agent.generateDataGrants(authorization.iri)
 ```
 
 ## Funding

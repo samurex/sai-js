@@ -6,6 +6,7 @@ import {
 } from '@ldo/solid'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+
 // FAKE data
 import data from '../../fake-data'
 import {
@@ -250,13 +251,9 @@ export const useAppStore = defineStore('app', () => {
       user.value['@id'] === event.chair.agent['@id'] ||
       user.value['@id'] === event.scribe?.agent['@id'] ||
       //@ts-expect-error
-      event.attendee
-        .map((presence) => presence.agent['@id'])
-        .includes(user.value['@id']) ||
+      event.attendee.map((presence) => presence.agent['@id']).includes(user.value['@id']) ||
       //@ts-expect-error
-      event.absentee
-        .map((presence) => presence.agent['@id'])
-        .includes(user.value['@id'])
+      event.absentee.map((presence) => presence.agent['@id']).includes(user.value['@id'])
     )
   }
 

@@ -2,6 +2,7 @@ import { buildOidcSession, issuanceUrl } from '@elfpavlik/sai-components'
 import type { IncomingGrantData } from '@janeirodigital/interop-data-model'
 import { ACL, INTEROP, LDP, toStore } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
+
 import { SOLIDTREES } from './vocabularies'
 
 const bobId = 'https://id/bob'

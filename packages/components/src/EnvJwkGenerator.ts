@@ -1,5 +1,6 @@
 import { createPublicKey } from 'node:crypto'
 import type { KeyObject } from 'node:crypto'
+
 import type { AlgJwk, JwkGenerator } from '@solid/community-server'
 import { exportJWK, importJWK } from 'jose'
 import type { AsymmetricSigningAlgorithm } from 'oidc-provider'

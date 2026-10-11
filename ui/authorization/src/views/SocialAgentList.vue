@@ -7,11 +7,7 @@
       :subtitle="agent.note"
     >
       <v-card-subtitle v-if="agent.admin">
-        <v-chip
-          size="small"
-          color="primary"
-          class="mr-1"
-        >
+        <v-chip size="small" color="primary" class="mr-1">
           {{ $t('admin') }}
         </v-chip>
       </v-card-subtitle>
@@ -30,24 +26,15 @@
         </v-btn>
         <v-btn
           prepend-icon="mdi-hexagon-multiple-outline"
-          :to="{name: 'data-registry-list', query: {agent: agent.id}}"
+          :to="{ name: 'data-registry-list', query: { agent: agent.id } }"
         >
           {{ $t('data') }}
-          <template
-            v-if="agent.accessRequestsSent.length > 0"
-            #append
-          >
-            <v-badge
-              inline
-              color="warning"
-            >
+          <template v-if="agent.accessRequestsSent.length > 0" #append>
+            <v-badge inline color="warning">
               <!-- direction icon + count via the custom badge slot (Vuetify
                    renders `icon` and `content` mutually exclusively) -->
               <template #badge>
-                <v-icon
-                  icon="mdi-outbox"
-                  size="small"
-                />
+                <v-icon icon="mdi-outbox" size="small" />
                 {{ agent.accessRequestsSent.length }}
               </template>
             </v-badge>
@@ -59,19 +46,10 @@
           :to="accessRoute(agent)"
         >
           {{ $t('access') }}
-          <template
-            v-if="agent.accessRequestsReceived.length > 0"
-            #append
-          >
-            <v-badge
-              inline
-              color="warning"
-            >
+          <template v-if="agent.accessRequestsReceived.length > 0" #append>
+            <v-badge inline color="warning">
               <template #badge>
-                <v-icon
-                  icon="mdi-inbox"
-                  size="small"
-                />
+                <v-icon icon="mdi-inbox" size="small" />
                 {{ agent.accessRequestsReceived.length }}
               </template>
             </v-badge>
@@ -87,10 +65,7 @@
     >
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          prepend-icon="mdi-content-copy"
-          @click="copyCapabilityUrl(invitation)"
-        >
+        <v-btn prepend-icon="mdi-content-copy" @click="copyCapabilityUrl(invitation)">
           {{ $t('copy-link') }}
         </v-btn>
         <v-btn
@@ -102,22 +77,18 @@
         </v-btn>
       </v-card-actions>
     </v-card>
-    <v-btn
-      id="add"
-      icon="mdi-plus-circle-outline"
-      @click="showAdd=true"
-    />
+    <v-btn id="add" icon="mdi-plus-circle-outline" @click="showAdd = true" />
     <v-bottom-sheet v-model="showAdd">
       <v-list>
         <v-list-item
           prepend-icon="mdi-account-arrow-right"
-          @click="router.push( { name: 'invitation', query: { direction: 'create'}})"
+          @click="router.push({ name: 'invitation', query: { direction: 'create' } })"
         >
           {{ $t('create-invitation') }}
         </v-list-item>
         <v-list-item
           prepend-icon="mdi-account-arrow-left"
-          @click="router.push( { name: 'invitation', query: { direction: 'accept'}})"
+          @click="router.push({ name: 'invitation', query: { direction: 'accept' } })"
         >
           {{ $t('accept-invitation') }}
         </v-list-item>
@@ -126,12 +97,13 @@
   </v-sheet>
 </template>
 <script lang="ts" setup>
-import { useAppStore } from '@/store/app'
-import { useCoreStore } from '@/store/core'
 import type { SocialAgentInvitation } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+
+import { useAppStore } from '@/store/app'
+import { useCoreStore } from '@/store/core'
 
 const router = useRouter()
 const coreStore = useCoreStore()

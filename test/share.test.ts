@@ -5,6 +5,7 @@ import {
 } from '@janeirodigital/interop-authorization-agent'
 import { getDataGrantIris } from '@janeirodigital/interop-data-model'
 import { describe, expect, test } from 'vitest'
+
 import { awaitGrantCompletion, dataGrants } from './util'
 
 const rpcEndpoint = 'https://auth/.sai/api'

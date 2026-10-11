@@ -16,6 +16,7 @@ import {
   iriForContained,
   loader,
 } from '@janeirodigital/interop-utils'
+
 import { getDataGrants, getDataInstanceIterator, getGranted } from './grant'
 
 interface ApplicationDependencies {

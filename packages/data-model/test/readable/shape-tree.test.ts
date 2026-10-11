@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto'
+
 import { fetch } from '@janeirodigital/interop-test-utils'
 import { loader } from '@janeirodigital/interop-utils'
 import { test } from 'vitest'
+
 import { ShapeTree } from '../../src'
 const loadShapeTree = loader(ShapeTree.fromJsonLd)
 

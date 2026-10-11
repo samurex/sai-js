@@ -1,4 +1,5 @@
 import LinkHeader from 'http-link-header'
+
 import { INTEROP, SOLID } from './namespaces'
 
 export function getAgentRegistrationIri(linkHeaderText: string): string | undefined {

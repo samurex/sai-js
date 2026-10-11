@@ -1,6 +1,7 @@
 import { AS, INTEROP } from '@janeirodigital/interop-utils'
 import { frameDoc } from '@janeirodigital/interop-utils'
 import { describe, expect, expectTypeOf, test } from 'vitest'
+
 import {
   type ActivityCompleted,
   type ActivityData,

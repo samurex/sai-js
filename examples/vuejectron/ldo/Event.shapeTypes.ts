@@ -1,4 +1,5 @@
 import type { ShapeType } from '@ldo/ldo'
+
 import { EventContext } from './Event.context'
 import { EventSchema } from './Event.schema'
 import type { Event, Organization, Person, Role } from './Event.typings'

@@ -78,10 +78,7 @@ export type { WebIdProfileData, WebIdProfileId } from './web-id-profile'
 export * as WebIdProfile from './web-id-profile'
 export type { ClientIdDocumentData, ClientIdDocumentId } from './client-id-document'
 export * as ClientIdDocument from './client-id-document'
-export type {
-  ShapeTreeDescriptionData,
-  ShapeTreeDescriptionId,
-} from './shape-tree-description'
+export type { ShapeTreeDescriptionData, ShapeTreeDescriptionId } from './shape-tree-description'
 export * as ShapeTreeDescription from './shape-tree-description'
 export type { AccessDescriptionData, AccessDescriptionId } from './access-description'
 export type { AccessNeedDescriptionData, AccessNeedDescriptionId } from './access-need-description'

@@ -1,4 +1,5 @@
 import { useAppStore } from '@/store/app'
+
 import { getRuntimeConfig } from './runtime-config'
 
 /**

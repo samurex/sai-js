@@ -1,6 +1,7 @@
 import { agentId, buildOidcSession, buildSessionManager } from '@elfpavlik/sai-components'
 import { getRegistrySetIri } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
+
 import { waitFor, waitForRoleCreatedCompletion } from './util'
 
 /**

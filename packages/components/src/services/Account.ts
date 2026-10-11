@@ -5,6 +5,7 @@ import {
 } from '@janeirodigital/interop-data-model'
 import { cssKv } from '@janeirodigital/interop-utils'
 import postgres from 'postgres'
+
 import { agentId, issuanceUrl } from '../util/uriTemplates.js'
 
 export class AccountService {

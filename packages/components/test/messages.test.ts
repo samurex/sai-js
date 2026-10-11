@@ -1,5 +1,6 @@
 import { ACL, INTEROP } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
+
 import { isAccessRequestMessage, isAccessRevocationMessage } from '../src/messages.js'
 
 const grant = {

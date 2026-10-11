@@ -1,4 +1,5 @@
 import type { ShapeType } from '@ldo/ldo'
+
 import { ProjectContext } from './Project.context'
 import { ProjectSchema } from './Project.schema'
 import type { Project } from './Project.typings'

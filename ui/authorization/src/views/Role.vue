@@ -8,35 +8,26 @@
         {{ action === 'create' ? $t('new-role') : $t('edit-role') }}
       </v-card-title>
       <v-card-text>
-        <v-text-field
-          v-if="action !== 'view'"
-          v-model="label"
-          v-bind="$ta('role-label')"
-        />
+        <v-text-field v-if="action !== 'view'" v-model="label" v-bind="$ta('role-label')" />
         <v-list v-if="action === 'view' && existingRole">
-          <v-list-item
-            v-for="member in existingRole.members"
-            :key="member"
-          >
+          <v-list-item v-for="member in existingRole.members" :key="member">
             <template #title>
               {{ agentLabel(member) }}
             </template>
           </v-list-item>
         </v-list>
         <v-list v-else-if="action !== 'view'">
-          <v-list-item
-            v-for="member in members"
-            :key="member"
-          >
+          <v-list-item v-for="member in members" :key="member">
             <template #title>
-              <span :class="{ 'text-decoration-line-through text-disabled': markedForDelete.has(member) }">
+              <span
+                :class="{
+                  'text-decoration-line-through text-disabled': markedForDelete.has(member),
+                }"
+              >
                 {{ agentLabel(member) }}
               </span>
             </template>
-            <template
-              v-if="action === 'edit'"
-              #append
-            >
+            <template v-if="action === 'edit'" #append>
               <v-btn
                 v-if="markedForDelete.has(member)"
                 icon="mdi-plus"
@@ -53,19 +44,13 @@
               />
             </template>
           </v-list-item>
-          <v-list-item
-            v-for="member in newMembers"
-            :key="member"
-          >
+          <v-list-item v-for="member in newMembers" :key="member">
             <template #title>
               <span class="text-decoration-underline">
                 {{ agentLabel(member) }}
               </span>
             </template>
-            <template
-              v-if="action !== 'view'"
-              #append
-            >
+            <template v-if="action !== 'view'" #append>
               <v-btn
                 icon="mdi-minus"
                 size="small"
@@ -80,55 +65,34 @@
         <template v-if="action === 'view'">
           <v-btn
             prepend-icon="mdi-pencil"
-            @click="router.push({name: 'role', query: {roleId: roleId, action: 'edit'}})"
+            @click="router.push({ name: 'role', query: { roleId: roleId, action: 'edit' } })"
           >
             {{ $t('edit') }}
           </v-btn>
-          <v-btn
-            prepend-icon="mdi-delete"
-            color="error"
-            @click="confirmDelete = true"
-          >
+          <v-btn prepend-icon="mdi-delete" color="error" @click="confirmDelete = true">
             {{ $t('delete') }}
           </v-btn>
           <v-spacer />
-          <v-btn
-            prepend-icon="mdi-security"
-            color="primary"
-            @click="grantDialog = true"
-          >
+          <v-btn prepend-icon="mdi-security" color="primary" @click="grantDialog = true">
             {{ $t('grant-access') }}
           </v-btn>
         </template>
         <template v-else>
-          <v-btn
-            variant="tonal"
-            @click="router.back()"
-          >
+          <v-btn variant="tonal" @click="router.back()">
             {{ $t('cancel') }}
           </v-btn>
           <v-spacer />
-          <v-btn
-            color="primary"
-            :disabled="!label || !dirty"
-            @click="save"
-          >
+          <v-btn color="primary" :disabled="!label || !dirty" @click="save">
             {{ $t('save') }}
           </v-btn>
         </template>
       </v-card-actions>
     </v-card>
-    <v-card
-      v-if="action !== 'view'"
-      class="mt-4"
-    >
+    <v-card v-if="action !== 'view'" class="mt-4">
       <v-card-title>{{ $t('add-members') }}</v-card-title>
       <v-card-text>
         <v-list>
-          <v-list-item
-            v-for="agent in availableAgents"
-            :key="agent.id"
-          >
+          <v-list-item v-for="agent in availableAgents" :key="agent.id">
             <template #title>
               {{ agent.label }}
             </template>
@@ -149,19 +113,12 @@
         <v-card-title>{{ $t('delete-role') }}</v-card-title>
         <v-card-text>
           <p>{{ $t('delete-role-confirm') }}</p>
-          <v-text-field
-            v-model="confirmLabel"
-            v-bind="$ta('role-label')"
-          />
+          <v-text-field v-model="confirmLabel" v-bind="$ta('role-label')" />
         </v-card-text>
         <v-card-actions>
           <v-btn @click="confirmDelete = false">{{ $t('cancel') }}</v-btn>
           <v-spacer />
-          <v-btn
-            color="error"
-            :disabled="confirmLabel !== label"
-            @click="remove"
-          >
+          <v-btn color="error" :disabled="confirmLabel !== label" @click="remove">
             {{ $t('delete') }}
           </v-btn>
         </v-card-actions>
@@ -186,12 +143,13 @@
   </v-container>
 </template>
 <script lang="ts" setup>
-import { useAppStore } from '@/store/app'
 import { IRI } from '@janeirodigital/sai-api-messages'
 import type { Application } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+
+import { useAppStore } from '@/store/app'
 
 const appStore = useAppStore()
 appStore.listSocialAgents()

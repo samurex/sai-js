@@ -1,4 +1,5 @@
 import { frameNode } from '@janeirodigital/interop-utils'
+
 import type { ActivityRegistryData } from './activity-registry'
 import type {
   ApplicationRegistryData,

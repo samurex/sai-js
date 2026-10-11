@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto'
+
 import { fetch } from '@janeirodigital/interop-test-utils'
 import { ACL, loader } from '@janeirodigital/interop-utils'
 import { test } from 'vitest'
+
 import { Grant } from '../../src'
 const loadGrant = loader(Grant.fromJsonLd)
 

@@ -1,5 +1,6 @@
 import { ACL, ACP, RDF, jsonld, toNQuads } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
+
 import {
   acrContext,
   agentRegistrationAcrJsonLd,

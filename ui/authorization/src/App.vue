@@ -2,19 +2,17 @@
   <Suspense>
     <router-view />
     <template #fallback>
-      <v-progress-circular
-        indeterminate
-        color="primary"
-      />
+      <v-progress-circular indeterminate color="primary" />
     </template>
   </Suspense>
 </template>
 
 <script lang="ts" setup>
-import { startEvents, stopEvents } from '@/events'
-import { useCoreStore } from '@/store/core'
 import { watch } from 'vue'
 import { useTheme } from 'vuetify'
+
+import { startEvents, stopEvents } from '@/events'
+import { useCoreStore } from '@/store/core'
 
 const coreStore = useCoreStore()
 

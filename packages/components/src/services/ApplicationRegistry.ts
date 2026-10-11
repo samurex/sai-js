@@ -6,6 +6,7 @@ import {
 import { loader } from '@janeirodigital/interop-utils'
 const loadClientIdDocument = loader(ClientIdDocument.fromJsonLd)
 import { Application, IRI, UnregisteredApplication } from '@janeirodigital/sai-api-messages'
+
 import type { ResolvedContext } from './Context.js'
 import {
   getApplicationRegistration as getApplicationRegistrationFromSparql,

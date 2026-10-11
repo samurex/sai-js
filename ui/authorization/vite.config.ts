@@ -2,6 +2,7 @@
 import { existsSync, unlinkSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { URL, fileURLToPath } from 'node:url'
+
 import vue from '@vitejs/plugin-vue'
 import { ExternalFluentPlugin, SFCFluentPlugin } from 'unplugin-fluent-vue/vite'
 // Utilities

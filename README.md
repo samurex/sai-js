@@ -8,8 +8,8 @@ Modules implementing [Solid Application Interoperability Specification](https://
 
 ## Intended dependents
 
-|                           | package                                                                                                                          |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+|                           | package                                                                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | Solid Applications        | [`@janeirodigital/interop-application`](https://github.com/hackers4peace/sai-js/tree/main/packages/application)                 |
 | Solid Authorization Agent | [`@janeirodigital/interop-authorization-agent`](https://github.com/hackers4peace/sai-js/tree/main/packages/authorization-agent) |
 
@@ -105,6 +105,7 @@ Create VPS, you can use any Linux distribution, we are going to use [NixOS anywh
 Let's use [Hetzner CAX21](https://www.hetzner.com/cloud/#pricing) as an example. We need to add our public SSH key when we create it.
 
 ### DNS
+
 Configure DNS for your domain, for example `A` records for `me.example` :
 
 ```txt
@@ -142,8 +143,8 @@ And following `#demo` config create `#me` config in `flake.nix`
 
 We will use [ragenix](https://github.com/yaxitech/ragenix) to encrypt two env files:
 
-* DNS API Key - which is used by [Caddy](https://caddyserver.com/) plugin to issue [Let's encrypt](https://letsencrypt.org/) certificates
-* Auth service secrets - Web Push [VAPID](https://www.rfc-editor.org/rfc/rfc8292.html) keys and JSON Web Key for signing tokens.
+- DNS API Key - which is used by [Caddy](https://caddyserver.com/) plugin to issue [Let's encrypt](https://letsencrypt.org/) certificates
+- Auth service secrets - Web Push [VAPID](https://www.rfc-editor.org/rfc/rfc8292.html) keys and JSON Web Key for signing tokens.
 
 First we need to add VPS public key to `nix/hosts/me/secrets.nix`. To do it we can first `ssh root@me.example` and accept server fingerprint. Now we can `cat ~/.ssh/known_hosts | grep me.example` and use the `ssh-ed25519` key.
 
@@ -158,9 +159,11 @@ RULES=./secrets.nix ragenix -e ./secrets/cloudflare.age
 ```
 
 And following Cloudflare module for Caddy set it as:
+
 ```env
 CF_API_TOKEN=
 ```
+
 nix config will set it as an env file so Caddy can access it.
 
 ##### VAPID
@@ -192,6 +195,7 @@ RULES=./secrets.nix ragenix -e ./secrets/auth.age
 ```
 
 And set
+
 ```env
 
 CSS_VAPID_PRIVATE_KEY=
@@ -200,7 +204,6 @@ CSS_ENCODED_PRIVATE_JWK=
 ```
 
 [Application Server Contact Information](https://datatracker.ietf.org/doc/html/draft-thomson-webpush-vapid#section-2.1) is required by the VAPID spec and must be a `mailto:` or an `https:` contact URI.
-
 
 #### Applying config
 
@@ -215,7 +218,6 @@ nixos-rebuild switch \
 
 > [!TIP]
 > In case starting some systemd service errors, you can simply re-run this command.
-
 
 Now Caddy will request certificates from Let's encrypt and after short moment you should be able to access account management application on `https://app.auth.me.example` (if you further customized your config it will be at that address)
 

@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto'
+
 import { loader } from '@janeirodigital/interop-utils'
 import type { WhatwgFetch } from '@janeirodigital/interop-utils'
 import { describe, test } from 'vitest'
+
 import { ClientIdDocument } from '../../src'
 const loadClientIdDocument = loader(ClientIdDocument.fromJsonLd)
 

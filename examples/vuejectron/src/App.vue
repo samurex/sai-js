@@ -2,10 +2,7 @@
   <Suspense>
     <router-view />
     <template #fallback>
-      <v-progress-circular
-        indeterminate
-        color="primary"
-      />
+      <v-progress-circular indeterminate color="primary" />
     </template>
   </Suspense>
 </template>

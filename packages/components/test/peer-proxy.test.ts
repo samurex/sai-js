@@ -6,8 +6,8 @@ import type {
 } from '@janeirodigital/interop-data-model'
 import { INTEROP } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
+
 import type { ResolvedContext } from '../src/services/Context.js'
-import { agentsWithAccessMatching } from '../src/services/ShareResource.js'
 import {
   PeerFetchError,
   fetchPeerResource,
@@ -24,6 +24,7 @@ import {
   listContained,
   sparqlTransportFor,
 } from '../src/services/queries/org.js'
+import { agentsWithAccessMatching } from '../src/services/ShareResource.js'
 
 // ──────────────────────────
 // Fixtures

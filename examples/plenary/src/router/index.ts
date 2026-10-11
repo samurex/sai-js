@@ -4,11 +4,12 @@
  * Automatic routes for `./src/pages/*.vue`
  */
 
+// Composables
+import { createRouter, createWebHistory } from 'vue-router'
+
 import EventDetails from '@/components/EventDetails.vue'
 import EventForm from '@/components/EventForm.vue'
 import EventList from '@/components/EventList.vue'
-// Composables
-import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   { path: '/', name: 'list', component: EventList },

@@ -39,8 +39,8 @@ import {
 } from '@janeirodigital/sai-api-messages'
 import type { Brand } from 'effect/Brand'
 import type * as S from 'effect/Schema'
+
 import type { ResolvedContext } from './Context.js'
-import { listSocialAgentRegistrations } from './SocialAgentRegistry.js'
 import { dataRegistrationContains } from './peerProxy.js'
 import {
   getDataGrant as getDataGrantFromSparql,
@@ -49,6 +49,7 @@ import {
   listRegistrationsByShapeTrees,
   sparqlTransportFor,
 } from './queries/org.js'
+import { listSocialAgentRegistrations } from './SocialAgentRegistry.js'
 
 const formatAccessNeed = async (
   accessNeed: AccessNeedData,

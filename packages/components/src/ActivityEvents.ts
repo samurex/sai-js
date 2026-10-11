@@ -1,4 +1,5 @@
 import type { PassThrough } from 'node:stream'
+
 import type { ActivityData } from '@janeirodigital/interop-data-model'
 import { WrappedSetMultiMap } from '@solid/community-server'
 

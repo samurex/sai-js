@@ -10,10 +10,7 @@
     <v-list-item>
       <v-list-item-title>{{ $t('language') }}</v-list-item-title>
       <template #append>
-        <v-select
-          v-model="coreStore.lang"
-          :items="languages"
-        />
+        <v-select v-model="coreStore.lang" :items="languages" />
       </template>
     </v-list-item>
     <v-list-item id="translation">
@@ -25,9 +22,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useCoreStore } from '@/store/core'
 import locale from 'locale-codes'
 import { computed } from 'vue'
+
+import { useCoreStore } from '@/store/core'
 
 const coreStore = useCoreStore()
 
@@ -43,7 +41,7 @@ async function signOut() {
 }
 </script>
 <style scoped>
-  #translation {
-    text-align: right;
-  }
+#translation {
+  text-align: right;
+}
 </style>

@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto'
+
 import { fetch } from '@janeirodigital/interop-test-utils'
 import { loader } from '@janeirodigital/interop-utils'
 import { describe, test } from 'vitest'
+
 import { ApplicationRegistration } from '../../src'
 const loadApplicationRegistration = loader(ApplicationRegistration.fromJsonLd)
 

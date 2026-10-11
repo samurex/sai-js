@@ -11,5 +11,3 @@ establishReciprocal
   "registrationId": "https://reg.docker/alice/agent/vzp6ky/"
 }
 ```
-
-

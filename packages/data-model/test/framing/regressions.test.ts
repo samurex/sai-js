@@ -1,5 +1,6 @@
 import { RDFS, SKOS, frameDoc } from '@janeirodigital/interop-utils'
 import { describe, test } from 'vitest'
+
 import { dataModelContext } from '../../src'
 import { expect } from '../expect'
 import { docFromGraphs } from './helpers'

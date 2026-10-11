@@ -8,6 +8,7 @@ const loadNeedBasedAccessRequest = loader(AccessRequest.fromJsonLd)
 
 import { LDP, linkedIrisJsonLd, loader } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
+
 import {
   rpcPayload,
   waitForNeedBasedAccessRequestReceivedCompletion,

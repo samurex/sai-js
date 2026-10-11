@@ -8,6 +8,7 @@ import { type AuthorizationGranted, getDataGrantIris } from '@janeirodigital/int
 import { INTEROP } from '@janeirodigital/interop-utils'
 import { Client, Connection } from '@temporalio/client'
 import { describe, expect, test } from 'vitest'
+
 import { waitFor } from './util'
 
 const acmeId = 'https://id/acme'

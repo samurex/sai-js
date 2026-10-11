@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+
 import { loadDataInstance } from '@janeirodigital/interop-authorization-agent'
 import { fetch } from '@janeirodigital/interop-test-utils'
 import { describe, expect, test } from 'vitest'

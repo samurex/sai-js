@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises'
+
 import { initNodeTracing } from '@elfpavlik/sai-components'
 import { Postgres, seedQuadstore } from '@janeirodigital/interop-test-utils'
 import { context, trace } from '@opentelemetry/api'

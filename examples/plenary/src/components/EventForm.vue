@@ -1,21 +1,15 @@
 <template>
   <v-form>
-    <v-text-field
-      v-model="eventName"
-      label="Name"
-      :rules="[required]"
-    />
+    <v-text-field v-model="eventName" label="Name" :rules="[required]" />
     <v-select
-      v-if="eventName" 
+      v-if="eventName"
       v-model="organizationId"
       label="Organization"
       :items="store.organizations"
       item-title="label"
       item-value="@id"
     />
-    <v-list-item
-      v-if="pods?.length === 1"
-    >
+    <v-list-item v-if="pods?.length === 1">
       {{ pods[0]?.name }}
     </v-list-item>
     <v-select
@@ -43,17 +37,8 @@
       prepend-icon="mdi-calendar-blank-outline"
       readonly
     >
-      <v-dialog
-        v-model="dateModal"
-        activator="parent"
-        width="auto"
-      >
-        <v-date-picker
-          v-if="dateModal"
-          v-model="startDate"
-          title="Start Date"
-          :min="minDate()"
-        />
+      <v-dialog v-model="dateModal" activator="parent" width="auto">
+        <v-date-picker v-if="dateModal" v-model="startDate" title="Start Date" :min="minDate()" />
       </v-dialog>
     </v-text-field>
     <v-text-field
@@ -65,17 +50,8 @@
       prepend-icon="mdi-clock-time-four-outline"
       readonly
     >
-      <v-dialog
-        v-model="timeModal"
-        activator="parent"
-        width="auto"
-      >
-        <v-time-picker
-          v-if="timeModal"
-          v-model="startTime"
-          format="24h"
-          title="Start Time"
-        />
+      <v-dialog v-model="timeModal" activator="parent" width="auto">
+        <v-time-picker v-if="timeModal" v-model="startTime" format="24h" title="Start Time" />
       </v-dialog>
     </v-text-field>
     <v-btn
@@ -91,6 +67,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+
 import { useAppStore } from '../stores/app'
 
 const router = useRouter()
@@ -143,7 +120,7 @@ function create() {
 </script>
 
 <style>
-  .v-form {
-    margin: 1rem;
-  }
+.v-form {
+  margin: 1rem;
+}
 </style>

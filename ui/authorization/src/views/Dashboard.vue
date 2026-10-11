@@ -47,9 +47,10 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, ref } from 'vue'
+
 import { useAppStore } from '@/store/app'
 import { useCoreStore } from '@/store/core'
-import { computed, ref } from 'vue'
 
 const coreStore = useCoreStore()
 const appStore = useAppStore()

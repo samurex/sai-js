@@ -12,6 +12,7 @@ import {
   SocialAgentInvitation,
 } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
+
 import type { ResolvedContext } from './Context.js'
 import {
   getSocialAgentInvitation as getInvitationFromSparql,

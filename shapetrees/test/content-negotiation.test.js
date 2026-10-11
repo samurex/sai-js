@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest' // available via monorepo root node_modules
+
 import { negotiate } from '../functions/[collection]/[name].js'
 
 // Helper: build a minimal Request-like object that the `negotiate` helper

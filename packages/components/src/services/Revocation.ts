@@ -1,4 +1,5 @@
 import type { IRI } from '@janeirodigital/sai-api-messages'
+
 import { GrantRevocationHandler } from '../GrantRevocationHandler.js'
 import type { ResolvedContext } from './Context.js'
 

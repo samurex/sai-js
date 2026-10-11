@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+
 import { statelessFetch } from '@janeirodigital/interop-test-utils'
 import { describe, expect, test, vi } from 'vitest'
 

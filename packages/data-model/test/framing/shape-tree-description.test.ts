@@ -1,5 +1,6 @@
 import { SHAPETREES } from '@janeirodigital/interop-utils'
 import { describe, test } from 'vitest'
+
 import { ShapeTreeDescription } from '../../src'
 import { expect } from '../expect'
 import { docFromGraphs } from './helpers'

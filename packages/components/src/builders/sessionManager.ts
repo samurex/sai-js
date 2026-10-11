@@ -1,4 +1,5 @@
 import { generateKeyPair } from 'jose'
+
 import { EnvJwkGenerator } from '../EnvJwkGenerator.js'
 import { SelfIssuedSession } from '../SelfIssuedSession.js'
 import { SessionManager } from '../SessionManager.js'

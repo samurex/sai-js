@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto'
+
 import { describe, expect, test } from 'vitest'
+
 import { iriForContained } from '../src'
 
 const iri = 'https://work.alice.example/something/'

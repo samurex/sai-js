@@ -11,6 +11,7 @@ const loadWebIdProfile = loader(WebIdProfile.fromJsonLd)
 import { INTEROP, loader, pickLanguage } from '@janeirodigital/interop-utils'
 import { IRI, InvitationAcceptedMessage, SocialAgent } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
+
 import type { ResolvedContext } from './Context.js'
 import {
   findSocialAgentRegistration as findRegistrationFromSparql,

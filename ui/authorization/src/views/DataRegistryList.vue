@@ -3,17 +3,11 @@
     <v-card v-if="appStore.socialAgentList">
       <v-card-title>
         <template v-if="route.query.agent === coreStore.userId">
-          <v-icon
-            color="agent"
-            icon="mdi-account-circle"
-          />
+          <v-icon color="agent" icon="mdi-account-circle" />
           <span class="label flex-grow-1">{{ $t('me') }}</span>
         </template>
         <template v-else>
-          <v-icon
-            color="agent"
-            icon="mdi-account-circle-outline"
-          />
+          <v-icon color="agent" icon="mdi-account-circle-outline" />
           <span class="label flex-grow-1">{{ agent?.label }}</span>
         </template>
       </v-card-title>
@@ -24,16 +18,13 @@
         :key="registry.id"
       >
         <v-expansion-panel-title class="d-flex flex-row">
-          <v-icon
-            color="primary"
-            icon="mdi-hexagon-outline"
-          />
+          <v-icon color="primary" icon="mdi-hexagon-outline" />
           <span class="label flex-grow-1">{{ registry.label }}</span>
         </v-expansion-panel-title>
         <v-expansion-panel-text>
           <v-expansion-panels>
-            <v-expansion-panel 
-              v-for="registration in registry.registrations" 
+            <v-expansion-panel
+              v-for="registration in registry.registrations"
               :key="registration.id"
               :title="registration.label"
               @click="appStore.listDataInstances(route.query.agent as string, registration.id)"
@@ -45,18 +36,12 @@
                     :key="dataInstance.id"
                   >
                     <v-list-item-title>
-                      <v-icon
-                        color="secondary"
-                        icon="mdi-star-three-points-outline"
-                      />
+                      <v-icon color="secondary" icon="mdi-star-three-points-outline" />
                       {{ dataInstance.label }}
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
-                <v-skeleton-loader
-                  v-else
-                  type="list-item@2"
-                />
+                <v-skeleton-loader v-else type="list-item@2" />
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
@@ -66,10 +51,7 @@
     <v-card v-if="agent && appStore.dataRegistryList[agent.id] && !hasData">
       <template v-if="agent.accessRequestsSent.length === 0">
         <v-card-title>{{ $t('request-access') }}</v-card-title>
-        <v-btn
-          prepend-icon="mdi-security"
-          @click="appListDialog = true"
-        >
+        <v-btn prepend-icon="mdi-security" @click="appListDialog = true">
           {{ $t('based-on-an-application') }}
         </v-btn>
       </template>
@@ -82,7 +64,9 @@
          incoming approval entries + outgoing sent requests, one action per
          request (approve/archive any of them — the multi-request future) -->
     <v-card
-      v-if="agent && (agent.accessRequestsReceived.length > 0 || agent.accessRequestsSent.length > 0)"
+      v-if="
+        agent && (agent.accessRequestsReceived.length > 0 || agent.accessRequestsSent.length > 0)
+      "
     >
       <v-card-title>{{ $t('open-requests') }}</v-card-title>
       <v-list v-if="agent.accessRequestsReceived.length > 0">
@@ -98,7 +82,7 @@
               prepend-icon="mdi-security"
               :to="{
                 name: 'authorization',
-                query: { webid: agent.id, redirect: 'false', request }
+                query: { webid: agent.id, redirect: 'false', request },
               }"
             >
               {{ $t('approve') }}
@@ -114,11 +98,7 @@
           :subtitle="request"
         >
           <template #append>
-            <v-btn
-              size="small"
-              prepend-icon="mdi-archive-outline"
-              @click="archiveRequest(request)"
-            >
+            <v-btn size="small" prepend-icon="mdi-archive-outline" @click="archiveRequest(request)">
               {{ $t('archive') }}
             </v-btn>
           </template>
@@ -140,10 +120,11 @@
   </v-container>
 </template>
 <script lang="ts" setup>
-import { useAppStore } from '@/store/app'
-import { useCoreStore } from '@/store/core'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+
+import { useAppStore } from '@/store/app'
+import { useCoreStore } from '@/store/core'
 
 const appStore = useAppStore()
 const coreStore = useCoreStore()

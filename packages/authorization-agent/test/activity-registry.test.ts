@@ -1,6 +1,7 @@
 import { ActivityRegistry } from '@janeirodigital/interop-authorization-agent'
 import { dataModelContext } from '@janeirodigital/interop-data-model'
 import { describe, test } from 'vitest'
+
 import { expect } from './expect'
 
 // payload-contract-alignment flip: JSON-LD `@type` is an unordered set — the

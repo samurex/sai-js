@@ -12,6 +12,7 @@ import {
 } from '@janeirodigital/interop-utils'
 import { DataFactory } from 'n3'
 import { describe, test } from 'vitest'
+
 import { expect } from './expect'
 
 // ──────────────────────────

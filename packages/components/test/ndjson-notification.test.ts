@@ -1,5 +1,6 @@
 import { readableToString } from '@solid/community-server'
 import { describe, expect, test } from 'vitest'
+
 import { NdjsonNotificationSerializer, expandNotification } from '../src'
 
 const AS = 'https://www.w3.org/ns/activitystreams#'

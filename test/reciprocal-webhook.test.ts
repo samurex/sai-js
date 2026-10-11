@@ -6,6 +6,7 @@ import {
   discoverAuthorizationAgent,
 } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
+
 import { awaitEvent, openEventsStream, receivesNotification, waitFor } from './util'
 
 const aliceId = 'https://id/alice'

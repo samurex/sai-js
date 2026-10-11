@@ -1,5 +1,6 @@
 import { INTEROP } from '@janeirodigital/interop-utils'
 import { describe, test } from 'vitest'
+
 import { fromJsonLd as invitationFromJsonLd } from '../../src/social-agent-invitation'
 import { expect } from '../expect'
 import { docFromGraphs } from './helpers'

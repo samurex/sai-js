@@ -4,15 +4,10 @@
       v-for="role in appStore.roleList"
       :key="role.id"
       :title="role.label"
-      @click="router.push({name: 'role', query: {roleId: role.id, action: 'view'}})"
+      @click="router.push({ name: 'role', query: { roleId: role.id, action: 'view' } })"
     >
       <v-card-subtitle>
-        <v-chip
-          v-for="member in role.members"
-          :key="member"
-          size="small"
-          class="mr-1"
-        >
+        <v-chip v-for="member in role.members" :key="member" size="small" class="mr-1">
           {{ agentLabel(member) }}
         </v-chip>
       </v-card-subtitle>
@@ -20,13 +15,14 @@
     <v-btn
       id="add"
       icon="mdi-plus-circle-outline"
-      @click="router.push({name: 'role', query: {action: 'create'}})"
+      @click="router.push({ name: 'role', query: { action: 'create' } })"
     />
   </v-sheet>
 </template>
 <script lang="ts" setup>
-import { useAppStore } from '@/store/app'
 import { useRouter } from 'vue-router'
+
+import { useAppStore } from '@/store/app'
 
 const router = useRouter()
 const appStore = useAppStore()

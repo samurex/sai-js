@@ -1,7 +1,8 @@
-import * as effect from '@/effect'
-import { useCoreStore } from '@/store/core'
 // Composables
 import { createRouter, createWebHistory } from 'vue-router'
+
+import * as effect from '@/effect'
+import { useCoreStore } from '@/store/core'
 
 const routes = [
   {

@@ -1,5 +1,6 @@
 import type { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
 import { describe, expect, test } from 'vitest'
+
 import type { ResolvedContext } from '../src/services/Context.js'
 import { getRoles } from '../src/services/RoleRegistry.js'
 

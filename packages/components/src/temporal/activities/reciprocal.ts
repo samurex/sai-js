@@ -17,9 +17,10 @@ import {
   loader,
   subscribeToNotificationChannel,
 } from '@janeirodigital/interop-utils'
-import { ReciprocalWebhookStore } from '../../ReciprocalWebhookStore.js'
+
 import { buildAccountLoginStorage } from '../../builders/accountLoginStorage.js'
 import { buildSessionManager } from '../../builders/sessionManager.js'
+import { ReciprocalWebhookStore } from '../../ReciprocalWebhookStore.js'
 import {
   deleteReciprocalMirror as deleteMirror,
   updateReciprocalMirror,

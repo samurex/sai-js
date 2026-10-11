@@ -14,18 +14,11 @@
             v-bind="$ta('invitation-label-input')"
             :rules="[rules.required]"
           />
-          <v-text-field
-            v-model="note"
-            v-bind="$ta('invitation-note-input')"
-          />
-          <v-btn
-            type="submit"
-            block
-            class="mt-2"
-            :loading="loading"
-            :disabled="!valid"
-          >
-            {{ route.query.direction === 'create' ? $t('create-invitation') : $t('accept-invitation') }}
+          <v-text-field v-model="note" v-bind="$ta('invitation-note-input')" />
+          <v-btn type="submit" block class="mt-2" :loading="loading" :disabled="!valid">
+            {{
+              route.query.direction === 'create' ? $t('create-invitation') : $t('accept-invitation')
+            }}
           </v-btn>
         </v-form>
       </v-card-item>
@@ -33,10 +26,11 @@
   </v-sheet>
 </template>
 <script lang="ts" setup>
-import { useAppStore } from '@/store/app'
 import { useFluent } from 'fluent-vue'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+
+import { useAppStore } from '@/store/app'
 
 const router = useRouter()
 const route = useRoute()

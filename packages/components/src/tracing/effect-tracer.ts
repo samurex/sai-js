@@ -2,6 +2,7 @@ import { Resource, Tracer } from '@effect/opentelemetry'
 import { context, trace } from '@opentelemetry/api'
 import { Effect, Layer } from 'effect'
 import type { Effect as EffectType } from 'effect/Effect'
+
 import { temporalPluginConfig } from './otel-state.js'
 
 /**

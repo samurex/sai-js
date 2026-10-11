@@ -1,8 +1,9 @@
-import { useAppStore } from '@/store/app'
-import { useCoreStore } from '@/store/core'
 // Composables
 import { h } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
+
+import { useAppStore } from '@/store/app'
+import { useCoreStore } from '@/store/core'
 
 async function handleRedirect() {
   const coreStore = useCoreStore()

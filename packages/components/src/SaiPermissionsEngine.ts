@@ -16,6 +16,7 @@ import { ACP, PERMISSIONS } from '@solidlab/policy-engine'
 import { type IBindings, SparqlEndpointFetcher } from 'fetch-sparql-endpoint'
 import { getLoggerFor } from 'global-logger-factory'
 import { Store } from 'n3'
+
 import type { SaiAuthorizationManager } from './SaiAuthorizationManager.js'
 
 enum TargetType {
@@ -38,10 +39,7 @@ export class SaiPermissionsEngine implements PolicyEngine {
    * @param target - Identifier of the targeted resource.
    * @param credentials - Credentials identifying who or what is trying to access the target resource.
    */
-  async getPermissions(
-    target: string,
-    credentials: Credentials
-  ): Promise<PermissionMap> {
+  async getPermissions(target: string, credentials: Credentials): Promise<PermissionMap> {
     // check if reqested by User Authorization Server
     let uasId: string | undefined
     if (credentials.agent && credentials.client) {

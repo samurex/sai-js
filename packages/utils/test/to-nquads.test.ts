@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+
 import { jsonld, toNQuads } from '../src'
 
 /** Parse N-Quads text the way the codebase reads RDF: jsonld.fromRDF → expanded JSON-LD. */

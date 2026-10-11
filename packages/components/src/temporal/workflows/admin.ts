@@ -6,6 +6,7 @@ import type {
   SocialAgentId,
 } from '@janeirodigital/interop-data-model'
 import { executeChild, proxyActivities } from '@temporalio/workflow'
+
 import type * as adminActivities from '../activities/admin.js'
 import type * as grantsActivities from '../activities/grants.js'
 

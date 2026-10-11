@@ -9,6 +9,7 @@ import { loader } from '@janeirodigital/interop-utils'
 const loadDataAuthorization = loader(DataAuthorization.fromJsonLd)
 
 import { beforeEach, describe, expect, test } from 'vitest'
+
 import {
   awaitGrantCompletion,
   dataGrants,

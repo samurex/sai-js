@@ -9,6 +9,7 @@ import {
 } from '@solid/community-server'
 import type { CredentialsExtractor, OperationHttpHandlerInput } from '@solid/community-server'
 import { getLoggerFor } from 'global-logger-factory'
+
 import type { ReciprocalWebhookStore } from './ReciprocalWebhookStore.js'
 import type { SessionManager } from './SessionManager'
 

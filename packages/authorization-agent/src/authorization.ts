@@ -20,6 +20,7 @@ import {
   iriForContained,
   putJsonLd,
 } from '@janeirodigital/interop-utils'
+
 import {
   getDataAuthorization as getDataAuthorizationFromSparql,
   listContained,

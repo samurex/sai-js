@@ -5,11 +5,12 @@
  */
 
 import { createApp } from 'vue'
-import App from './App.vue'
-import { loadRuntimeConfig } from './runtime-config'
 
 // Plugins
 import { registerPlugins } from '@/plugins'
+
+import App from './App.vue'
+import { loadRuntimeConfig } from './runtime-config'
 
 // Load runtime config before mounting the app
 // This ensures config is available to all components from the start

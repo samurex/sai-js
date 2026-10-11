@@ -1,6 +1,7 @@
 import { INTEROP } from '@janeirodigital/interop-utils'
 import { DataFactory, Store } from 'n3'
 import { describe, expect, test } from 'vitest'
+
 import { type SparqlTransport, getRole } from '../src/sparql.js'
 
 const ROLE_IRI = 'https://registry/kim/role/r1'

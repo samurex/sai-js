@@ -18,6 +18,7 @@ import {
   loader,
   storageIri,
 } from '@janeirodigital/interop-utils'
+
 import {
   type SparqlTransport,
   findInheritingAuthorizations,

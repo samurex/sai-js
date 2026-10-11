@@ -8,20 +8,13 @@
       text="currently disabled"
     >
       <template #append>
-        <v-btn
-          color="secondary"
-          :loading="enableNotificationsLoading"
-          @click="enableNotifications"
-        >
+        <v-btn color="secondary" :loading="enableNotificationsLoading" @click="enableNotifications">
           Enable
         </v-btn>
       </template>
     </v-alert>
     <v-list>
-      <v-list-item
-        v-for="agent in appStore.agents"
-        :key="agent.id"
-      >
+      <v-list-item v-for="agent in appStore.agents" :key="agent.id">
         <router-link :to="{ name: 'agent', query: { agent: agent.id } }">
           {{ agent.label }}
         </router-link>
@@ -30,8 +23,9 @@
   </v-main>
 </template>
 <script lang="ts" setup>
-import { useAppStore } from '@/store/app'
 import { ref } from 'vue'
+
+import { useAppStore } from '@/store/app'
 
 const appStore = useAppStore()
 const enableNotificationsLoading = ref(false)

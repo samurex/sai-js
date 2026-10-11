@@ -1,4 +1,5 @@
 import type { NodeSDK } from '@opentelemetry/sdk-node'
+
 import { setTemporalPluginConfig } from './otel-state.js'
 
 /**

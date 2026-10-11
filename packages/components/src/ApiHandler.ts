@@ -1,7 +1,12 @@
 import { RpcRouter } from '@effect/rpc'
 import type { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
 import { SaiService, router } from '@janeirodigital/sai-api-messages'
-import { SpanStatusCode, context as otelContext, isSpanContextValid, trace } from '@opentelemetry/api'
+import {
+  SpanStatusCode,
+  context as otelContext,
+  isSpanContextValid,
+  trace,
+} from '@opentelemetry/api'
 import {
   BasicRepresentation,
   ForbiddenHttpError,
@@ -16,8 +21,7 @@ import type { OperationHttpHandlerInput, ResponseDescription } from '@solid/comm
 import { Effect, Layer } from 'effect'
 import { getLoggerFor } from 'global-logger-factory'
 import type { PushSubscription } from 'web-push'
-import type { SessionManager } from './SessionManager'
-import type { UiPushSubscriptionStore } from './UiPushSubscriptionStore.js'
+
 import type { AccountService } from './services/Account.js'
 import { addAdmin, removeAdmin } from './services/Admin.js'
 import { getApplications, getUnregisteredApplication } from './services/ApplicationRegistry.js'
@@ -38,7 +42,9 @@ import {
   shareResource,
 } from './services/ShareResource.js'
 import { acceptInvitation, getSocialAgents } from './services/SocialAgentRegistry.js'
+import type { SessionManager } from './SessionManager'
 import { withEffectTracing } from './tracing/effect-tracer.js'
+import type { UiPushSubscriptionStore } from './UiPushSubscriptionStore.js'
 
 export class ApiHandler extends OperationHttpHandler {
   protected readonly logger = getLoggerFor(this)

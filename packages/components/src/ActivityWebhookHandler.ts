@@ -32,6 +32,7 @@ import type { OperationHttpHandlerInput } from '@solid/community-server'
 import { WorkflowExecutionAlreadyStartedError } from '@temporalio/client'
 import * as S from 'effect/Schema'
 import { getLoggerFor } from 'global-logger-factory'
+
 import type { ActivityEvents } from './ActivityEvents.js'
 import type { ActivityWebhookStore } from './ActivityWebhookStore.js'
 import type { SessionManager } from './SessionManager'

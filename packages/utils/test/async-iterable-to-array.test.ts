@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest'
+
 import { asyncIterableToArray } from '../src'
 
 test('it produces array with all elements', async () => {

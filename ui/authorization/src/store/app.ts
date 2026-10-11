@@ -1,5 +1,3 @@
-import * as effect from '@/effect'
-import type { ActivityEvent } from '@/events'
 import type {
   ApplicationList,
   Authorization,
@@ -23,6 +21,10 @@ import { IRI } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
 import { defineStore } from 'pinia'
 import { reactive, ref } from 'vue'
+
+import * as effect from '@/effect'
+import type { ActivityEvent } from '@/events'
+
 import { useCoreStore } from './core'
 
 export const useAppStore = defineStore('app', () => {

@@ -33,6 +33,7 @@ import {
   startChild,
   workflowInfo,
 } from '@temporalio/workflow'
+
 import type * as activities from '../activities/grants.js'
 import {
   detectGrantedRequests,
@@ -426,9 +427,7 @@ export async function processRoleDeletion(
  * construction (full regeneration). `agentRegistrationAdded` is skipped
  * (accountId is not resolvable here).
  */
-export async function reconcileActivities(payload: {
-  webId: SocialAgentId
-}): Promise<void> {
+export async function reconcileActivities(payload: { webId: SocialAgentId }): Promise<void> {
   const pending = await getPendingActivities({ webId: payload.webId })
   const granteeGroups = new Map<string, ActivityData[]>()
   const roleActivities: ActivityData[] = []

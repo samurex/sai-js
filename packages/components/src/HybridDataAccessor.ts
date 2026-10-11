@@ -1,4 +1,5 @@
 import type { Readable } from 'node:stream'
+
 import { BasicRepresentation } from '@solid/community-server'
 import type {
   DataAccessor,
@@ -8,11 +9,7 @@ import type {
   ResourceIdentifier,
   SparqlDataAccessor,
 } from '@solid/community-server'
-import {
-  CONTENT_TYPE,
-  INTERNAL_QUADS,
-  RepresentationMetadata,
-} from '@solid/community-server'
+import { CONTENT_TYPE, INTERNAL_QUADS, RepresentationMetadata } from '@solid/community-server'
 export class HybridDataAccessor implements DataAccessor {
   public constructor(
     private binaryAccessor: FileDataAccessor,

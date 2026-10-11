@@ -1,5 +1,6 @@
 import type { DatasetCore, Quad } from '@rdfjs/types'
 import { Store } from 'n3'
+
 import { jsonld } from './jsonld-lib'
 
 // Local type for the document loader result compatible with jsonld's RemoteDocument

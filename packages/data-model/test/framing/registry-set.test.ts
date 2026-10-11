@@ -1,6 +1,7 @@
 import type { WhatwgFetch } from '@janeirodigital/interop-utils'
 import { INTEROP, LDP, SPACE, loader } from '@janeirodigital/interop-utils'
 import { describe, test } from 'vitest'
+
 import { RegistrySet } from '../../src'
 const loadRegistrySet = loader(RegistrySet.fromJsonLd)
 

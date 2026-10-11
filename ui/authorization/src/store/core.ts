@@ -1,10 +1,11 @@
-import * as effect from '@/effect'
-import { fluent } from '@/plugins/fluent'
-import { getRuntimeConfig } from '@/runtime-config'
 import { FluentBundle } from '@fluent/bundle'
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import type { PushSubscription } from 'web-push'
+
+import * as effect from '@/effect'
+import { fluent } from '@/plugins/fluent'
+import { getRuntimeConfig } from '@/runtime-config'
 
 let endpoint: string
 

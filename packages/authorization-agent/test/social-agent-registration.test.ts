@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+
 import {
   createSocialAgentRegistration,
   replaceAdminGrantLinks,
@@ -14,6 +15,7 @@ const loadSocialAgentRegistration = loader(SocialAgentRegistration.fromJsonLd)
 
 import { fetch, statelessFetch } from '@janeirodigital/interop-test-utils'
 import { describe, test, vi } from 'vitest'
+
 import { expect } from './expect'
 
 describe('build', () => {

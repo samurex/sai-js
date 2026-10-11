@@ -1,4 +1,5 @@
 import { PassThrough } from 'node:stream'
+
 import {
   BasicRepresentation,
   ForbiddenHttpError,
@@ -15,6 +16,7 @@ import type {
   WebIdStore,
 } from '@solid/community-server'
 import { getLoggerFor } from 'global-logger-factory'
+
 import type { ActivityEvents } from './ActivityEvents.js'
 
 /** Heartbeat cadence — the UI's timeout detection uses a multiple of this. */

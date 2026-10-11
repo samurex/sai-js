@@ -35,10 +35,11 @@ import {
   type ShareAuthorizationConfirmation,
 } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
+
 import type { ResolvedContext } from './Context.js'
-import { listSocialAgentRegistrations } from './SocialAgentRegistry.js'
 import { fetchPeerDocument, peerInstanceNode } from './peerProxy.js'
 import { getDataAuthorization, listContained, sparqlTransportFor } from './queries/org.js'
+import { listSocialAgentRegistrations } from './SocialAgentRegistry.js'
 
 /**
  * Grantees whose org-side data authorizations cover the resource — the

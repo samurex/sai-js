@@ -5,6 +5,7 @@ import {
   WrappedIndexedStorage,
 } from '@solid/community-server'
 import type { IndexTypeCollection, LoginStorage, VirtualObject } from '@solid/community-server'
+
 import { PostgresKeyValueStorage } from '../PostgresKeyValueStorage.js'
 
 export async function buildAccountLoginStorage<T extends IndexTypeCollection<T>>(): Promise<

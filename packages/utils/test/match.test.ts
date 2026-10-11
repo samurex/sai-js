@@ -1,6 +1,7 @@
 import type { DatasetCore } from '@rdfjs/types'
 import { DataFactory } from 'n3'
 import { beforeAll, describe, expect, test } from 'vitest'
+
 import { getAllMatchingQuads, getOneMatchingQuad, toStore } from '../src'
 
 const INTEROP = 'http://www.w3.org/ns/solid/interop#'

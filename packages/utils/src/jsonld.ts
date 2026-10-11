@@ -1,6 +1,7 @@
 import { SpanStatusCode, trace } from '@opentelemetry/api'
 import type { DatasetCore, Quad } from '@rdfjs/types'
 import { Store } from 'n3'
+
 import { jsonld } from './jsonld-lib'
 import { localDocumentLoader } from './jsonld-parser'
 import type { WhatwgFetch } from './whatwg-fetch'

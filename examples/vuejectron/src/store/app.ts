@@ -1,5 +1,3 @@
-import type { Agent, ResourceServer } from '@/models'
-import { getRuntimeConfig } from '@/runtime-config'
 import { getDefaultSession } from '@inrupt/solid-client-authn-browser'
 import { Application, NotificationManager } from '@janeirodigital/interop-application'
 import { WebIdProfile } from '@janeirodigital/interop-data-model'
@@ -11,6 +9,10 @@ import type { LdoBase } from '@ldo/ldo'
 import { useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { ref, shallowRef, triggerRef } from 'vue'
+
+import type { Agent, ResourceServer } from '@/models'
+import { getRuntimeConfig } from '@/runtime-config'
+
 import { FileShapeType } from '../../ldo/File.shapeTypes'
 import type { File as FileObject } from '../../ldo/File.typings'
 import { ProjectShapeType } from '../../ldo/Project.shapeTypes'

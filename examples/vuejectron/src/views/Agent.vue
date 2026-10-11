@@ -12,7 +12,14 @@
             :key="project['@id']"
           >
             <router-link
-              :to="{ name: 'project', query: { ...route.query, resourceServer: resourceServer.id, project: project['@id'] } }"
+              :to="{
+                name: 'project',
+                query: {
+                  ...route.query,
+                  resourceServer: resourceServer.id,
+                  project: project['@id'],
+                },
+              }"
             >
               {{ project.prefLabel }}
             </router-link>
@@ -23,9 +30,10 @@
   </v-main>
 </template>
 <script lang="ts" setup>
-import { useAppStore } from '@/store/app'
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
+
+import { useAppStore } from '@/store/app'
 
 const route = useRoute()
 

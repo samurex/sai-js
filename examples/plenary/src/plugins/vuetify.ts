@@ -7,10 +7,8 @@
 // Styles
 import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
-
 // Composables
 import { createVuetify } from 'vuetify'
-
 // Plugins
 import { VTimePicker } from 'vuetify/labs/VTimePicker'
 

@@ -1,6 +1,7 @@
 import { ACL, INTEROP, RDF, toStore } from '@janeirodigital/interop-utils'
 import { DataFactory } from 'n3'
 import { describe, test } from 'vitest'
+
 import { DataAuthorization, type FinalDataAuthorizationData } from '../../src'
 import { expect } from '../expect'
 

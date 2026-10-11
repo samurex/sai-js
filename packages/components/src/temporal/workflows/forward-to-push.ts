@@ -1,4 +1,5 @@
 import { proxyActivities } from '@temporalio/workflow'
+
 import type * as activities from '../activities/forward-to-push'
 
 const { forwardToPush } = proxyActivities<typeof activities>({

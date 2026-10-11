@@ -13,6 +13,7 @@ import {
   toStore,
 } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
+
 import { awaitEvent, openEventsStream } from './util'
 
 /**

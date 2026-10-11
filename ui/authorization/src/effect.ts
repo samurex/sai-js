@@ -35,6 +35,7 @@ import {
 import { Effect, Layer } from 'effect'
 import type * as S from 'effect/Schema'
 import type { PushSubscription } from 'web-push'
+
 import { getRuntimeConfig } from './runtime-config'
 import { UiTracingLive } from './tracing'
 

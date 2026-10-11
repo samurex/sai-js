@@ -27,13 +27,14 @@ import {
 } from '@solid/community-server'
 import type { CredentialsExtractor, OperationHttpHandlerInput } from '@solid/community-server'
 import { getLoggerFor } from 'global-logger-factory'
+
 import { GrantRevocationHandler } from './GrantRevocationHandler.js'
-import type { SessionManager } from './SessionManager'
 import {
   isAccessRequestMessage,
   isAccessRevocationMessage,
   isNeedBasedAccessRequestMessage,
 } from './messages.js'
+import type { SessionManager } from './SessionManager'
 import { Temporal } from './temporal/client.js'
 import { storeGrant } from './temporal/workflows/grants.js'
 

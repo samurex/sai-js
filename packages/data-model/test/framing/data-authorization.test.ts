@@ -1,5 +1,6 @@
 import { ACL, INTEROP } from '@janeirodigital/interop-utils'
 import { describe, test } from 'vitest'
+
 import { DataAuthorization } from '../../src'
 import { expect } from '../expect'
 import { docFromGraphs } from './helpers'

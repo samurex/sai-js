@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+
 import { Args, Command, Options } from '@effect/cli'
 import {
   dataRegistryTemplate,

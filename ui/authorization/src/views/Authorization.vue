@@ -1,12 +1,13 @@
 <template>
   <v-main>
-    <AuthenticateApp
-      v-if="registered"
-      :application="registered"
-    />
+    <AuthenticateApp v-if="registered" :application="registered" />
     <AuthorizeApp
-      v-if="!registered && !route.query.resource && appStore.authorizationData
-        && (agent || role || appStore.application)"
+      v-if="
+        !registered &&
+        !route.query.resource &&
+        appStore.authorizationData &&
+        (agent || role || appStore.application)
+      "
       :application="appStore.application"
       :agent="agent"
       :role="role"
@@ -23,14 +24,15 @@
 </template>
 
 <script lang="ts" setup>
+import type { Role } from '@janeirodigital/sai-api-messages'
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
 import AuthenticateApp from '@/components/AuthenticateApp.vue'
 import AuthorizeApp from '@/components/AuthorizeApp.vue'
 import ShareResource from '@/components/ShareResource.vue'
 import { useAppStore } from '@/store/app'
 import { useCoreStore } from '@/store/core'
-import type { Role } from '@janeirodigital/sai-api-messages'
-import { computed, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
 
 const appStore = useAppStore()
 const coreStore = useCoreStore()

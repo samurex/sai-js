@@ -1,5 +1,6 @@
 import { INTEROP, LDP } from '@janeirodigital/interop-utils'
 import { describe, test } from 'vitest'
+
 import { ApplicationRegistration } from '../../src'
 import { expect } from '../expect'
 import { docFromGraphs } from './helpers'

@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+
 import { createFetch, createStatefulFetch, statelessFetch } from '../src'
 
 describe('common', () => {

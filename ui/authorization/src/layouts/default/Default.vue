@@ -1,9 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar
-      v-if="coreStore.userId"
-      elevation="0"
-    >
+    <v-app-bar v-if="coreStore.userId" elevation="0">
       <v-app-bar-title @click="coreStore.navigateHome()">
         <v-icon icon="mdi-shield-account" />
         SAI
@@ -30,7 +27,9 @@
          visible until the workflow finishes) -->
     <v-snackbar
       v-model="appStore.activitySnackbar.visible"
-      :color="appStore.activitySnackbar.status === 'pending' ? 'amber-lighten-3' : 'light-green-lighten-3'"
+      :color="
+        appStore.activitySnackbar.status === 'pending' ? 'amber-lighten-3' : 'light-green-lighten-3'
+      "
       :timeout="-1"
       location="top"
     >
@@ -42,10 +41,7 @@
           width="2"
           class="mr-2"
         />
-        <span
-          v-else
-          class="mr-2"
-        >✓</span>
+        <span v-else class="mr-2">✓</span>
         <span>{{ activityLabel }}</span>
       </div>
     </v-snackbar>
@@ -53,11 +49,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useFluent } from 'fluent-vue'
+import { computed, watch } from 'vue'
+
 import { ACTIVITY_LABELS } from '@/activityLabels'
 import { useAppStore } from '@/store/app'
 import { useCoreStore } from '@/store/core'
-import { useFluent } from 'fluent-vue'
-import { computed, watch } from 'vue'
 
 const coreStore = useCoreStore()
 const appStore = useAppStore()

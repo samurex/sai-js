@@ -1,12 +1,12 @@
+import { URL, fileURLToPath } from 'node:url'
+
 import Vue from '@vitejs/plugin-vue'
 import VueRouter from 'unplugin-vue-router/vite'
+// Utilities
+import { defineConfig } from 'vite'
 // Plugins
 import Layouts from 'vite-plugin-vue-layouts'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
-
-import { URL, fileURLToPath } from 'node:url'
-// Utilities
-import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({

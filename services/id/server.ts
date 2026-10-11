@@ -4,6 +4,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import * as jsonldNs from 'jsonld'
 import { Store } from 'n3'
+
 import { toCidDocument } from './cid.ts'
 
 // CJS/ESM interop: jsonld is a CJS package; grab the full object so all

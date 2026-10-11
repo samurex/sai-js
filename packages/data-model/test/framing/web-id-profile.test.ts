@@ -1,4 +1,5 @@
 import { describe, test } from 'vitest'
+
 import { WebIdProfile } from '../../src'
 import { expect } from '../expect'
 import { docFromGraphs } from './helpers'

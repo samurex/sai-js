@@ -1,8 +1,5 @@
-import {
-  type LanguageMap,
-  frameNode,
-  opt,
-} from '@janeirodigital/interop-utils'
+import { type LanguageMap, frameNode, opt } from '@janeirodigital/interop-utils'
+
 import { dataModelContext } from './context'
 
 export type SocialAgentInvitationId = {

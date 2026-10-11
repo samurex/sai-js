@@ -14,7 +14,7 @@
       </h3>
       <v-list>
         <v-list-item
-          v-for="task of (appStore.currentProject.hasTask as LdSet<Task>)"
+          v-for="task of appStore.currentProject.hasTask as LdSet<Task>"
           :key="task['@id']"
         >
           <v-card v-if="task.prefLabel">
@@ -52,16 +52,9 @@
         />
       </h3>
       <v-list>
-        <v-list-item
-          v-for="file of files"
-          :key="file['@id']"
-        >
+        <v-list-item v-for="file of files" :key="file['@id']">
           {{ file.fileName }}
-          <v-btn
-            icon="mdi-download"
-            variant="plain"
-            @click="downloadFile(file)"
-          />
+          <v-btn icon="mdi-download" variant="plain" @click="downloadFile(file)" />
         </v-list-item>
       </v-list>
       <h3>
@@ -76,14 +69,8 @@
         />
       </h3>
       <v-list>
-        <v-list-item
-          v-for="(dataUrl, index) in imageUrls"
-          :key="index"
-        >
-          <img
-            :src="dataUrl"
-            style="width: 100%;"
-          >
+        <v-list-item v-for="(dataUrl, index) in imageUrls" :key="index">
+          <img :src="dataUrl" style="width: 100%" />
         </v-list-item>
       </v-list>
       <input-dialog
@@ -92,22 +79,19 @@
         @cancel="dialog = false"
         @save="updateTask"
       />
-      <a
-        ref="download"
-        style="visibility: hidden"
-      />
+      <a ref="download" style="visibility: hidden" />
       <input
         ref="fileUpload"
         type="file"
         style="visibility: hidden"
         @change="appStore.uploadFile($event)"
-      >
+      />
       <input
         ref="imageUpload"
         type="file"
         style="visibility: hidden"
         @change="appStore.uploadImage($event)"
-      >
+      />
     </div>
   </v-main>
 </template>
@@ -118,9 +102,9 @@ import { computedAsync } from '@vueuse/core'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
+import InputDialog from '@/components/InputDialog.vue'
 import { useAppStore } from '@/store/app'
 
-import InputDialog from '@/components/InputDialog.vue'
 import type { File as FileObject } from '../../ldo/File.typings'
 import type { Task } from '../../ldo/Task.typings'
 

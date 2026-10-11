@@ -5,6 +5,7 @@ import type {
   SocialAgentRegistrationData,
 } from '@janeirodigital/interop-data-model'
 import { proxyActivities } from '@temporalio/workflow'
+
 import type * as grantsActivities from '../activities/grants.js'
 import type * as activities from '../activities/reciprocal.js'
 

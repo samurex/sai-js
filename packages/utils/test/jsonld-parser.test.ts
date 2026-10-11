@@ -1,5 +1,6 @@
 import { DataFactory } from 'n3'
 import { expect, test } from 'vitest'
+
 import { parseJsonld } from '../src'
 
 const snippet = `

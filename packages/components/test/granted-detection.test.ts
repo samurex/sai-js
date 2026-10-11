@@ -1,5 +1,6 @@
 import type { OpenSentAccessRequest } from '@janeirodigital/interop-authorization-agent'
 import { describe, expect, test } from 'vitest'
+
 import { matchGrantedRequests } from '../src/temporal/activities/access-request.js'
 
 // ──────────────────────────

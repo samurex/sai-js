@@ -27,6 +27,7 @@ export interface SessionAcquirer {
   getSession(webId: string): Promise<AuthorizationAgent>
 }
 import { INTEROP } from '@janeirodigital/interop-utils'
+
 import { Temporal } from './temporal/client.js'
 import { revokeGrants } from './temporal/workflows/grants.js'
 

@@ -42,7 +42,7 @@ services:
     expose:
       - 4800
     ports:
-      - "9229:9229"
+      - '9229:9229'
     working_dir: /sai/environments/css
     command:
       - node
@@ -55,16 +55,7 @@ services:
       - ./:/sai
       - ${CAROOT}:/mkcert
     environment:
-      <<:
-        [
-          *postgres-env,
-          *vapid-env,
-          *idp-env,
-          *sparql-env,
-          *certs-env,
-          *temporal-env,
-          *origin-env,
-        ]
+      <<: [*postgres-env, *vapid-env, *idp-env, *sparql-env, *certs-env, *temporal-env, *origin-env]
       CSS_CONFIG: /sai/environments/css/auth.json
       CSS_LOGGING_LEVEL: debug
       CSS_BASE_URL: https://auth.docker/
@@ -92,7 +83,7 @@ services:
     expose:
       - 4600
     ports:
-      - "9230:9230"
+      - '9230:9230'
     working_dir: /sai/environments/css
     command:
       - node
@@ -130,7 +121,7 @@ services:
     expose:
       - 4700
     ports:
-      - "9231:9231"
+      - '9231:9231'
     working_dir: /sai/environments/css
     command:
       - node
@@ -166,7 +157,7 @@ services:
     dns:
       - 172.16.0.253
     ports:
-      - "9235:9235"
+      - '9235:9235'
     working_dir: /sai/packages/components
     command:
       - node
@@ -176,16 +167,7 @@ services:
       - ./:/sai
       - ${CAROOT}:/mkcert
     environment:
-      <<:
-        [
-          *postgres-env,
-          *vapid-env,
-          *idp-env,
-          *sparql-env,
-          *certs-env,
-          *temporal-env,
-          *origin-env,
-        ]
+      <<: [*postgres-env, *vapid-env, *idp-env, *sparql-env, *certs-env, *temporal-env, *origin-env]
       CSS_BASE_URL: https://auth.docker/
       # OpenTelemetry dev loop — live to the compose tempo service (worker)
       OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4318
@@ -198,7 +180,7 @@ services:
     expose:
       - 4200
     working_dir: /sai/ui/authorization
-    command: ["npm", "run", "dev"]
+    command: ['npm', 'run', 'dev']
     volumes:
       - ./:/sai
     labels:
@@ -216,7 +198,7 @@ services:
     expose:
       - 4500
     working_dir: /sai/examples/vuejectron
-    command: ["npm", "run", "dev"]
+    command: ['npm', 'run', 'dev']
     volumes:
       - ./:/sai
     labels:
@@ -231,8 +213,8 @@ services:
     container_name: router
     restart: on-failure
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik/conf/traefik.yml:/etc/traefik/traefik.yml
@@ -245,7 +227,7 @@ services:
       - traefik.http.services.router.loadbalancer.server.port=8080
       - traefik.http.routers.router.tls=true
     healthcheck:
-      test: ["CMD-SHELL", "traefik healthcheck --ping"]
+      test: ['CMD-SHELL', 'traefik healthcheck --ping']
       interval: 4s
       timeout: 4s
       retries: 8
@@ -261,12 +243,12 @@ services:
     env_file:
       - .env
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
+      - '53:53/tcp'
+      - '53:53/udp'
     cap_add:
       - NET_ADMIN
     healthcheck:
-      test: ["CMD-SHELL", "nslookup localhost 127.0.0.1 || exit 1"]
+      test: ['CMD-SHELL', 'nslookup localhost 127.0.0.1 || exit 1']
       interval: 4s
       timeout: 4s
       retries: 8
@@ -288,7 +270,7 @@ services:
     expose:
       - 5432 # internal only
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U temporal"]
+      test: ['CMD-SHELL', 'pg_isready -U temporal']
       interval: 5s
       timeout: 5s
       retries: 60
@@ -312,7 +294,7 @@ services:
       - default
     volumes:
       - ./temporal/setup-postgres.sh:/etc/temporal/setup-postgres.sh
-    entrypoint: ["/bin/sh"]
+    entrypoint: ['/bin/sh']
     command: /etc/temporal/setup-postgres.sh
 
   temporal:
@@ -336,7 +318,7 @@ services:
     volumes:
       - ./temporal/development.yaml:/etc/temporal/development-sql.yaml
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "7233"]
+      test: ['CMD', 'nc', '-z', 'localhost', '7233']
       interval: 5s
       timeout: 3s
       start_period: 30s
@@ -356,7 +338,7 @@ services:
       - default
     volumes:
       - ./temporal/create-namespace.sh:/etc/temporal/create-namespace.sh
-    entrypoint: ["/bin/sh"]
+    entrypoint: ['/bin/sh']
     command: /etc/temporal/create-namespace.sh
 
   temporal-ui:
@@ -389,7 +371,7 @@ services:
       - RUST_LOG=debug
     expose:
       - 7878 # internal only
-    command: ["serve", "--location", "/data", "--bind", "0.0.0.0:7878"]
+    command: ['serve', '--location', '/data', '--bind', '0.0.0.0:7878']
 
   sparql:
     image: nginx:alpine
@@ -416,7 +398,7 @@ services:
     volumes:
       - ./:/sai
     ports:
-      - "9236:9236"
+      - '9236:9236'
     command:
       - node
       - --inspect=0.0.0.0:9236
@@ -445,10 +427,10 @@ services:
     networks:
       - default
     ports:
-      - "3900:3900"
-      - "3901:3901"
-      - "3902:3902"
-      - "3903:3903"
+      - '3900:3900'
+      - '3901:3901'
+      - '3902:3902'
+      - '3903:3903'
     volumes:
       - ./garage/garage.toml:/etc/garage.toml
       - ./garage/meta:/var/lib/garage/meta
@@ -461,9 +443,9 @@ services:
     networks:
       - default
     ports:
-      - "3200:3200" # query API / TraceQL
-      - "4318:4318" # OTLP/HTTP
-      - "4317:4317" # OTLP/gRPC
+      - '3200:3200' # query API / TraceQL
+      - '4318:4318' # OTLP/HTTP
+      - '4317:4317' # OTLP/gRPC
     volumes:
       - ./tempo/tempo.yaml:/etc/tempo.yaml
       # blocks + live store, so `devbox run tempo-import` can add dagger traces
@@ -492,14 +474,14 @@ services:
     networks:
       - default
     ports:
-      - "3000:3000" # Grafana UI + datasource proxy
+      - '3000:3000' # Grafana UI + datasource proxy
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
     environment:
       # anonymous admin: local dev convenience (no login or token needed)
-      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: 'true'
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
-      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_AUTH_DISABLE_LOGIN_FORM: 'true'
 
 networks:
   default:

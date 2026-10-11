@@ -1,11 +1,13 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+
 import { Args, Command, Options } from '@effect/cli'
 import * as NodeContext from '@effect/platform-node/NodeContext'
 import * as Runtime from '@effect/platform-node/NodeRuntime'
 import { Postgres, seedQuadstore } from '@janeirodigital/interop-test-utils'
 import { Console, Effect, Option } from 'effect'
 import { exportJWK, generateKeyPair } from 'jose'
+
 import { addUserCommand } from './add-user.js'
 
 const datasetSourcePath = fileURLToPath(

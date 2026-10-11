@@ -1,7 +1,9 @@
 import { setTimeout as sleep } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
+
 import { OpenTelemetryPlugin } from '@temporalio/interceptors-opentelemetry-v2'
 import { NativeConnection, Worker } from '@temporalio/worker'
+
 import * as accessRequestActivities from '../temporal/activities/access-request.js'
 import * as adminActivities from '../temporal/activities/admin.js'
 import * as forwardActivities from '../temporal/activities/forward-to-push.js'

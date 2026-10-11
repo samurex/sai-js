@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+
 import { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
 import type { AuthorizationAgent as AuthorizationAgentType } from '@janeirodigital/interop-authorization-agent'
 import { INTEROP } from '@janeirodigital/interop-utils'

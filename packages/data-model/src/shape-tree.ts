@@ -11,6 +11,7 @@ import {
 } from '@janeirodigital/interop-utils'
 import type { NamedNode } from '@rdfjs/types'
 import { DataFactory } from 'n3'
+
 import type { ShapeTreeDescriptionData } from '.'
 import { dataModelContext } from './context'
 import { fromJsonLd as shapeTreeDescriptionFromJsonLd } from './shape-tree-description'

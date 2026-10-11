@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+
 import { ACL, AS, INTEROP, RDF } from '../src/namespaces'
 
 describe('vocabularies', () => {

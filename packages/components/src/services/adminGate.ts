@@ -5,6 +5,7 @@ import {
 } from '@janeirodigital/interop-data-model'
 import { ForbiddenHttpError } from '@solid/community-server'
 import type { CredentialsExtractor, HttpRequest } from '@solid/community-server'
+
 import type { SessionManager } from '../SessionManager.js'
 
 /**

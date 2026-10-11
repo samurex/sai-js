@@ -16,6 +16,7 @@ import type {
   ResponseDescription,
 } from '@solid/community-server'
 import { getLoggerFor } from 'global-logger-factory'
+
 import type { SessionManager } from './SessionManager'
 
 export class AgentIdHandler extends OperationHttpHandler {

@@ -24,6 +24,7 @@ import {
   loader,
 } from '@janeirodigital/interop-utils'
 import type { LanguageMap } from '@janeirodigital/interop-utils'
+
 import { setAcr } from './agent-registration'
 import { createApplicationRegistration } from './application-registration'
 import { putSocialAgentInvitation } from './social-agent-invitation'

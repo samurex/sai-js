@@ -1,4 +1,3 @@
-import { getRuntimeConfig } from '@/runtime-config'
 import {
   type ISessionInfo,
   getDefaultSession,
@@ -8,6 +7,8 @@ import {
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { RouteLocationNormalized } from 'vue-router'
+
+import { getRuntimeConfig } from '@/runtime-config'
 
 class OidcError extends Error {
   constructor(private oidcInfo?: ISessionInfo) {

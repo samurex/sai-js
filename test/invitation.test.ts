@@ -5,6 +5,7 @@ import { loader } from '@janeirodigital/interop-utils'
 const loadSocialAgentInvitation = loader(SocialAgentInvitation.fromJsonLd)
 
 import { describe, expect, test } from 'vitest'
+
 import {
   rpcPayload,
   waitFor,

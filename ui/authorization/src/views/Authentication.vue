@@ -2,12 +2,8 @@
   <v-main>
     <v-card v-if="step === 'signIn'">
       <v-card-item>
-        <v-card-title>
-          Sign In
-        </v-card-title>
-        <v-card-subtitle>
-          If account doesn't exist one will be created for you
-        </v-card-subtitle>
+        <v-card-title> Sign In </v-card-title>
+        <v-card-subtitle> If account doesn't exist one will be created for you </v-card-subtitle>
         <v-card-text>
           <v-form @submit.prevent="signIn">
             <v-text-field v-bind="$ta('email-input')" v-model="email" required />
@@ -28,24 +24,35 @@
     </v-card>
     <v-card v-if="step === 'signUp'">
       <v-card-item>
-        <v-card-title>
-          Create handle
-        </v-card-title>
-        <v-card-subtitle>
-          It will be used for your ID and Data Pod subdomain.
-        </v-card-subtitle>
+        <v-card-title> Create handle </v-card-title>
+        <v-card-subtitle> It will be used for your ID and Data Pod subdomain. </v-card-subtitle>
         <v-card-text>
           <v-form @submit.prevent="signUp">
-            <v-text-field v-bind="$ta('handle-input')" v-model="handle" :error-messages="errors" required />
+            <v-text-field
+              v-bind="$ta('handle-input')"
+              v-model="handle"
+              :error-messages="errors"
+              required
+            />
             <v-btn type="submit" block class="mt-2" :loading="checking" :disabled="!!errors">
               {{ $t('create') }}
             </v-btn>
           </v-form>
           <dl>
             <dt>ID</dt>
-            <dd><v-chip :color="handleAvailable ? 'green' : 'red'" variant="flat">https://<span class="handle">{{handle}}</span>.{{config.idOrigin}}</v-chip></dd>
+            <dd>
+              <v-chip :color="handleAvailable ? 'green' : 'red'" variant="flat"
+                >https://<span class="handle">{{ handle }}</span
+                >.{{ config.idOrigin }}</v-chip
+              >
+            </dd>
             <dt>Pod</dt>
-            <dd><v-chip  :color="handleAvailable ? 'green' : 'red'" variant="flat">https://<span class="handle">{{handle}}</span>.{{config.dataOrigin}}</v-chip></dd>
+            <dd>
+              <v-chip :color="handleAvailable ? 'green' : 'red'" variant="flat"
+                >https://<span class="handle">{{ handle }}</span
+                >.{{ config.dataOrigin }}</v-chip
+              >
+            </dd>
           </dl>
         </v-card-text>
       </v-card-item>
@@ -58,9 +65,10 @@ dl {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 1rem;
-  align-items: baseline ;
+  align-items: baseline;
 }
-dt, dd {
+dt,
+dd {
   margin: 0;
 }
 dd {
@@ -72,11 +80,12 @@ dd {
 </style>
 
 <script lang="ts" setup>
+import { computedAsync } from '@vueuse/core'
+import { computed, ref } from 'vue'
+
 import { bootstrapAccount, checkHandle } from '@/effect'
 import { getRuntimeConfig } from '@/runtime-config'
 import { useCoreStore } from '@/store/core'
-import { computedAsync } from '@vueuse/core'
-import { computed, ref } from 'vue'
 
 const config = getRuntimeConfig()
 const coreStore = useCoreStore()

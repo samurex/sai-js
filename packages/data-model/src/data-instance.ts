@@ -8,6 +8,7 @@ import {
   opt,
   strs,
 } from '@janeirodigital/interop-utils'
+
 import { dataModelContext } from './context'
 import type { DataRegistrationData } from './data-registration'
 import type { ShapeTreeData } from './shape-tree'

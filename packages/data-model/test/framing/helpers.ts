@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs'
+
 import { jsonld } from '@janeirodigital/interop-utils'
 import { DataFactory, Parser, type Quad, type Term } from 'n3'
 

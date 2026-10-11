@@ -1,24 +1,14 @@
 <template>
-  <v-card
-    :title="resource.label"
-    :subtitle="resource.shapeTree.label"
-  >
+  <v-card :title="resource.label" :subtitle="resource.shapeTree.label">
     <v-card-actions>
       <AccessModeSelector @selected="(mode) => modeSelected(resource.shapeTree.id, mode)" />
     </v-card-actions>
     <v-card-text>
       <v-list>
-        <v-list-item
-          v-for="child of resource.children"
-          :key="child.shapeTree.id"
-        >
+        <v-list-item v-for="child of resource.children" :key="child.shapeTree.id">
           <v-list-item-title>
             {{ child.shapeTree.label }}
-            <v-badge
-              color="secondary"
-              :content="child.count"
-              inline
-            />
+            <v-badge color="secondary" :content="child.count" inline />
           </v-list-item-title>
           <template #append>
             <v-list-item-action>
@@ -41,10 +31,7 @@
         >
           <template #append>
             <v-list-item-action end>
-              <v-checkbox-btn
-                :model-value="selectedAgents.has(agent.id)"
-                @click.prevent
-              />
+              <v-checkbox-btn :model-value="selectedAgents.has(agent.id)" @click.prevent />
             </v-list-item-action>
           </template>
         </v-list-item>
@@ -60,11 +47,7 @@
       </v-list>
     </v-card-text>
     <div class="px-2 d-flex justify-space-between">
-      <v-btn
-        color="warning"
-        variant="tonal"
-        :disabled="loading"
-      >
+      <v-btn color="warning" variant="tonal" :disabled="loading">
         {{ $t('cancel') }}
       </v-btn>
       <v-btn
@@ -83,8 +66,6 @@
 </template>
 
 <script lang="ts" setup>
-import AccessModeSelector from '@/components/AccessModeSelector.vue'
-import { useAppStore } from '@/store/app'
 import {
   AccessModes,
   IRI,
@@ -94,6 +75,9 @@ import {
 } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
 import { computed, reactive, ref, watch } from 'vue'
+
+import AccessModeSelector from '@/components/AccessModeSelector.vue'
+import { useAppStore } from '@/store/app'
 
 const appStore = useAppStore()
 
