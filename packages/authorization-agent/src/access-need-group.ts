@@ -66,7 +66,8 @@ export async function reliableDescriptionLanguages(
     if (!languages) {
       languages = needLanguages
     } else {
-      languages = new Set([...languages].filter((lang) => needLanguages.has(lang)))
+      const current: Set<string> = languages
+      languages = new Set([...current].filter((lang) => needLanguages.has(lang)))
     }
   }
   return languages ?? new Set()

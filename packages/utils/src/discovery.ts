@@ -54,6 +54,7 @@ export async function discoverDelegationIssuanceEndpoint(
   fetch: WhatwgFetch
 ): Promise<string> {
   const uasId = await discoverAuthorizationAgent(webId, fetch)
+  if (!uasId) throw new Error(`cannot discover authorization agent for ${webId}`)
   const doc = await fetchJsonLd(uasId, fetch)
   return (await documentValues(doc, uasId, INTEROP.hasDelegationIssuanceEndpoint))[0]
 }
@@ -109,6 +110,9 @@ export async function discoverStorageDescription(
  */
 export async function storageIri(data: { id: string }, fetch: WhatwgFetch): Promise<string> {
   const storageDescriptionIri = await discoverStorageDescription(data.id, fetch)
+  if (!storageDescriptionIri) {
+    throw new Error(`cannot discover storage description for ${data.id}`)
+  }
   const doc = await fetchJsonLd(storageDescriptionIri, fetch)
   return findNodeIdByType(doc, SPACE.Storage, storageDescriptionIri)
 }

@@ -27,7 +27,7 @@ import { DataFactory } from 'n3'
 function descriptionIrisInSet(dataset: DatasetCore, setIri: string): string[] {
   return getAllMatchingQuads(
     dataset,
-    null,
+    undefined,
     INTEROP.terms.inAccessDescriptionSet,
     DataFactory.namedNode(setIri)
   ).map((quad) => quad.subject.value)
@@ -64,7 +64,7 @@ export function findInLanguage(dataset: DatasetCore, descriptionLang: string): s
   // we can skip matching on INTEROP.hasAccessDescriptionSet since nothing else uses INTEROP.terms.usesLanguage
   return getOneMatchingQuad(
     dataset,
-    null,
+    undefined,
     INTEROP.terms.usesLanguage,
     DataFactory.literal(descriptionLang, XSD.terms.language)
   )?.subject.value

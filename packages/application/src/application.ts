@@ -42,11 +42,11 @@ export class Application {
 
   randomUUID: () => string
 
-  authorizationAgentIri: string
+  authorizationAgentIri!: string
 
-  authorizationRedirectEndpoint: string
+  authorizationRedirectEndpoint!: string
 
-  registrationIri: string
+  registrationIri?: string
 
   // TODO rename
   applicationRegistration?: ApplicationRegistrationData
@@ -65,7 +65,11 @@ export class Application {
   }
 
   private async bootstrap(): Promise<void> {
-    this.authorizationAgentIri = await discoverAuthorizationAgent(this.webId, this.fetch)
+    const authorizationAgentIri = await discoverAuthorizationAgent(this.webId, this.fetch)
+    if (!authorizationAgentIri) {
+      throw new Error(`cannot discover authorization agent for ${this.webId}`)
+    }
+    this.authorizationAgentIri = authorizationAgentIri
     this.registrationIri = await discoverAgentRegistration(this.authorizationAgentIri, this.fetch)
     this.authorizationRedirectEndpoint = await discoverAuthorizationRedirectEndpoint(
       this.authorizationAgentIri,
@@ -122,7 +126,7 @@ export class Application {
     }
     const dataGrants = await getDataGrants(this.applicationRegistration, this.fetch)
     return dataGrants.reduce((acc, grant) => {
-      let owner: DataOwnerData = acc.find((agent) => agent.id === grant.dataOwner)
+      let owner = acc.find((agent) => agent.id === grant.dataOwner)
       if (!owner) {
         owner = { id: grant.dataOwner, issuedGrants: [] }
         acc.push(owner)
@@ -176,6 +180,7 @@ export class Application {
 
   public childInfo(childId: string, scope: string, parentId: string): ChildInfo {
     const parentInfo = this.parentMap.get(parentId)
+    if (!parentInfo) throw new Error(`no parent info for ${parentId}`)
     return {
       id: childId,
       scope,
@@ -194,25 +199,26 @@ export class Application {
 
   public async canCreate(resourceServer: string, scope: string): Promise<boolean> {
     const grant = await this.findGrant(resourceServer, scope)
-    return grant?.accessMode.includes(ACL.Create)
+    return grant?.accessMode.includes(ACL.Create) ?? false
   }
 
   public async canCreateChild(parentId: string, scope: string): Promise<boolean> {
-    const { resourceServer } = this.parentMap.get(parentId)
-    const grant = await this.findGrant(resourceServer, scope)
-    return grant?.accessMode.includes(ACL.Create)
+    const parentInfo = this.parentMap.get(parentId)
+    if (!parentInfo) throw new Error(`no parent info for ${parentId}`)
+    const grant = await this.findGrant(parentInfo.resourceServer, scope)
+    return grant?.accessMode.includes(ACL.Create) ?? false
   }
 
   public async canUpdate(id: string): Promise<boolean> {
     const info = this.getInfo(id)
     const grant = await this.findGrant(info.resourceServer, info.scope)
-    return grant?.accessMode.includes(ACL.Update)
+    return grant?.accessMode.includes(ACL.Update) ?? false
   }
 
   public async canDelete(id: string): Promise<boolean> {
     const info = this.getInfo(id)
     const grant = await this.findGrant(info.resourceServer, info.scope)
-    return grant?.accessMode.includes(ACL.Delete)
+    return grant?.accessMode.includes(ACL.Delete) ?? false
   }
 
   // TODO: rename to idForNew
@@ -223,14 +229,17 @@ export class Application {
   }
 
   public async iriForChild(parentId: string, scope: string): Promise<string> {
-    const { resourceServer } = this.parentMap.get(parentId)
-    const iri = await this.iriForNew(resourceServer, scope)
+    const parentInfo = this.parentMap.get(parentId)
+    if (!parentInfo) throw new Error(`no parent info for ${parentId}`)
+    const iri = await this.iriForNew(parentInfo.resourceServer, scope)
     this.childMap.set(iri, this.childInfo(iri, scope, parentId))
     return iri
   }
 
   public findParent(childId: string): string {
-    return this.childMap.get(childId).parent
+    const child = this.childMap.get(childId)
+    if (!child) throw new Error(`no child info for ${childId}`)
+    return child.parent
   }
 
   public async discoverDescription(resourceIri: string): Promise<string | undefined> {

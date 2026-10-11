@@ -173,7 +173,7 @@ export class SaiJs {
   async temporalService(): Promise<Service> {
     const scripts = this.source.directory('temporal/scripts')
     const dynamicConfig = this.source.directory('temporal/dynamicconfig')
-    const pgData = dag.cacheVolume('temporal-pg-data-5846846546546848')
+    const pgData = dag.cacheVolume('temporal-pg-data-26568486468484654')
 
     const pg = dag
       .container()

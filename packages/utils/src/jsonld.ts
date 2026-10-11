@@ -132,7 +132,7 @@ export async function frameDoc(
       // `@types/jsonld` types the third `frame` argument as `Frame` instead of
       // `Options`, so cast the options to satisfy overload resolution.
       const framed = (await jsonld.frame(
-        doc,
+        doc as any,
         buildFrame(context, iri, overrides) as any,
         {
           documentLoader,
@@ -167,7 +167,7 @@ export async function frameDoc(
  * family), and absent properties are omitted (`@omitDefault`).
  */
 export type FramedNode = {
-  id?: string
+  id: string
   '@id'?: string
   type?: string[]
 } & Record<string, unknown>
@@ -191,7 +191,9 @@ export async function frameNode(
   // the frame embeds its @context in the output — strip it so the node is
   // pure POJO data (term keys, plain-IRI/literal values only)
   const { '@context': _context, ...rest } = node
-  return rest as FramedNode
+  const id = (rest.id ?? rest['@id']) as string | undefined
+  if (!id) throw new Error(`framed node ${iri} has no id`)
+  return { ...rest, id } as FramedNode
 }
 
 /**
@@ -277,7 +279,7 @@ export async function findNodeIdByType(
   // default and would return relative @ids for absolute-id documents
   const options: any = { documentLoader, compactToRelative: false }
   if (base) options.base = base
-  const framed = (await jsonld.frame(doc, { '@type': typeIri } as any, options)) as any
+  const framed = (await jsonld.frame(doc as any, { '@type': typeIri } as any, options)) as any
   const node = framed?.['@id'] ? framed : framed?.['@graph']?.[0]
   if (!node?.['@id']) throw new Error(`no node of type ${typeIri} in document`)
   return node['@id'] as string
@@ -296,7 +298,10 @@ export async function documentValues(
   iri: string,
   predicate: string
 ): Promise<string[]> {
-  const expanded = (await jsonld.expand(doc, { base: iri, documentLoader })) as any[]
+  const expanded = (await jsonld.expand(
+    doc as any,
+    { base: iri, documentLoader } as any
+  )) as unknown as any[]
   const values = new Set<string>()
   const nodes: any[] = []
   const collectNodes = (value: unknown): void => {

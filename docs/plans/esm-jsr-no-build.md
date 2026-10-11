@@ -442,13 +442,30 @@ effort.
 - `.github/workflows/publish-jsr.yml` (OIDC, per-package repo link).
 - Prerequisite: own/create the `@janeirodigital` scope on jsr.io.
 
-### Phase 7 — strict-mode migration (deferred follow-up)
+### Phase 7 — strict-mode migration (follow-up) — ✅ implemented (components still excluded)
 
-Only start after Phases 1–5 are complete and verified (per D2).
-
-- Flip `tsconfig.base.json` to `"strict": true` (per package or repo-wide).
-- Fix the ~53 errors in the 5 interop libs + `test-utils` + `repl`; optionally the ~68 in `components`.
-- Add a CI gate so the tree stays strict.
+- ✅ Flipped `tsconfig.base.json` to `"strict": true` (dropped the now-redundant
+  `noImplicitAny`). The CI `Typecheck` step (added in Phase 2) now enforces it.
+- ✅ Fixed all errors in the 5 interop libs + `test-utils` + `repl` (~50):
+  - `utils`: guards for `discoverAuthorizationAgent`/`discoverStorageDescription`;
+    `@types/jsonld` overload casts; `FramedNode.id` made required (the frame
+    always has an id — `frameNode` now throws if not).
+  - `data-model`: `frameNode` id invariant + `jsonld.expand` cast.
+  - `application`: definite-assignment on bootstrap fields; guards for
+    parent/child map lookups; `?? false` on `can*` grants; `DataOwnerData |
+    undefined`.
+  - `authorization-agent`: `null` → `undefined` for quad matchers; definite
+    assignment on `webIdProfile`/`registrySet`; `findDataRegistration` now
+    returns `DataRegistrationData | undefined` (matching its test); guards +
+    `?? null`/`?? undefined`.
+  - `test-utils`: cast the mock response object as a whole; `sql!` definite
+    assignment.
+- ⏸️ **`components` remains `strict: false`** (its own tsconfig override) — the
+  ~68 errors are still deferred, as the plan allowed. Its `tsc` build is
+  unaffected, and it stays out of the G2 gate.
+- **Validated:** G2 exit 0; G1 70/70 / 298 passed; `npm run build -- --force`
+  3/3; `npm run check` green.
+- **Gate:** ✅ G1 + G2 green; ⏳ G3 (`dagger call test`) — user to run.
 
 ### Phase 8 — normalize relative imports to `.ts` (deferred follow-up)
 

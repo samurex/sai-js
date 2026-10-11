@@ -2,7 +2,7 @@ import postgres from 'postgres'
 import type { Sql } from 'postgres'
 
 export class Postgres {
-  public sql: Sql
+  public sql!: Sql
 
   constructor(
     private readonly connectionString: string,

@@ -323,7 +323,7 @@ async function generateSourceDataGrants(
       registrationIris.map((iri) => getDataRegistration(transport, iri))
     )
 
-    let matchingRegistration: DataRegistrationData
+    let matchingRegistration: DataRegistrationData | undefined
 
     if (data.hasDataRegistration) {
       // match registration if specified

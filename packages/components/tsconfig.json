@@ -9,7 +9,9 @@
     // so it opts out of the base typecheck-only settings.
     "module": "esnext",
     "noEmit": false,
-    "allowImportingTsExtensions": false
+    "allowImportingTsExtensions": false,
+    // strict migration for components is deferred (Phase 7 keeps it out of G2).
+    "strict": false
   },
   "include": ["src"]
 }

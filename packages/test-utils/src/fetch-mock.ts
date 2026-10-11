@@ -52,8 +52,7 @@ async function common(
     Link: `<${strippedUrl}.acr>; rel="acl", <http://just.en.example/description-resource>; rel="describedby", <${STORAGE_DESCRIPTION_IRI}>; rel="http://www.w3.org/ns/solid/terms#storageDescription`,
   }
 
-  // @ts-ignore
-  const response: Response = {
+  const response = {
     ok: true,
     headers: {
       get(name: string) {
@@ -68,7 +67,7 @@ async function common(
           const raw = await getData()
           return JSON.parse(raw)
         },
-  }
+  } as unknown as Response
   response.clone = () => ({ ...response })
   return response
 }

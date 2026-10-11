@@ -31,8 +31,8 @@ export class NotificationManager extends EventTarget {
       topic,
       sendTo: subscription.endpoint,
       'notify:keys': {
-        'notify:auth': subscription.toJSON().keys.auth,
-        'notify:p256dh': subscription.toJSON().keys.p256dh,
+        'notify:auth': subscription.toJSON().keys?.auth,
+        'notify:p256dh': subscription.toJSON().keys?.p256dh,
       },
     }
     const response = await this.authnFetch(this.webPushService.id, {
@@ -102,8 +102,8 @@ export class NotificationManager extends EventTarget {
           this.dispatchEvent(
             new CustomEvent('notification', {
               detail: {
-                type: getOneMatchingQuad(dataset, null, RDF.terms.type)!.object.value,
-                object: getOneMatchingQuad(dataset, null, AS.terms.object)!.object.value,
+                type: getOneMatchingQuad(dataset, undefined, RDF.terms.type)!.object.value,
+                object: getOneMatchingQuad(dataset, undefined, AS.terms.object)!.object.value,
               },
             })
           )
@@ -118,8 +118,12 @@ export class NotificationManager extends EventTarget {
   public async subscribeToResource(resourceId: string): Promise<void> {
     if (this.streamMap.has(resourceId)) return
     const headResponse = await this.authnFetch(resourceId)
-    const receiveFrom = getNotificationChannel(headResponse.headers.get('link'))
-    if (!receiveFrom) console.log('Failed to discover notification chanel for:', resourceId)
+    const linkHeader = headResponse.headers.get('link')
+    const receiveFrom = linkHeader ? getNotificationChannel(linkHeader) : undefined
+    if (!receiveFrom) {
+      console.log('Failed to discover notification chanel for:', resourceId)
+      return
+    }
     this.handleStream(resourceId, receiveFrom)
   }
 }

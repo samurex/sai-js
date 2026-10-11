@@ -52,7 +52,7 @@ export type ShapeTreeData = ShapeTreeId & {
  * the shared local document loader (no remote fetching).
  */
 async function expandedNodes(doc: unknown, base: string): Promise<any[]> {
-  return jsonld.expand(doc, { base, documentLoader }) as Promise<any[]>
+  return (await jsonld.expand(doc as any, { base, documentLoader } as any)) as unknown as any[]
 }
 
 /**

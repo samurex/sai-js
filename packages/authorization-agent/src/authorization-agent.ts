@@ -123,9 +123,9 @@ export class AuthorizationAgent {
   /** Internal SPARQL endpoint (shared store) this session reads registry data from. */
   sparqlEndpoint: string
 
-  webIdProfile: WebIdProfileData
+  webIdProfile!: WebIdProfileData
 
-  registrySet: RegistrySetData
+  registrySet!: RegistrySetData
 
   /**
    * Registry sets keyed by webId (C2 of org-admin-feature.md): the session's
@@ -211,9 +211,9 @@ export class AuthorizationAgent {
   public async findDataRegistration(
     dataRegistryIri: string,
     shapeTree: string
-  ): Promise<DataRegistrationData> {
+  ): Promise<DataRegistrationData | undefined> {
     const transport = localSparqlTransport(this.sparqlEndpoint)
-    let dataRegistration: DataRegistrationData
+    let dataRegistration: DataRegistrationData | undefined
     for (const iri of await listContained(transport, dataRegistryIri)) {
       const registration = await getDataRegistrationFromSparql(transport, iri)
       if (registration.registeredShapeTree === shapeTree) {
@@ -573,7 +573,7 @@ export class AuthorizationAgent {
   public async discoverReciprocal(data: SocialAgentRegistrationData): Promise<string | null> {
     const authrizationAgentIri = await discoverAuthorizationAgent(data.registeredAgent, this.fetch)
     if (!authrizationAgentIri) return null
-    return discoverAgentRegistration(authrizationAgentIri, this.fetch)
+    return (await discoverAgentRegistration(authrizationAgentIri, this.fetch)) ?? null
   }
 
   /** Discover the reciprocal registration and patch the link onto the registration. */
@@ -687,21 +687,25 @@ export class AuthorizationAgent {
       accessMode: details.accessMode,
       hasDataInstance: [dataInstance.id],
       children: await Promise.all(
-        details.children.map(async (child) => ({
-          type: [INTEROP.DataAuthorization],
-          grantee: agent,
-          grantedBy: this.webId,
-          registeredShapeTree: child.shapeTree,
-          scopeOfAuthorization: INTEROP.Inherited,
-          dataOwner: this.webId, // TODO: delegated authorizations and trusted agents
-          hasDataRegistration: (
-            await this.findDataRegistration(
-              registryOfRegistration(dataInstance.dataRegistration!.id),
-              child.shapeTree
-            )
-          ).id,
-          accessMode: child.accessMode,
-        }))
+        details.children.map(async (child) => {
+          const dataRegistration = await this.findDataRegistration(
+            registryOfRegistration(dataInstance.dataRegistration!.id),
+            child.shapeTree
+          )
+          if (!dataRegistration) {
+            throw new Error(`no data registration for shape tree ${child.shapeTree}`)
+          }
+          return {
+            type: [INTEROP.DataAuthorization],
+            grantee: agent,
+            grantedBy: this.webId,
+            registeredShapeTree: child.shapeTree,
+            scopeOfAuthorization: INTEROP.Inherited,
+            dataOwner: this.webId, // TODO: delegated authorizations and trusted agents
+            hasDataRegistration: dataRegistration.id,
+            accessMode: child.accessMode,
+          }
+        })
       ),
     }
 
