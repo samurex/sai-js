@@ -44,7 +44,7 @@ async function enableNotifications() {
 await appStore.getPushSubscription()
 
 // TODO: act differently depending on message.data
-navigator.serviceWorker.onmessage = (message) => {
+navigator.serviceWorker.addEventListener('message', (message) => {
   console.log('message', message)
-}
+})
 </script>

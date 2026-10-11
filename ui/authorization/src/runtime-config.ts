@@ -55,7 +55,7 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
     // Log the error for debugging, then re-throw
     // This ensures the app doesn't silently fail with missing config
     console.error('Failed to load runtime config:', error)
-    throw new Error('Failed to load runtime config')
+    throw new Error('Failed to load runtime config', { cause: error })
   }
 }
 

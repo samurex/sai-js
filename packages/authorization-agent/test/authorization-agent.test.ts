@@ -1073,7 +1073,7 @@ describe('revokeGrants core (Phase 4)', () => {
 
     const revoked = await agent.revokeGrants([GRANT_1], ALICE)
 
-    expect(revoked.map((grant) => grant.iri).sort()).toEqual([CHILD_1, GRANT_1].sort())
+    expect(revoked.map((grant) => grant.iri).toSorted()).toEqual([CHILD_1, GRANT_1].toSorted())
     for (const grant of revoked) {
       expect(grant.dataOwner).toBe(ALICE)
     }

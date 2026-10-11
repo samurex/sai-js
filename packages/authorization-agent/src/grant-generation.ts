@@ -111,9 +111,9 @@ async function inheritingAuthorizations(
   // can lack it); the child's forward `inheritsFromAuthorization` always
   // survives — union it with any stored reverse list and dedupe, covering
   // every storage state without re-migration
-  const childIris = data.hasInheritingAuthorization ?? []
+  const storedChildIris = data.hasInheritingAuthorization ?? []
   const forwardIris = await findInheritingAuthorizations(transport, data.id!)
-  const iris = [...new Set([...childIris, ...forwardIris])]
+  const iris = [...new Set([...storedChildIris, ...forwardIris])]
   return Promise.all(iris.map((iri) => getDataAuthorization(transport, iri)))
 }
 
@@ -268,7 +268,7 @@ async function generateChildSourceGrantData(
   dataRegistrations: DataRegistrationData[],
   registrySet: RegistrySetData,
   grantee: string,
-  storageIri: string,
+  dataStorageIri: string,
   deps: DataModelDependencies,
   transport: SparqlTransport
 ): Promise<FinalGrantData[]> {
@@ -289,7 +289,7 @@ async function generateChildSourceGrantData(
       dataOwner: childAuthorization.grantedBy,
       registeredShapeTree: childAuthorization.registeredShapeTree,
       hasDataRegistration: dataRegistration.id,
-      hasStorage: storageIri,
+      hasStorage: dataStorageIri,
       scopeOfGrant: INTEROP.Inherited,
       accessMode: childAuthorization.accessMode,
       inheritsFromGrant: parentGrantIri,

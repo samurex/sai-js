@@ -31,24 +31,6 @@ export type AccessNeedData = AccessNeedId & {
  * Uses jsonld.frame with the dataModelContext to resolve the @reverse
  * relationship (hasInheritingNeed) automatically. `descriptionLanguages` is
  * collected from the whole document (flattened), since it lives on the
- * description sets, not on the need node itself.
- */
-const ACCESS_NEED_TERMS = [
-  'registeredShapeTree',
-  'inheritsFromNeed',
-  'hasInheritingNeed',
-  'accessMode',
-  'required',
-] as const
-
-/**
- * Convert a JSON-LD document (fetched as application/ld+json) directly into an
- * AccessNeedData POJO. The document can be in expanded, compacted, or
- * flattened form.
- *
- * Uses jsonld.frame with the dataModelContext to resolve the @reverse
- * relationship (hasInheritingNeed) automatically. `descriptionLanguages` is
- * collected from the whole document (flattened), since it lives on the
  * description sets, not on the need node itself. `required` is a derived
  * boolean (`interop:accessNecessity = interop:AccessRequired`).
  */

@@ -4,7 +4,6 @@ import {
   DataRegistration,
   type DataRegistrationData,
   ShapeTree,
-  childIris,
   frameDataInstance,
   isBlob,
   labelFromNode,

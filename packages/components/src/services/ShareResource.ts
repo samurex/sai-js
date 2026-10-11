@@ -1,5 +1,4 @@
 import {
-  type AuthorizationAgent,
   type ShareDataInstanceStructure,
   matchesScope,
 } from '@janeirodigital/interop-authorization-agent'

@@ -1,10 +1,4 @@
-import {
-  INTEROP,
-  type JsonLdContext,
-  OIDC,
-  frameNode,
-  selectNode,
-} from '@janeirodigital/interop-utils'
+import { frameNode, selectNode } from '@janeirodigital/interop-utils'
 import { dataModelContext } from './context'
 
 export type ClientIdDocumentId = {
@@ -17,16 +11,6 @@ export type ClientIdDocumentData = ClientIdDocumentId & {
   hasAccessNeedGroup?: string
   clientName?: string
   logoUri?: string
-}
-
-const clientIdContext: JsonLdContext = {
-  ...dataModelContext,
-  callbackEndpoint: {
-    '@id': INTEROP.hasAuthorizationCallbackEndpoint,
-    '@type': '@id',
-  },
-  hasAccessNeedGroup: { '@id': INTEROP.hasAccessNeedGroup, '@type': '@id' },
-  logoUri: { '@id': OIDC.logo_uri, '@type': '@id' },
 }
 
 const CLIENT_ID_DOCUMENT_TERMS = [

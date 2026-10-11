@@ -13,6 +13,10 @@ function defaultLang(availableLanguages: string[]): string {
   return availableLanguages.includes(lang) ? lang : 'en'
 }
 
+function navigateHome() {
+  window.location.href = import.meta.env.BASE_URL
+}
+
 export const useCoreStore = defineStore('core', () => {
   endpoint = `${getRuntimeConfig().backendBaseUrl}/.account/`
   const userId = ref<string | null>(null)
@@ -31,10 +35,6 @@ export const useCoreStore = defineStore('core', () => {
     },
     { immediate: true }
   )
-
-  function navigateHome() {
-    window.location.href = import.meta.env.BASE_URL
-  }
 
   async function signIn(email: string, password: string): Promise<boolean> {
     const controlsResponse = await fetch(endpoint)

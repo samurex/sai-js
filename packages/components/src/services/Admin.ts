@@ -93,10 +93,7 @@ export const removeAdmin = async (
   // the operator of their own registry set, so demoting the only admin is
   // legitimate — the guard only protects org contexts from ending up
   // admin-less.
-  let count = 0
-  for (const _adminAuthorization of await ctx.session.adminAuthorizations(authorizationRegistry)) {
-    count += 1
-  }
+  const count = (await ctx.session.adminAuthorizations(authorizationRegistry)).length
   if (ctx.webId !== ctx.userWebId && count === 1) {
     throw new Error('can not remove the last admin')
   }

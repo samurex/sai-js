@@ -18,8 +18,6 @@ export type ApplicationId = {
   type: string[]
 }
 
-const APPLICATION_REGISTRATION_TERMS = ['registeredAgent', 'hasDataGrant'] as const
-
 /**
  * Convert a JSON-LD document (fetched as application/ld+json) directly into an
  * ApplicationRegistrationData POJO. The document can be in expanded, compacted,

@@ -1,5 +1,3 @@
-import { randomUUID } from 'node:crypto'
-import { fetch } from '@janeirodigital/interop-test-utils'
 import { ACL, INTEROP, RDF, toStore } from '@janeirodigital/interop-utils'
 import { DataFactory } from 'n3'
 import { describe, test } from 'vitest'

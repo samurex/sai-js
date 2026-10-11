@@ -1,4 +1,4 @@
-import { type JsonLdContext, type LanguageMap, frameNode, opt } from '@janeirodigital/interop-utils'
+import { type LanguageMap, frameNode, opt } from '@janeirodigital/interop-utils'
 import type { AgentRegistrationId } from './agent-registration'
 import { dataModelContext } from './context'
 
@@ -22,15 +22,6 @@ export type SocialAgentId = {
 // ──────────────────────────
 // Read path: JSON-LD → SocialAgentRegistrationData
 // ──────────────────────────
-
-const SOCIAL_AGENT_REGISTRATION_TERMS = [
-  'registeredAgent',
-  'hasDataGrant',
-  'hasAdminGrant',
-  'label',
-  'note',
-  'reciprocalRegistration',
-]
 
 /**
  * Convert a JSON-LD document (fetched as application/ld+json) directly into a

@@ -10,7 +10,7 @@ import { expect } from './expect'
 // decode, pending filters, the events bus) breaks.
 
 function mockFetch(doc: Record<string, unknown>): (url: string) => Promise<Response> {
-  return async (url: string) =>
+  return async () =>
     ({
       ok: true,
       status: 200,

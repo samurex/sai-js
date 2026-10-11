@@ -64,12 +64,12 @@ describe('descriptions', () => {
 
   test('should get description languages', async () => {
     const need = await accessNeed(snippetIri, deps.fetch)
-    expect([...need.descriptionLanguages].sort()).toStrictEqual(['en', 'pl'])
+    expect([...need.descriptionLanguages].toSorted()).toStrictEqual(['en', 'pl'])
   })
 
   test('should get reliable description languages', async () => {
     const need = await accessNeed(snippetIri, deps.fetch)
     const languages = await AccessNeed.reliableDescriptionLanguages(need, deps.fetch)
-    expect([...languages].sort()).toStrictEqual(['en', 'pl'])
+    expect([...languages].toSorted()).toStrictEqual(['en', 'pl'])
   })
 })

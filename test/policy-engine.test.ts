@@ -1,4 +1,4 @@
-import { buildOidcSession, buildSessionManager } from '@elfpavlik/sai-components'
+import { buildOidcSession } from '@elfpavlik/sai-components'
 import { beforeAll, describe, expect, test } from 'vitest'
 
 /*

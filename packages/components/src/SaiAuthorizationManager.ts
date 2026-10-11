@@ -55,8 +55,8 @@ export class SaiAuthorizationManager implements AuthorizationManager {
             }
           `
         )
-        const results = await arrayifyStream<Quad>(grantsStream)
-        data = data.concat(results)
+        const grantQuads = await arrayifyStream<Quad>(grantsStream)
+        data = data.concat(grantQuads)
       }
       // AdminGrants carry `hasStorage` too (the Read-only DataRegistry-scoped
       // ones) — they ride along in the same dataset and the engine's admin

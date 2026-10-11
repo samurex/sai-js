@@ -49,6 +49,6 @@ describe('descriptions', () => {
   test('should get reliable description languages', async () => {
     const needGroup = await accessNeedGroup(snippetIri, deps.fetch)
     const languages = await AccessNeedGroup.reliableDescriptionLanguages(needGroup, deps.fetch)
-    expect([...languages].sort()).toStrictEqual(['en', 'pl'])
+    expect([...languages].toSorted()).toStrictEqual(['en', 'pl'])
   })
 })

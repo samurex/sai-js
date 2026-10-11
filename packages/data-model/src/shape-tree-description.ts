@@ -25,8 +25,6 @@ export type ShapeTreeDescriptionData = ShapeTreeDescriptionId & {
 // Read path: JSON-LD → ShapeTreeDescriptionData
 // ──────────────────────────
 
-const SHAPE_TREE_DESCRIPTION_TERMS = ['label', 'definition']
-
 /**
  * Convert a JSON-LD document (fetched as application/ld+json) directly into a
  * ShapeTreeDescriptionData POJO. The document can be in expanded, compacted,

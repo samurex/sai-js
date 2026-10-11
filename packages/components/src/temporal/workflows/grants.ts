@@ -40,7 +40,6 @@ import {
   processNeedBasedAccessRequestReceived,
 } from './access-request.js'
 import { processAdminAuthorizationGranted, processAdminAuthorizationRevoked } from './admin.js'
-import type { AdminWorkflowInput } from './admin.js'
 import { createInvitation } from './invitation.js'
 
 // NOTE: workflow code runs inside the Temporal sandbox — no runtime imports
@@ -48,7 +47,6 @@ import { createInvitation } from './invitation.js'
 // built-ins). The values must match what producers put in the refs they build.
 const ROLE_TYPE = 'http://www.w3.org/ns/solid/interop#Role'
 const SOCIAL_AGENT_TYPE = 'http://www.w3.org/ns/solid/interop#SocialAgent'
-const DATA_GRANT_TYPE = 'http://www.w3.org/ns/solid/interop#DataGrant'
 
 /** Sandbox-safe discriminant check (the data-model `isActivityClass` helper
  * is a runtime import — not allowed here; the tuples are read as string[]). */
@@ -635,7 +633,6 @@ export async function createGrantsForAgent(
   }
 
   // delete the old grant resources that are not reused
-  const reusedExistingIds = new Set(reused.map((entry) => entry.existing.id))
   // await deleteDataGrants({
   //   webId: payload.webId,
   //   grants: existing

@@ -41,7 +41,6 @@ function addToRegistryListing(trig: string, handle: string): string {
 
   const graph = match[0]
   const dotIndex = graph.lastIndexOf('.')
-  const lastGt = graph.lastIndexOf('>', dotIndex)
   const entry = `,\n      <https://registry/${handle}/>`
   return trig.replace(graph, graph.slice(0, dotIndex) + entry + graph.slice(dotIndex))
 }

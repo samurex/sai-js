@@ -1,4 +1,4 @@
-import { ActivityRegistry, RoleRegistry } from '@janeirodigital/interop-authorization-agent'
+import { ActivityRegistry } from '@janeirodigital/interop-authorization-agent'
 import {
   type RoleCreated,
   type RoleData,

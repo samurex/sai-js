@@ -1,5 +1,4 @@
 import type {
-  AuthorizationAgent,
   AuthorizationStructure,
   DataAuthorizationStructure,
 } from '@janeirodigital/interop-authorization-agent'
@@ -24,7 +23,6 @@ import {
   type GrantData,
   type NeedBasedAccessRequestGroup,
   ShapeTree,
-  type SocialAgentRegistrationData,
 } from '@janeirodigital/interop-data-model'
 const loadShapeTree = loader(ShapeTree.fromJsonLd)
 const loadClientIdDocument = loader(ClientIdDocument.fromJsonLd)

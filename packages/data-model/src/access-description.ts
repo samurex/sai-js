@@ -1,5 +1,4 @@
-import { type JsonLdContext, type LanguageMap, SKOS } from '@janeirodigital/interop-utils'
-import { dataModelContext } from './context'
+import { type LanguageMap } from '@janeirodigital/interop-utils'
 
 export type AccessDescriptionId = {
   id: string

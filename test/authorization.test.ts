@@ -1,5 +1,4 @@
 import { buildOidcSession, buildSessionManager, issuanceUrl } from '@elfpavlik/sai-components'
-import type { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
 import { LDP, linkedIrisJsonLd } from '@janeirodigital/interop-utils'
 import { INTEROP } from '@janeirodigital/interop-utils'
 import { Client, Connection } from '@temporalio/client'

@@ -236,19 +236,19 @@ export const useAppStore = defineStore('app', () => {
 
   function isMe(agent: Person) {
     if (!user.value) return
-    return user.value['@id']! === agent['@id']
+    return user.value['@id'] === agent['@id']
   }
 
   function amIChair(event: Event) {
     if (!user.value || !event.chair) return
-    return user.value['@id']! === event.chair.agent['@id']
+    return user.value['@id'] === event.chair.agent['@id']
   }
 
   function isPresenceSet(event: Event) {
     if (!user.value || !haveDetailsLoaded(event)) return
     return (
-      user.value['@id']! === event.chair.agent['@id'] ||
-      user.value['@id']! === event.scribe?.agent['@id'] ||
+      user.value['@id'] === event.chair.agent['@id'] ||
+      user.value['@id'] === event.scribe?.agent['@id'] ||
       //@ts-expect-error
       event.attendee
         .map((presence) => presence.agent['@id'])

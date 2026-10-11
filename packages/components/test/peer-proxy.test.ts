@@ -146,7 +146,7 @@ describe('fetchPeerDocument', () => {
     const [profileRequest, proxyRequest] = requests
     expect(profileRequest.url).toBe(YOYO_WEBID)
     expect(proxyRequest.url).toBe(proxyAdminUrl(YOYO_WEBID, PEER_REGISTRATION))
-    expect((proxyRequest.init?.headers as Record<string, string>).Accept).toBe(
+    expect((proxyRequest.init?.headers as Record<string, string> | undefined)?.Accept).toBe(
       'application/ld+json'
     )
   })
@@ -244,10 +244,7 @@ const grantData = (scopeOfGrant: string, extra: Partial<GrantData> = {}): GrantD
 })
 
 /** Fetch dispatcher keyed on the *decoded proxy target* (plus the profile). */
-function proxyDispatcher(
-  byIri: Record<string, unknown>,
-  sessionFetch = happySession().session.fetch
-) {
+function proxyDispatcher(byIri: Record<string, unknown>) {
   return fakeSession(async (url) => {
     if (url === YOYO_WEBID) return jsonResponse(yoyoProfileDoc)
     const target = new URL(url).searchParams.get('iri')
@@ -540,7 +537,7 @@ describe('sparqlTransportFor — org context routes via /sparql-admin', () => {
     // access-token verifier added it to its REQUEST_METHOD whitelist (2.1.2).
     expect(sparqlRequest?.init?.method).toBe('QUERY')
     expect(
-      (sparqlRequest?.init?.headers as Record<string, string>)['Content-Type'] ?? ''
+      (sparqlRequest?.init?.headers as Record<string, string> | undefined)?.['Content-Type'] ?? ''
     ).toContain('application/sparql-query')
     expect(typeof sparqlRequest?.init?.body).toBe('string')
   })

@@ -1,4 +1,3 @@
-import type { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
 import { ActivityRegistry } from '@janeirodigital/interop-authorization-agent'
 import {
   type InvitationAccepted,

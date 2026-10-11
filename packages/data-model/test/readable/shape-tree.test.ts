@@ -61,5 +61,5 @@ test('should gracefully fail if description set with missing description for lan
 
 test('should get description languages', async () => {
   const shapeTree = await loadShapeTree(snippetIri, deps.fetch)
-  expect([...shapeTree.descriptionLanguages].sort()).toStrictEqual(['de', 'en', 'pl'])
+  expect([...shapeTree.descriptionLanguages].toSorted()).toStrictEqual(['de', 'en', 'pl'])
 })

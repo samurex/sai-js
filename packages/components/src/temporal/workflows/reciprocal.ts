@@ -27,18 +27,16 @@ const { invitationAcceptance, reciprocalRegistration, reciprocalWebhook } = prox
 // mirror graphs, so it needs a longer startToClose budget than the
 // registration probes. Fewer retries than reciprocalRegistration — a failed
 // sync is eventually recovered by the reconcile-sweep mirror arm (plan
-// phase 4.2). deleteReciprocalMirror is registered for the future unregister
-// flow (dormant).
-const { syncReciprocalMirror: syncMirrorActivity, deleteReciprocalMirror: deleteMirrorActivity } =
-  proxyActivities<typeof activities>({
-    startToCloseTimeout: '5 minutes',
-    retry: {
-      initialInterval: '5s',
-      backoffCoefficient: 2,
-      maximumInterval: '60s',
-      maximumAttempts: 5,
-    },
-  })
+// phase 4.2).
+const { syncReciprocalMirror: syncMirrorActivity } = proxyActivities<typeof activities>({
+  startToCloseTimeout: '5 minutes',
+  retry: {
+    initialInterval: '5s',
+    backoffCoefficient: 2,
+    maximumInterval: '60s',
+    maximumAttempts: 5,
+  },
+})
 
 const { markActivitiesDone } = proxyActivities<typeof grantsActivities>({
   startToCloseTimeout: '1 minute',

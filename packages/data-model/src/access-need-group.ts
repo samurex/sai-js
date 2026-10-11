@@ -1,4 +1,4 @@
-import { frameNode, selectNode } from '@janeirodigital/interop-utils'
+import { frameNode } from '@janeirodigital/interop-utils'
 import type { AccessNeedData } from './access-need'
 import { dataModelContext } from './context'
 
@@ -16,13 +16,6 @@ export type AccessNeedGroupData = AccessNeedGroupId & {
 // ──────────────────────────
 // Read path: JSON-LD → AccessNeedGroupData
 // ──────────────────────────
-
-/**
- * Convert a JSON-LD document (fetched as application/ld+json) directly into an
- * AccessNeedGroupData POJO. The document can be in expanded, compacted, or
- * flattened form.
- */
-const ACCESS_NEED_GROUP_TERMS = ['hasAccessNeed'] as const
 
 /**
  * Convert a JSON-LD document (fetched as application/ld+json) directly into an

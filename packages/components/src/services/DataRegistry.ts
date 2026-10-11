@@ -94,6 +94,18 @@ const buildDataRegistryForGrant = async (
   })
 }
 
+function indexFromGrants(dataGrants: GrantData[]): Record<string, GrantData[]> {
+  return dataGrants.reduce(
+    (acc, dataGrant) => {
+      const regIri = Grant.dataRegistryIri(dataGrant)
+      if (!acc[regIri]) acc[regIri] = [] as GrantData[]
+      acc[regIri].push(dataGrant)
+      return acc
+    },
+    {} as Record<string, GrantData[]>
+  )
+}
+
 /**
  * The data grants the context has for `agentId` (peer branch): the
  * reciprocal of the context's registration of `agentId`, then its linked
@@ -120,17 +132,6 @@ async function dataGrantIndexForAgent(
       )
     )
   })()
-
-  const indexFromGrants = (dataGrants: GrantData[]): Record<string, GrantData[]> =>
-    dataGrants.reduce(
-      (acc, dataGrant) => {
-        const regIri = Grant.dataRegistryIri(dataGrant)
-        if (!acc[regIri]) acc[regIri] = [] as GrantData[]
-        acc[regIri].push(dataGrant)
-        return acc
-      },
-      {} as Record<string, GrantData[]>
-    )
 
   const directIndex = indexFromGrants(directGrants)
   if (Object.keys(directIndex).length > 0) return directIndex

@@ -17,6 +17,7 @@ import { findInLanguage, loadDescriptions } from './access-description-set'
 export async function accessNeed(
   id: string,
   fetch: WhatwgFetch,
+  // oxlint-disable-next-line oxc/only-used-in-recursion -- reserved for future per-need language filtering
   descriptionLang?: string
 ): Promise<AccessNeedData> {
   const need = await loadAccessNeed(id, fetch)

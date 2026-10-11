@@ -1,7 +1,7 @@
 import { RpcRouter } from '@effect/rpc'
 import type { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
 import { SaiService, router } from '@janeirodigital/sai-api-messages'
-import { SpanStatusCode, context, isSpanContextValid, trace } from '@opentelemetry/api'
+import { SpanStatusCode, context as otelContext, isSpanContextValid, trace } from '@opentelemetry/api'
 import {
   BasicRepresentation,
   ForbiddenHttpError,
@@ -95,7 +95,7 @@ export class ApiHandler extends OperationHttpHandler {
         // parent — the envelope placeholders would collapse every Effect span
         // into one pseudo-trace. Rewrite from the active OTel span
         // (sai.rpc.handle) when tracing is recording.
-        const rpcSpan = trace.getSpan(context.active())
+        const rpcSpan = trace.getSpan(otelContext.active())
         if (rpcSpan && isSpanContextValid(rpcSpan.spanContext())) {
           const rpcContext = rpcSpan.spanContext()
           for (const entry of requestBody) {
@@ -178,15 +178,15 @@ export class ApiHandler extends OperationHttpHandler {
                 const ctx = await resolveContext(session, context)
                 return revokeGrants(ctx, this.sparqlEndpoint, grants)
               }),
-            addAdmin: (webId, context) =>
+            addAdmin: (agentWebId, context) =>
               Effect.promise(async () => {
                 const ctx = await resolveContext(session, context)
-                return addAdmin(ctx, webId)
+                return addAdmin(ctx, agentWebId)
               }),
-            removeAdmin: (webId, context) =>
+            removeAdmin: (agentWebId, context) =>
               Effect.promise(async () => {
                 const ctx = await resolveContext(session, context)
-                return removeAdmin(ctx, webId)
+                return removeAdmin(ctx, agentWebId)
               }),
             registerPushSubscription: (subscription: PushSubscription) =>
               Effect.promise(() =>

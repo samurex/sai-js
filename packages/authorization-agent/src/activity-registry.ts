@@ -15,10 +15,8 @@ import {
 } from '@janeirodigital/interop-data-model'
 import {
   INTEROP,
-  type JsonLdContext,
   LDP,
   type LanguageMap,
-  SKOS,
   type WhatwgFetch,
   fetchJsonLd,
   frameDoc,

@@ -31,18 +31,6 @@ export type AccessRequestRegistryData = {
   id: string
 }
 
-const REGISTRY_SET_TERMS = [
-  'hasAuthorizationRegistry',
-  'hasGrantRegistry',
-  'hasSocialAgentRegistry',
-  'hasApplicationRegistry',
-  'hasInvitationRegistry',
-  'hasRoleRegistry',
-  'hasDataRegistry',
-  'hasActivityRegistry',
-  'hasAccessRequestRegistry',
-] as const
-
 /**
  * Convert a JSON-LD document (fetched as application/ld+json) directly into a
  * RegistrySetData POJO. The document can be in expanded, compacted, or
@@ -59,7 +47,9 @@ export async function fromJsonLd(doc: unknown, id: string): Promise<RegistrySetD
     hasApplicationRegistry: { id: node.hasApplicationRegistry as string },
     hasInvitationRegistry: { id: node.hasInvitationRegistry as string },
     hasRoleRegistry: { id: node.hasRoleRegistry as string },
-    hasDataRegistry: ((node.hasDataRegistry as string[] | undefined) ?? []).map((id) => ({ id })),
+    hasDataRegistry: ((node.hasDataRegistry as string[] | undefined) ?? []).map(
+      (dataRegistryId) => ({ id: dataRegistryId })
+    ),
     hasActivityRegistry: node.hasActivityRegistry
       ? { id: node.hasActivityRegistry as string }
       : undefined,

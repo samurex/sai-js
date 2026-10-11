@@ -37,13 +37,10 @@ export class SaiPermissionsEngine implements PolicyEngine {
    *
    * @param target - Identifier of the targeted resource.
    * @param credentials - Credentials identifying who or what is trying to access the target resource.
-   * @param permissions - Optional list of permissions that are being requested.
-   *                      As an optimization, the engine can look at just those that are requested.
    */
   async getPermissions(
     target: string,
-    credentials: Credentials,
-    permissions?: string[]
+    credentials: Credentials
   ): Promise<PermissionMap> {
     // check if reqested by User Authorization Server
     let uasId: string | undefined
@@ -122,17 +119,8 @@ export class SaiPermissionsEngine implements PolicyEngine {
   /**
    * Returns the granted and denied permissions for the given input.
    * This also generates a report describing why permissions were granted or denied.
-   *
-   * @param target - Identifier of the targeted resource.
-   * @param credentials - Credentials identifying who or what is trying to access the target resource.
-   * @param permissions - Optional list of permissions that are being requested.
-   *                      As an optimization, the engine can look at just those that are requested.
    */
-  getPermissionsWithReport(
-    target: string,
-    credentials: Credentials,
-    permissions?: string[]
-  ): Promise<PermissionReport> {
+  getPermissionsWithReport(): Promise<PermissionReport> {
     throw new Error('do not use')
   }
 

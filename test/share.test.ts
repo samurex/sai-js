@@ -4,7 +4,6 @@ import {
   localSparqlTransport,
 } from '@janeirodigital/interop-authorization-agent'
 import { getDataGrantIris } from '@janeirodigital/interop-data-model'
-import { AS } from '@janeirodigital/interop-utils'
 import { describe, expect, test } from 'vitest'
 import { awaitGrantCompletion, dataGrants } from './util'
 

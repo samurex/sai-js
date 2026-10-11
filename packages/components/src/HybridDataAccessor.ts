@@ -4,7 +4,6 @@ import type {
   DataAccessor,
   FileDataAccessor,
   Guarded,
-  Representation,
   RepresentationConverter,
   ResourceIdentifier,
   SparqlDataAccessor,
@@ -12,12 +11,8 @@ import type {
 import {
   CONTENT_TYPE,
   INTERNAL_QUADS,
-  NotFoundHttpError,
   RepresentationMetadata,
-  arrayifyStream,
 } from '@solid/community-server'
-import type { Quad } from 'n3'
-import { DataFactory as DF } from 'n3'
 export class HybridDataAccessor implements DataAccessor {
   public constructor(
     private binaryAccessor: FileDataAccessor,
@@ -25,7 +20,7 @@ export class HybridDataAccessor implements DataAccessor {
     private converter: RepresentationConverter
   ) {}
 
-  public async canHandle(representation: Representation): Promise<void> {
+  public async canHandle(): Promise<void> {
     // can handle everything since it falls back to binaryAccessor
   }
 

@@ -1,13 +1,9 @@
-import { randomUUID } from 'node:crypto'
-import { fetch } from '@janeirodigital/interop-test-utils'
 import { INTEROP } from '@janeirodigital/interop-utils'
 import { describe, test } from 'vitest'
 import { expect } from '../expect'
 
 describe('build', () => {
   const snippetIri = 'https://auth.alice.example/some-inviation'
-  const deps = { fetch, randomUUID }
-
   const data = {
     capabilityUrl: 'https://auth.alice.example/some-secret-url',
     label: 'Yori',

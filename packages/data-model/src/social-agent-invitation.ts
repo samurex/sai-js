@@ -1,7 +1,5 @@
 import {
-  type JsonLdContext,
   type LanguageMap,
-  SKOS,
   frameNode,
   opt,
 } from '@janeirodigital/interop-utils'
@@ -23,8 +21,6 @@ export type SocialAgentInvitationData = SocialAgentInvitationId & {
 // ──────────────────────────
 // Read path: JSON-LD → SocialAgentInvitationData
 // ──────────────────────────
-
-const SOCIAL_AGENT_INVITATION_TERMS = ['capabilityUrl', 'label', 'note', 'registeredAgent']
 
 /**
  * Convert a JSON-LD document (fetched as application/ld+json) directly into a

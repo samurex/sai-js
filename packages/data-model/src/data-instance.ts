@@ -120,7 +120,7 @@ export function childIris(
   shapeTree: ShapeTreeData,
   childShapeTree: string
 ): string[] {
-  const reference = shapeTree.references.find((reference) => reference.shapeTree === childShapeTree)
+  const reference = shapeTree.references.find((ref) => ref.shapeTree === childShapeTree)
   if (!reference) {
     throw new Error(`shape tree ${shapeTree.id} does not reference ${childShapeTree}`)
   }

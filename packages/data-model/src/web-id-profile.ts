@@ -1,7 +1,5 @@
 import {
-  type JsonLdContext,
   type LanguageMap,
-  SKOS,
   frameNode,
   opt,
 } from '@janeirodigital/interop-utils'
@@ -28,8 +26,6 @@ export type WebIdProfileData = WebIdProfileId & {
 // ──────────────────────────
 // Read path: JSON-LD → WebIdProfileData
 // ──────────────────────────
-
-const WEB_ID_PROFILE_TERMS = ['label', 'oidcIssuer']
 
 /**
  * Convert a JSON-LD document (fetched as application/ld+json) directly into a

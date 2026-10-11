@@ -97,8 +97,6 @@ function referencePairs(expanded: any[], treeId: string): ShapeTreeReference[] {
  * foreign nodes) are extracted from the expanded document instead, since a
  * node-centric frame can't capture either shape.
  */
-const SHAPE_TREE_TERMS = ['shape', 'describesInstance', 'expectsType'] as const
-
 export async function fromJsonLd(doc: unknown, id: string): Promise<ShapeTreeData> {
   const node = await frameNode(doc, dataModelContext, id)
   return {

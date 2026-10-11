@@ -68,9 +68,9 @@ async function enableNotifications() {
 }
 
 // TODO: act differently depending on message.data
-navigator.serviceWorker.onmessage = (message) => {
+navigator.serviceWorker.addEventListener('message', (message) => {
   appStore.listSocialAgents(true)
   appStore.listSocialAgentInvitations(true)
   appStore.listDataRegistries(message.data.data.webId)
-}
+})
 </script>

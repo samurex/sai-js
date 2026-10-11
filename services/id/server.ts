@@ -27,7 +27,7 @@ const construct = (graph: string): string => `
 const app = new Hono()
 app.use(
   cors({
-    origin: (origin, c) => origin,
+    origin: (origin) => origin,
     credentials: true,
   })
 )

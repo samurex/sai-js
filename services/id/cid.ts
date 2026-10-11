@@ -7,11 +7,6 @@ import type { Quad } from 'n3'
 // properties (fromRDF, frame, compact, …) are available regardless of import style.
 const jsonld = (jsonldNs as any).default ?? jsonldNs
 
-// Namespaces used by the oidc issuer → lws:OpenIdProvider rule
-const SOLID = 'http://www.w3.org/ns/solid/terms#'
-const INTEROP = 'http://www.w3.org/ns/solid/interop#'
-const LWS = 'https://www.w3.org/ns/lws#'
-
 export const CID_CONTEXT = 'https://www.w3.org/ns/cid/v1'
 
 /**

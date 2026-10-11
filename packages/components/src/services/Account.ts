@@ -94,8 +94,8 @@ export class AccountService {
       [cssKv.pod(ids.pod)]: [accountId],
       [cssKv.podByBaseUrl(dataRegistry)]: [accountId],
     }
-    const entries = Object.entries(record).map(([key, value]) => ({
-      key,
+    const entries = Object.entries(record).map(([entryKey, value]) => ({
+      key: entryKey,
       value: JSON.stringify(value),
     }))
     await this.sql`

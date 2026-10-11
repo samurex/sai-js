@@ -13,7 +13,6 @@ const seededGrantCount = 10
 
 const p9m2vr = `${grantRegistry}p9m2vr` // Project parent — bob, grantedBy acme
 const x4j8lm = `${grantRegistry}x4j8lm` // Project parent — bob, grantedBy acme
-const hdaymz = `${grantRegistry}hdaymz` // Task child of p9m2vr
 const q2v9pt = `${grantRegistry}q2v9pt` // Task child of x4j8lm
 
 function rpcPayload(grants: string[]) {

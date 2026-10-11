@@ -73,10 +73,6 @@ function systemToArch(system: string): Arch {
   }
 }
 
-function tarballName(image: string): string {
-  return `docker-image-${image}.tar.gz`
-}
-
 function imageBaseName(image: string): string {
   return image.endsWith(IMAGE_SUFFIX) ? image.slice(0, -IMAGE_SUFFIX.length) : image
 }
@@ -173,7 +169,7 @@ export class SaiJs {
   async temporalService(): Promise<Service> {
     const scripts = this.source.directory('temporal/scripts')
     const dynamicConfig = this.source.directory('temporal/dynamicconfig')
-    const pgData = dag.cacheVolume('temporal-pg-data-65468654646846846')
+    const pgData = dag.cacheVolume('temporal-pg-data-26846846845465484')
 
     const pg = dag
       .container()
@@ -252,10 +248,7 @@ export class SaiJs {
 
   @func()
   @func()
-  async workerService(
-    @argument()
-    runId = 'dev'
-  ): Promise<Service> {
+  async workerService(): Promise<Service> {
     const temporal = await this.temporalService()
     return (
       this.withTracing(dag.container().from('node:24-slim'), 'sai-worker')
@@ -289,10 +282,7 @@ export class SaiJs {
   }
 
   @func()
-  idService(
-    @argument()
-    runId = 'dev'
-  ): Service {
+  idService(): Service {
     return this.withTracing(dag.container().from('node:24-alpine'), 'sai-id')
       .withMountedDirectory('/sai', this.source)
       .withEnvVariable('ID_ORIGIN', 'id')
@@ -313,10 +303,7 @@ export class SaiJs {
   }
 
   @func()
-  async authService(
-    @argument()
-    runId = 'dev'
-  ): Promise<Service> {
+  async authService(): Promise<Service> {
     const temporal = await this.temporalService()
     return this.withTracing(dag.container().from('node:24-alpine'), 'sai-uas')
       .withMountedDirectory('/sai', this.source)
@@ -344,9 +331,9 @@ export class SaiJs {
       .withEnvVariable('CSS_REG_ORIGIN', CSS_REG_ORIGIN)
       .withServiceBinding('postgresql', this.postgresService())
       .withServiceBinding('temporal', temporal)
-      .withServiceBinding('id', this.idService(runId))
-      .withServiceBinding('registry', this.registryService(runId))
-      .withServiceBinding('data', this.dataService(runId))
+      .withServiceBinding('id', this.idService())
+      .withServiceBinding('registry', this.registryService())
+      .withServiceBinding('data', this.dataService())
       .withExposedPort(443)
       .withExposedPort(9229)
       .asService({
@@ -363,10 +350,7 @@ export class SaiJs {
   }
 
   @func()
-  registryService(
-    @argument()
-    runId = 'dev'
-  ): Service {
+  registryService(): Service {
     return this.withTracing(dag.container().from('node:24-alpine'), 'sai-registry')
       .withMountedDirectory('/sai', this.source)
       .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/registry.json')
@@ -397,10 +381,7 @@ export class SaiJs {
   }
 
   @func()
-  dataService(
-    @argument()
-    runId = 'dev'
-  ): Service {
+  dataService(): Service {
     return this.withTracing(dag.container().from('node:24-alpine'), 'sai-data')
       .withMountedDirectory('/sai', this.source)
       .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/data.json')
@@ -435,12 +416,9 @@ export class SaiJs {
       .withHostname('data')
   }
 
-  async testBase(
-    @argument()
-    runId = 'dev'
-  ): Promise<Container> {
-    const auth = await this.authService(runId)
-    const worker = await this.workerService(runId)
+  async testBase(): Promise<Container> {
+    const auth = await this.authService()
+    const worker = await this.workerService()
     const temporal = await this.temporalService()
     return this.withTracing(dag.container().from('node:24-alpine'), 'sai-test')
       .withMountedDirectory('/sai', this.source)
@@ -452,12 +430,12 @@ export class SaiJs {
       .withEnvVariable('TEMPORAL_ADDRESS', 'temporal:7233')
       .withEnvVariable('CSS_SPARQL_ENDPOINT', CSS_SPARQL_ENDPOINT)
       .withServiceBinding('auth', auth)
-      .withServiceBinding('registry', this.registryService(runId))
-      .withServiceBinding('data', this.dataService(runId))
+      .withServiceBinding('registry', this.registryService())
+      .withServiceBinding('data', this.dataService())
       .withServiceBinding('worker', worker)
       .withServiceBinding('temporal', temporal)
       .withServiceBinding('sparql', this.sparqlService())
-      .withServiceBinding('id', this.idService(runId))
+      .withServiceBinding('id', this.idService())
       .withServiceBinding('garage', this.garageService())
       .withWorkdir('/sai/test')
   }

@@ -36,7 +36,6 @@ import type { ActivityEvents } from './ActivityEvents.js'
 import type { ActivityWebhookStore } from './ActivityWebhookStore.js'
 import type { SessionManager } from './SessionManager'
 import type { CreateGrantsInput } from './temporal/activities/grants.js'
-import type { ReciprocalWebhookInput } from './temporal/activities/reciprocal.js'
 import { Temporal } from './temporal/client.js'
 import {
   processNeedBasedAccessRequest,

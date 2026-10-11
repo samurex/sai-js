@@ -12,8 +12,6 @@ export type AccessNeedDescriptionData = AccessDescriptionData & {
 // Read path: JSON-LD → AccessNeedDescriptionData
 // ──────────────────────────
 
-const ACCESS_NEED_DESCRIPTION_TERMS = ['label', 'definition', 'hasAccessNeed']
-
 /**
  * Convert a JSON-LD document (fetched as application/ld+json) directly into an
  * AccessNeedDescriptionData POJO. The document can be in expanded, compacted,

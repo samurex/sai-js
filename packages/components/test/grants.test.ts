@@ -371,7 +371,7 @@ describe('groupAuthorizationDataAuthorizations', () => {
     ])
     expect(groups).toHaveLength(2)
     const ids = groups.map((group) =>
-      Array.isArray(group) ? group.map((member) => member.id).sort() : []
+      Array.isArray(group) ? group.map((member) => member.id).toSorted() : []
     )
     expect(ids).toEqual([
       ['https://registry/alice/authorization/c-kim', 'https://registry/alice/authorization/p-kim'],

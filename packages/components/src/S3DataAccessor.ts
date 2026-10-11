@@ -62,24 +62,16 @@ export class S3DataAccessor implements DataAccessor {
     await this.s3.deleteObject(identifier.path)
   }
 
-  public async getMetadata(identifier: ResourceIdentifier): Promise<RepresentationMetadata> {
+  public async getMetadata(): Promise<RepresentationMetadata> {
     throw new NotImplementedHttpError('S3DataAccessor does not support getMetadata')
   }
-  public getChildren(
-    identifier: ResourceIdentifier
-  ): AsyncIterableIterator<RepresentationMetadata> {
+  public getChildren(): AsyncIterableIterator<RepresentationMetadata> {
     throw new NotImplementedHttpError('S3DataAccessor does not support getChildren')
   }
-  public async writeContainer(
-    identifier: ResourceIdentifier,
-    metadata: RepresentationMetadata
-  ): Promise<void> {
+  public async writeContainer(): Promise<void> {
     throw new NotImplementedHttpError('S3DataAccessor does not support writeContainer')
   }
-  public async writeMetadata(
-    identifier: ResourceIdentifier,
-    metadata: RepresentationMetadata
-  ): Promise<void> {
+  public async writeMetadata(): Promise<void> {
     throw new NotImplementedHttpError('S3DataAccessor does not support writeMetadata')
   }
 }

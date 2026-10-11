@@ -6,12 +6,30 @@
     "suspicious": "error"
   },
   "rules": {
-    "no-underscore-dangle": ["error", { "allow": ["_tag"] }],
+    "no-underscore-dangle": [
+      "error",
+      { "allow": ["_tag", "__dirname", "_getContextManager", "currentAth_"] }
+    ],
     "unicorn/no-array-for-each": "off",
     "oxc/no-accumulating-spread": "off",
     "typescript/no-explicit-any": "off",
     "typescript/no-non-null-assertion": "off"
   },
+  "overrides": [
+    {
+      "files": ["**/test/**", "**/*.test.ts", "**/*.spec.ts", "examples/**", "docs/**"],
+      "rules": {
+        "unicorn/consistent-function-scoping": "off",
+        "no-shadow": "off"
+      }
+    },
+    {
+      "files": ["**/sw.js"],
+      "rules": {
+        "unicorn/require-post-message-target-origin": "off"
+      }
+    }
+  ],
   "env": {
     "builtin": true
   },

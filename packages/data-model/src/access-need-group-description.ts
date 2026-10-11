@@ -18,8 +18,6 @@ export type AccessNeedGroupDescriptionData = AccessDescriptionData & {
  * AccessNeedGroupDescriptionData POJO. The document can be in expanded,
  * compacted, or flattened form.
  */
-const ACCESS_NEED_GROUP_DESCRIPTION_TERMS = ['label', 'definition', 'hasAccessNeedGroup'] as const
-
 export async function fromJsonLd(
   doc: unknown,
   id: string

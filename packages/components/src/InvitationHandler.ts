@@ -1,6 +1,6 @@
 import { ActivityRegistry, setRegisteredAgent } from '@janeirodigital/interop-authorization-agent'
 import type { AgentRegistrationAdded } from '@janeirodigital/interop-data-model'
-import { INTEROP, iriForContained, pickLanguage } from '@janeirodigital/interop-utils'
+import { INTEROP, iriForContained } from '@janeirodigital/interop-utils'
 import {
   BasicRepresentation,
   ForbiddenHttpError,

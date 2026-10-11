@@ -1,5 +1,4 @@
 import {
-  type AccessNeedGroupData,
   AdminAuthorization,
   type AdminAuthorizationData,
   type AgentId,
@@ -12,7 +11,6 @@ import {
   type DataRegistrationData,
   type FinalDataAuthorizationData,
   type GeneratedGrants,
-  type InvitationRegistryData,
   RegistrySet,
   type RegistrySetData,
   type RoleData,
@@ -21,7 +19,6 @@ import {
   // (payload-contract-alignment §2)
   type ShareDataInstanceStructure,
   type SocialAgentRegistrationData,
-  type SocialAgentRegistryData,
   WebIdProfile,
   type WebIdProfileData,
   dataModelContext,
