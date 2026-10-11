@@ -25,11 +25,11 @@ import {
 } from '@janeirodigital/interop-utils'
 import type { LanguageMap } from '@janeirodigital/interop-utils'
 
-import { setAcr } from './agent-registration'
-import { createApplicationRegistration } from './application-registration'
-import { putSocialAgentInvitation } from './social-agent-invitation'
-import { createSocialAgentRegistration } from './social-agent-registration'
-import type { DataModelDependencies } from './types'
+import { setAcr } from './agent-registration.ts'
+import { createApplicationRegistration } from './application-registration.ts'
+import { putSocialAgentInvitation } from './social-agent-invitation.ts'
+import { createSocialAgentRegistration } from './social-agent-registration.ts'
+import type { DataModelDependencies } from './types.ts'
 
 // ──────────────────────────
 // Behavior functions (replacing class methods)

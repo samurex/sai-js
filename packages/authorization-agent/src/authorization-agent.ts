@@ -46,8 +46,8 @@ import {
   withContext,
 } from '@janeirodigital/interop-utils'
 
-import { replaceDataGrants } from './agent-registration'
-import { findRegistration as findRegistrationInAgentRegistry } from './agent-registry'
+import { replaceDataGrants } from './agent-registration.ts'
+import { findRegistration as findRegistrationInAgentRegistry } from './agent-registry.ts'
 import {
   type AccessAuthorizationStructure,
   type GrantedAuthorization,
@@ -55,9 +55,9 @@ import {
   generateAuthorization,
   generateDataAuthorizations,
   matchesScope,
-} from './authorization'
-import { loadDataInstance } from './data-instance'
-import { generateGrantsForAuthorization } from './grant-generation'
+} from './authorization.ts'
+import { loadDataInstance } from './data-instance.ts'
+import { generateGrantsForAuthorization } from './grant-generation.ts'
 import {
   findApplicationRegistration as findApplicationRegistrationFromSparql,
   findInheritingChildren,
@@ -72,7 +72,7 @@ import {
   getRole as getRoleFromSparql,
   listContained,
   localSparqlTransport,
-} from './sparql'
+} from './sparql.ts'
 interface AuthorizationAgentDependencies {
   fetch: WhatwgFetch
   randomUUID(): string

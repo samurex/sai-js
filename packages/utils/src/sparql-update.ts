@@ -1,6 +1,6 @@
-import { discoverDescriptionResource } from './discovery'
-import { toNQuads } from './jsonld'
-import type { WhatwgFetch } from './whatwg-fetch'
+import { discoverDescriptionResource } from './discovery.ts'
+import { toNQuads } from './jsonld.ts'
+import type { WhatwgFetch } from './whatwg-fetch.ts'
 
 /**
  * Serialize a JSON-LD document (with embedded context) as a SPARQL

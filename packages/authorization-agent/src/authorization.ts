@@ -25,8 +25,8 @@ import {
   getDataAuthorization as getDataAuthorizationFromSparql,
   listContained,
   localSparqlTransport,
-} from './sparql'
-import type { DataModelDependencies } from './types'
+} from './sparql.ts'
+import type { DataModelDependencies } from './types.ts'
 
 // Nesting is being used to capture inheritance before IRIs are available
 export type NestedDataAuthorizationData = DataAuthorizationData & {

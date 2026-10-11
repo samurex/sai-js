@@ -1,7 +1,7 @@
 import { ACL, ACP } from '@janeirodigital/interop-utils'
 
-import { acrContext } from './context'
-import type { AgentAndClient } from './templates/types.js'
+import { acrContext } from './context.ts'
+import type { AgentAndClient } from './templates/types.ts'
 
 // ──────────────────────────
 // Access Control Resources (ACP) as JSON-LD

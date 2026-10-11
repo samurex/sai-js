@@ -8,7 +8,7 @@ import { Postgres, seedQuadstore } from '@janeirodigital/interop-test-utils'
 import { Console, Effect, Option } from 'effect'
 import { exportJWK, generateKeyPair } from 'jose'
 
-import { addUserCommand } from './add-user.js'
+import { addUserCommand } from './add-user.ts'
 
 const datasetSourcePath = fileURLToPath(
   new URL('../../environments/data/registry.trig', import.meta.url)

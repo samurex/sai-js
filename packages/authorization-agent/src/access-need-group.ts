@@ -7,11 +7,11 @@ const loadAccessNeedGroup = loader(AccessNeedGroup.fromJsonLd)
 
 import { type WhatwgFetch, loader, parseJsonld } from '@janeirodigital/interop-utils'
 
-import { findInLanguage, loadDescriptions } from './access-description-set'
+import { findInLanguage, loadDescriptions } from './access-description-set.ts'
 import {
   accessNeed,
   reliableDescriptionLanguages as needReliableDescriptionLanguages,
-} from './access-need'
+} from './access-need.ts'
 
 /**
  * Load an access need group with its access needs resolved recursively (the

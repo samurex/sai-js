@@ -467,13 +467,21 @@ effort.
   3/3; `npm run check` green.
 - **Gate:** ✅ G1 + G2 green; ⏳ G3 (`dagger call test`) — user to run.
 
-### Phase 8 — normalize relative imports to `.ts` (deferred follow-up)
+### Phase 8 — normalize relative imports to `.ts` — ✅ implemented
 
-Only start after Phases 1–5 are complete and verified (per D3).
-
-- Codemod every relative import/export in the no-build packages to an explicit `.ts` extension (`.js` → `.ts`, extensionless → `.ts`).
-- `components` can follow the same codemod even though it keeps its build.
-- Verify with `tsgo --noEmit` + vitest; keep it a standalone mechanical commit so it is easy to review/revert.
+- ✅ Codemodded every relative import/export in the **no-emit** packages
+  (`utils`, `data-model`, `application`, `authorization-agent`, `api-messages`,
+  `repl`): **46 files / 183 specifiers** (`.js` → `.ts`, extensionless → `.ts`).
+- ✅ One directory import (`data-model/src/index.ts` `./templates`) was rewritten
+  to `./templates/index.ts` (not `./templates.ts`).
+- ✅ **Emitting packages** (`components`, `test-utils`) had to switch from
+  `allowImportingTsExtensions: false` to `allowImportingTsExtensions: true` +
+  `rewriteRelativeImportExtensions: true`, because they now pull `.ts`-specifier
+  interop source into their program. Their **own** emitted specifiers stay `.js`
+  (verified in `packages/components/dist/index.js`). `tsc -b` + `tsgo` both pass.
+- **Validated:** G2 exit 0; G1 70/70 / 298 passed; `npm run build -- --force`
+  3/3; `npm run check` green.
+- **Gate:** ✅ G1 + G2 green; ⏳ G3 (`dagger call test`) — user to run.
 
 ### Phase 9 — extract Temporal code; shrink `components` to Components.js-only (deferred follow-up)
 

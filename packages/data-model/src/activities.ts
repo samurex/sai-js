@@ -1,9 +1,9 @@
 import type { LanguageMap } from '@janeirodigital/interop-utils'
 
-import type { NeedBasedAccessRequestGroup } from './access-request'
-import type { DataAuthorizationData } from './data-authorization'
-import type { RoleData } from './role'
-import type { SocialAgentInvitationData } from './social-agent-invitation'
+import type { NeedBasedAccessRequestGroup } from './access-request.ts'
+import type { DataAuthorizationData } from './data-authorization.ts'
+import type { RoleData } from './role.ts'
+import type { SocialAgentInvitationData } from './social-agent-invitation.ts'
 
 // ──────────────────────────
 // Activity types (the outbox) — payload-contract-alignment (amended wire)

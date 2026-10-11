@@ -28,8 +28,8 @@ import {
   getRole,
   getSocialAgentRegistration,
   listContained,
-} from './sparql'
-import type { DataModelDependencies } from './types'
+} from './sparql.ts'
+import type { DataModelDependencies } from './types.ts'
 
 // ──────────────────────────
 // Instance enumeration over the registry plane (resolves the Phase-2

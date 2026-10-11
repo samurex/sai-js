@@ -14,7 +14,7 @@ import {
   withContext,
 } from '@janeirodigital/interop-utils'
 
-import type { DataModelDependencies } from './types'
+import type { DataModelDependencies } from './types.ts'
 
 // ──────────────────────────
 // Write path: RoleData → JSON-LD (PUT)

@@ -1,6 +1,6 @@
 import { INTEROP, documentValues, frameNode } from '@janeirodigital/interop-utils'
 
-import { dataModelContext } from './context'
+import { dataModelContext } from './context.ts'
 
 export type AccessNeedId = {
   id: string

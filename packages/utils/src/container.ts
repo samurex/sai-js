@@ -1,5 +1,5 @@
-import { applyPatch, insertPatch } from './sparql-update'
-import type { WhatwgFetch } from './whatwg-fetch'
+import { applyPatch, insertPatch } from './sparql-update.ts'
+import type { WhatwgFetch } from './whatwg-fetch.ts'
 
 /**
  * Generate an IRI for a resource contained in the given container. `data` is

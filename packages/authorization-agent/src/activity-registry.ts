@@ -26,7 +26,7 @@ import {
   withContext,
 } from '@janeirodigital/interop-utils'
 
-import type { DataModelDependencies } from './types'
+import type { DataModelDependencies } from './types.ts'
 
 /** The activity resources currently in the registry (ldp:contains). */
 export async function getActivityIris(

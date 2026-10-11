@@ -1,12 +1,12 @@
-import { documentValues, fetchJsonLd, findNodeIdByType } from './jsonld'
+import { documentValues, fetchJsonLd, findNodeIdByType } from './jsonld.ts'
 import {
   getAcl,
   getAgentRegistrationIri,
   getDescriptionResource,
   getStorageDescription,
-} from './link-header'
-import { INTEROP, NOTIFY, SPACE } from './namespaces'
-import type { WhatwgFetch } from './whatwg-fetch'
+} from './link-header.ts'
+import { INTEROP, NOTIFY, SPACE } from './namespaces.ts'
+import type { WhatwgFetch } from './whatwg-fetch.ts'
 
 export class RequestError extends Error {
   constructor(

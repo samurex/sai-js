@@ -1,4 +1,4 @@
-export * from './application'
-export * from './grant'
-export * from './notification-manager'
+export * from './application.ts'
+export * from './grant.ts'
+export * from './notification-manager.ts'
 export { RequestError, AgentRegistrationDiscoveryError } from '@janeirodigital/interop-utils'

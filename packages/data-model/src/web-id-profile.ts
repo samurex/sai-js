@@ -1,6 +1,6 @@
 import { type LanguageMap, frameNode, opt } from '@janeirodigital/interop-utils'
 
-import { dataModelContext } from './context'
+import { dataModelContext } from './context.ts'
 
 // ──────────────────────────
 // Types

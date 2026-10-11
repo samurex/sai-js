@@ -6,8 +6,8 @@ import {
 } from '@janeirodigital/interop-data-model'
 import { type WhatwgFetch, createContainer, withContext } from '@janeirodigital/interop-utils'
 
-import { addApplicationRegistration, findApplicationRegistration } from './agent-registry'
-import type { DataModelDependencies } from './types'
+import { addApplicationRegistration, findApplicationRegistration } from './agent-registry.ts'
+import type { DataModelDependencies } from './types.ts'
 
 // ──────────────────────────
 // Write path: ApplicationRegistrationData → container (container.create)

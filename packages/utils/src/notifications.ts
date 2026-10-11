@@ -1,8 +1,8 @@
-import { discoverStorageDescription } from './discovery'
-import { fetchJsonLd, toStore } from './jsonld'
-import { getAllMatchingQuads } from './match'
-import { NOTIFY } from './namespaces'
-import type { WhatwgFetch } from './whatwg-fetch'
+import { discoverStorageDescription } from './discovery.ts'
+import { fetchJsonLd, toStore } from './jsonld.ts'
+import { getAllMatchingQuads } from './match.ts'
+import { NOTIFY } from './namespaces.ts'
+import type { WhatwgFetch } from './whatwg-fetch.ts'
 
 /**
  * The canonical notification context used by Community Solid Server for

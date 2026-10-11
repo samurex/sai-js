@@ -1,7 +1,7 @@
 import { type LanguageMap, frameNode, opt } from '@janeirodigital/interop-utils'
 
-import type { AgentRegistrationId } from './agent-registration'
-import { dataModelContext } from './context'
+import type { AgentRegistrationId } from './agent-registration.ts'
+import { dataModelContext } from './context.ts'
 
 export type SocialAgentRegistrationId = AgentRegistrationId
 

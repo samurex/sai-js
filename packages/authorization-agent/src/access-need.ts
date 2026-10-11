@@ -9,7 +9,7 @@ const loadAccessNeed = loader(AccessNeed.fromJsonLd)
 
 import { type WhatwgFetch, loader, parseJsonld } from '@janeirodigital/interop-utils'
 
-import { findInLanguage, loadDescriptions } from './access-description-set'
+import { findInLanguage, loadDescriptions } from './access-description-set.ts'
 
 /**
  * Load an access need with its inheriting needs resolved recursively (the

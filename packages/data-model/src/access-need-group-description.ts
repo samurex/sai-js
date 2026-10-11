@@ -1,7 +1,7 @@
 import { type LanguageMap, frameNode } from '@janeirodigital/interop-utils'
 
-import type { AccessDescriptionData, AccessDescriptionId } from './access-description'
-import { dataModelContext } from './context'
+import type { AccessDescriptionData, AccessDescriptionId } from './access-description.ts'
+import { dataModelContext } from './context.ts'
 
 export type AccessNeedGroupDescriptionId = AccessDescriptionId
 

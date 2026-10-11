@@ -1,16 +1,16 @@
 import { frameNode } from '@janeirodigital/interop-utils'
 
-import type { ActivityRegistryData } from './activity-registry'
+import type { ActivityRegistryData } from './activity-registry.ts'
 import type {
   ApplicationRegistryData,
   InvitationRegistryData,
   SocialAgentRegistryData,
-} from './agent-registry'
-import type { AuthorizationRegistryData } from './authorization-registry'
-import { dataModelContext } from './context'
-import type { DataRegistryData } from './data-registry'
-import type { GrantRegistryData } from './grant-registry'
-import type { RoleRegistryData } from './role-registry'
+} from './agent-registry.ts'
+import type { AuthorizationRegistryData } from './authorization-registry.ts'
+import { dataModelContext } from './context.ts'
+import type { DataRegistryData } from './data-registry.ts'
+import type { GrantRegistryData } from './grant-registry.ts'
+import type { RoleRegistryData } from './role-registry.ts'
 
 export type RegistrySetData = {
   id: string

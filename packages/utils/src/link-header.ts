@@ -1,6 +1,6 @@
 import LinkHeader from 'http-link-header'
 
-import { INTEROP, SOLID } from './namespaces'
+import { INTEROP, SOLID } from './namespaces.ts'
 
 export function getAgentRegistrationIri(linkHeaderText: string): string | undefined {
   const links = LinkHeader.parse(linkHeaderText).refs

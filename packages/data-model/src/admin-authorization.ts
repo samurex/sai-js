@@ -1,6 +1,6 @@
 import { frameNode, selectNode, withContext } from '@janeirodigital/interop-utils'
 
-import { dataModelContext } from './context'
+import { dataModelContext } from './context.ts'
 
 export type AdminAuthorizationData = {
   id: string

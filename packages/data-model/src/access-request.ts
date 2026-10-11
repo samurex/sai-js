@@ -1,7 +1,7 @@
 import { frameNode, selectNode } from '@janeirodigital/interop-utils'
 
-import { dataModelContext } from './context'
-import type { GrantData } from './grant'
+import { dataModelContext } from './context.ts'
+import type { GrantData } from './grant.ts'
 
 /**
  * A grant as a grantor sends it inside an `AccessRequest`: the parent grant's

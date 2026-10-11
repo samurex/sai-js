@@ -9,9 +9,9 @@ import {
   strs,
 } from '@janeirodigital/interop-utils'
 
-import { dataModelContext } from './context'
-import type { DataRegistrationData } from './data-registration'
-import type { ShapeTreeData } from './shape-tree'
+import { dataModelContext } from './context.ts'
+import type { DataRegistrationData } from './data-registration.ts'
+import type { ShapeTreeData } from './shape-tree.ts'
 
 // ──────────────────────────
 // DataInstanceData (readable POJO)

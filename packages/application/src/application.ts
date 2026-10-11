@@ -17,7 +17,7 @@ import {
   loader,
 } from '@janeirodigital/interop-utils'
 
-import { getDataGrants, getDataInstanceIterator, getGranted } from './grant'
+import { getDataGrants, getDataInstanceIterator, getGranted } from './grant.ts'
 
 interface ApplicationDependencies {
   fetch: WhatwgFetch

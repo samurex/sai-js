@@ -1,6 +1,6 @@
 import { type LanguageMap, frameNode, selectNode } from '@janeirodigital/interop-utils'
 
-import { dataModelContext } from './context'
+import { dataModelContext } from './context.ts'
 
 export type RoleId = {
   id: string
