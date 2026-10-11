@@ -4,7 +4,12 @@
     "composite": true,
     "rootDir": "src",
     "outDir": "dist",
-    "typeRoots": ["test/@types"]
+    "typeRoots": ["test/@types"],
+    // This package still emits (`build:ts` = tsc + componentsjs-generator, D1),
+    // so it opts out of the base typecheck-only settings.
+    "module": "esnext",
+    "noEmit": false,
+    "allowImportingTsExtensions": false
   },
   "include": ["src"]
 }

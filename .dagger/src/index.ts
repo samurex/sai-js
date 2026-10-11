@@ -57,6 +57,10 @@ type LogLevel = 'error' | 'warn' | 'info' | 'verbose' | 'debug' | 'silly'
 const CSS_LOG_LEVEL: LogLevel = 'warn'
 
 const NIX_IMAGE = 'nixos/nix'
+// Runtime for every service/test container in this module (D5 = A: Bun
+// everywhere). slim = Debian/glibc, matching the host-built node_modules and the
+// Temporal native core addon; 1.4.2 matches the pinned dev Bun.
+const BUN_IMAGE = 'oven/bun:1.4.2-slim'
 const SKOPEO_IMAGE = 'quay.io/skopeo/stable:latest'
 const IMAGE_SUFFIX = '-image'
 
@@ -169,7 +173,7 @@ export class SaiJs {
   async temporalService(): Promise<Service> {
     const scripts = this.source.directory('temporal/scripts')
     const dynamicConfig = this.source.directory('temporal/dynamicconfig')
-    const pgData = dag.cacheVolume('temporal-pg-data-26846846845465484')
+    const pgData = dag.cacheVolume('temporal-pg-data-5846846546546848')
 
     const pg = dag
       .container()
@@ -251,7 +255,7 @@ export class SaiJs {
   async workerService(): Promise<Service> {
     const temporal = await this.temporalService()
     return (
-      this.withTracing(dag.container().from('node:24-slim'), 'sai-worker')
+      this.withTracing(dag.container().from(BUN_IMAGE), 'sai-worker')
         .withMountedDirectory('/sai', this.source)
         .withEnvVariable('CSS_BASE_URL', CSS_BASE_URL)
         .withEnvVariable('CSS_ID_ORIGIN', CSS_ID_ORIGIN)
@@ -275,7 +279,7 @@ export class SaiJs {
         .withServiceBinding('sparql', this.sparqlService())
         .withExposedPort(9235)
         .asService({
-          args: ['node', '--inspect=0.0.0.0:9235', '/sai/packages/components/dist/workers/main.js'],
+          args: ['bun', '--inspect=0.0.0.0:9235', '/sai/packages/components/dist/workers/main.js'],
         })
         .withHostname('worker')
     )
@@ -283,7 +287,7 @@ export class SaiJs {
 
   @func()
   idService(): Service {
-    return this.withTracing(dag.container().from('node:24-alpine'), 'sai-id')
+    return this.withTracing(dag.container().from(BUN_IMAGE), 'sai-id')
       .withMountedDirectory('/sai', this.source)
       .withEnvVariable('ID_ORIGIN', 'id')
       .withEnvVariable('DOC_ORIGIN', 'id')
@@ -294,8 +298,8 @@ export class SaiJs {
       .withServiceBinding('sparql', this.sparqlService())
       .asService({
         args: [
-          'node',
-          '--require=/sai/packages/components/src/tracing/preload.cjs',
+          'bun',
+          '--preload=/sai/packages/components/src/tracing/preload.cjs',
           '/sai/services/id/https.ts',
         ],
       })
@@ -305,7 +309,7 @@ export class SaiJs {
   @func()
   async authService(): Promise<Service> {
     const temporal = await this.temporalService()
-    return this.withTracing(dag.container().from('node:24-alpine'), 'sai-uas')
+    return this.withTracing(dag.container().from(BUN_IMAGE), 'sai-uas')
       .withMountedDirectory('/sai', this.source)
       .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/auth.json')
       .withEnvVariable('CSS_BASE_URL', CSS_BASE_URL)
@@ -338,11 +342,11 @@ export class SaiJs {
       .withExposedPort(9229)
       .asService({
         args: [
-          'node',
+          'bun',
           '--inspect=0.0.0.0:9229',
-          // CJS on purpose: --require runs synchronously before CSS builds
-          // its HTTP server (--import preloads race — preload.cjs header)
-          '--require=/sai/packages/components/src/tracing/preload.cjs',
+          // `--preload` runs before CSS builds its HTTP server (the CJS preload
+          // header explains why a preload, not an import, is needed)
+          '--preload=/sai/packages/components/src/tracing/preload.cjs',
           '/sai/node_modules/@solid/community-server/bin/server.js',
         ],
       })
@@ -351,7 +355,7 @@ export class SaiJs {
 
   @func()
   registryService(): Service {
-    return this.withTracing(dag.container().from('node:24-alpine'), 'sai-registry')
+    return this.withTracing(dag.container().from(BUN_IMAGE), 'sai-registry')
       .withMountedDirectory('/sai', this.source)
       .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/registry.json')
       .withEnvVariable('CSS_BASE_URL', 'https://registry/')
@@ -371,9 +375,9 @@ export class SaiJs {
       .withExposedPort(9230)
       .asService({
         args: [
-          'node',
+          'bun',
           '--inspect=0.0.0.0:9230',
-          '--require=/sai/packages/components/src/tracing/preload.cjs',
+          '--preload=/sai/packages/components/src/tracing/preload.cjs',
           '/sai/node_modules/@solid/community-server/bin/server.js',
         ],
       })
@@ -382,7 +386,7 @@ export class SaiJs {
 
   @func()
   dataService(): Service {
-    return this.withTracing(dag.container().from('node:24-alpine'), 'sai-data')
+    return this.withTracing(dag.container().from(BUN_IMAGE), 'sai-data')
       .withMountedDirectory('/sai', this.source)
       .withEnvVariable('CSS_CONFIG', '/sai/environments/css/https/data.json')
       .withEnvVariable('CSS_BASE_URL', 'https://data/')
@@ -407,9 +411,9 @@ export class SaiJs {
       .withExposedPort(9231)
       .asService({
         args: [
-          'node',
+          'bun',
           '--inspect=0.0.0.0:9231',
-          '--require=/sai/packages/components/src/tracing/preload.cjs',
+          '--preload=/sai/packages/components/src/tracing/preload.cjs',
           '/sai/node_modules/@solid/community-server/bin/server.js',
         ],
       })
@@ -420,7 +424,7 @@ export class SaiJs {
     const auth = await this.authService()
     const worker = await this.workerService()
     const temporal = await this.temporalService()
-    return this.withTracing(dag.container().from('node:24-alpine'), 'sai-test')
+    return this.withTracing(dag.container().from(BUN_IMAGE), 'sai-test')
       .withMountedDirectory('/sai', this.source)
       .withEnvVariable('NODE_TLS_REJECT_UNAUTHORIZED', NODE_TLS_REJECT_UNAUTHORIZED)
       .withEnvVariable('CSS_BASE_URL', CSS_BASE_URL)
@@ -457,7 +461,7 @@ export class SaiJs {
     @argument()
     only?: string
   ): Promise<string> {
-    const args = ['npm', 'run', 'dagger:test']
+    const args = ['bun', 'run', 'dagger:test']
     const filter: string[] = []
     if (testFile) {
       // allow multiple files: --testFile="share.test.ts roles.test.ts"
@@ -467,8 +471,8 @@ export class SaiJs {
       // single test: vitest -t <testNamePattern>
       filter.push('-t', only)
     }
-    // npm's own arg parser strips/rewrites args placed before `--` (it ate
-    // the `-t` flag), so forward everything after the separator verbatim
+    // forward everything after the separator verbatim (Bun passes `--`-suffixed
+    // args straight through to the script)
     if (filter.length) args.push('--', ...filter)
     return (await this.testBase()).withExec(args).stdout()
   }
@@ -477,7 +481,7 @@ export class SaiJs {
     @argument()
     testFile?: string
   ): Promise<Service> {
-    const args = ['npm', 'run', 'dagger:debug']
+    const args = ['bun', 'run', 'dagger:debug']
     const filter: string[] = []
     if (testFile) {
       // allow multiple files: --testFile="share.test.ts roles.test.ts"
@@ -497,7 +501,7 @@ export class SaiJs {
     const worker = await this.workerService()
     return dag
       .container()
-      .from('node:24-alpine')
+      .from(BUN_IMAGE)
       .withServiceBinding('debug', debug)
       .withServiceBinding('auth', auth)
       .withServiceBinding('registry', this.registryService())
@@ -510,7 +514,7 @@ export class SaiJs {
       .withExposedPort(9231)
       .withExposedPort(9235)
       .withExposedPort(443)
-      .asService({ args: ['node', '/proxy.js'] })
+      .asService({ args: ['bun', '/proxy.js'] })
   }
 
   @func()

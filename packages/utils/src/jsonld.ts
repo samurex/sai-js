@@ -129,22 +129,25 @@ export async function frameDoc(
   return trace.getTracer('sai-jsonld').startActiveSpan('frameDoc', async (span) => {
     try {
       span.setAttribute('sai.jsonld.uri', iri)
-      const framed = await jsonld.frame(doc, buildFrame(context, iri, overrides) as any, {
-        documentLoader,
-      })
+      // `@types/jsonld` types the third `frame` argument as `Frame` instead of
+      // `Options`, so cast the options to satisfy overload resolution.
+      const framed = (await jsonld.frame(
+        doc,
+        buildFrame(context, iri, overrides) as any,
+        {
+          documentLoader,
+        } as any
+      )) as unknown as Record<string, unknown>
       if (!(framed as any).id && !(framed as any)['@id']) {
         throw new Error(`Node ${iri} not found in framed output`)
       }
       // the framed node — @context stripped for the payload (frameNode does
       // the same for the model POJOs); the span attribute set before end()
       if (span.isRecording()) {
-        span.setAttribute(
-          'sai.jsonld.framed',
-          JSON.stringify(withoutContext(framed as Record<string, unknown>))
-        )
+        span.setAttribute('sai.jsonld.framed', JSON.stringify(withoutContext(framed)))
       }
       span.end()
-      return framed as Record<string, unknown>
+      return framed
     } catch (err) {
       span.recordException(err as Error)
       span.setStatus({ code: SpanStatusCode.ERROR })

@@ -1,20 +1,16 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "moduleResolution": "node",
-    "declaration": true,
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
-    "removeComments": true,
-    "noLib": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "skipLibCheck": true,
     "target": "ESNext",
-    "sourceMap": true,
-    "declarationMap": true,
     "lib": ["ESNext", "DOM"],
-    "allowJs": true,
-    "module": "ESNext"
+    "allowJs": true
   }
 }

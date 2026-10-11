@@ -3,7 +3,11 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    // Still emits (`build` = tsc -b .), so opt out of the typecheck-only base.
+    "module": "esnext",
+    "noEmit": false,
+    "allowImportingTsExtensions": false
   },
   "include": ["src"]
 }

@@ -534,7 +534,9 @@ export async function getCompletedActivityIris(
   const completed: string[] = []
   for (const iri of iris) {
     const activity = await loadActivity(iri, fetch)
-    if (isActivityClass(activity, 'ActivityCompleted')) completed.push(activity.target)
+    if (isActivityClass(activity, 'ActivityCompleted') && 'target' in activity) {
+      completed.push(activity.target)
+    }
   }
   return completed
 }

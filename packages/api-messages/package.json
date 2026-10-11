@@ -3,21 +3,16 @@
   "version": "1.0.0-rc.26",
   "description": "",
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
     }
   },
-  "scripts": {
-    "build": "rollup --config rollup.config.mjs",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "publish": "npm run clean && npm run build"
-  },
+  "scripts": {},
   "dependencies": {
     "@effect/rpc": "^0.44.13",
     "@janeirodigital/interop-authorization-agent": "^1.0.0-rc.26",

@@ -111,7 +111,7 @@ const generateRegistry = (path: string, env: string): Effect.Effect<string, Erro
   Effect.try({
     try: () => {
       const content = readFileSync(path, 'utf-8')
-      const map = JSON.parse(readFileSync(mapPaths[env], 'utf-8')) as {
+      const map = JSON.parse(readFileSync(mapPaths[env as keyof typeof mapPaths], 'utf-8')) as {
         agents: Record<string, string>
         prefixes: Record<string, string>
       }

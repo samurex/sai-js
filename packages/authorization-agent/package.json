@@ -21,18 +21,16 @@
     "url": "https://github.com/janeirodigital/sai-js.git"
   },
   "license": "MIT",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
     }
   },
   "files": [
-    "dist/",
     "src/"
   ],
   "directories": {
@@ -40,11 +38,8 @@
     "test": "test"
   },
   "scripts": {
-    "build": "rollup --config rollup.config.mjs",
     "test": "vitest run",
-    "test:debug": "NODE_ENV=vitest vitest --run --inspect-brk --no-file-parallelism",
-    "clean": "rimraf dist tsconfig.tsbuildinfo",
-    "publish": "npm run clean && npm run build"
+    "test:debug": "NODE_ENV=vitest vitest --run --inspect-brk --no-file-parallelism"
   },
   "dependencies": {
     "@janeirodigital/interop-data-model": "^1.0.0-rc.26",

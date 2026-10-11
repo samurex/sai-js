@@ -69,7 +69,7 @@ describe('get authorization data', () => {
     const response = await fetch(rpcEndpoint, {
       method: 'POST',
       headers: {
-        ContentType: 'application/json',
+        'Content-Type': 'application/json',
         Cookie: aliceCookie,
       },
       body: JSON.stringify(payload),

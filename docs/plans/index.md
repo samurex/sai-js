@@ -12,10 +12,10 @@ is documented in the [OpenWiki](../openwiki/index.md).
 | Status | Count | Plans |
 |---|---|---|
 | 🔶 partial (first cut landed) | 1 | `revoke-delegation-chain` |
-| ⬜ not started / design only | 13 | `authorization-revoked`, `authorization-revocation`, `check-equivalence`, `durable-webhook-delivery`, `remove-turtle-serialization`, `webhook-subscription-bootstrap`, `federation`, `events`, `registry-set-permissions`, `isolated-datasets-and-sparql`, `components-tweaks`, `specific-instance-access-requests`, `generic-auditing` |
+| ⬜ not started / design only | 14 | `authorization-revoked`, `authorization-revocation`, `check-equivalence`, `durable-webhook-delivery`, `remove-turtle-serialization`, `webhook-subscription-bootstrap`, `federation`, `events`, `registry-set-permissions`, `isolated-datasets-and-sparql`, `components-tweaks`, `specific-instance-access-requests`, `generic-auditing`, `esm-jsr-no-build` |
 | ⬜ follow-up backlog (all items open) | 1 | `revoke-delegation-chain-follow-ups` |
 
-**15 plans total.**
+**16 plans total.**
 
 ## Full table
 
@@ -34,6 +34,7 @@ is documented in the [OpenWiki](../openwiki/index.md).
 | `registry-set-permissions.md` | ⬜ not started (design) | Scope the blanket `#fullAdminAccess` per structural registry: per-container ACRs, GrantRegistry owner-only (admins never write grants; per-grant ACRs serve reads), ActivityRegistry Read + create/append (append-only immutable log) instead of blanket Write; seed ACR hygiene for the ACR-less yoyo DataGrants | `org-admin-feature` R1 |
 | `isolated-datasets-and-sparql.md` | ⬜ not started (design only) | Per-owner datasets + SPARQL: 4a endpoint registry in `AccountLoginStorage` (env-var fallback) → 4b per-owner store cutover (joint checkpoint): mirror activation + backfill, serialized syncs, `/sparql-admin` → the org's own store, external admin-endpoint discovery, environment work, cross-owner isolation + mirror-freshness tests. The IRI-parametrized org-context SPARQL reads resolve to mirrors unchanged | `federation.md` shortcuts 1/1a |
 | `components-tweaks.md` | ⬜ design only (investigation write-up) | Residual SAI domain/spec logic still in components after the reorganize phases: extract `SaiPermissionsEngine`'s grant-evaluation predicates (grant→request coverage, Inherited-chain resolution, admin modes) and the 4×-duplicated `hasAdminGrant` admin-marker rule to AA session methods/predicates; move the delegation-endpoint inheritance completion (`GrantIssuanceHandler`) and `buildAdminGrants` materialization to AA; plane-based session `findRegistration` | — |
+| `esm-jsr-no-build.md` | 📋 planning — decisions open | ESM-only source with no build step for the publishable packages, Bun native TS for dev/test, `tsgo --noEmit` typecheck, JSR publishing; `components` likely stays npm+build | — |
 | `specific-instance-access-requests.md` | ⬜ not started (design only) | Access requests targeting specific data instances (`hasDataInstance` on `AccessNeed`); deferred from the granting work — no request-side caller yet | — |
 | `generic-auditing.md` | ⬜ not started (design only) | A generic auditing mechanism for creation metadata (creator agent/client, creation/modification times), replacing the removed hand-written `interop:registeredBy`/`registeredWith`/`registeredAt`/`updatedAt` writes | — |
 
