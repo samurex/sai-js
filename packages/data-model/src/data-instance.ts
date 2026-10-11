@@ -57,8 +57,8 @@ function dataInstanceContext(shapeTree: ShapeTreeData): JsonLdContext {
   } else {
     // the shared context maps `label` to skos:prefLabel; without
     // describesInstance the term must not pick up stray prefLabel values on
-    // instance documents
-    // biome-ignore lint/performance/noDelete: jsonld rejects `@context` term values that aren't strings or objects, so the key must be removed, not set to `undefined` (noDelete's suggested fix)
+    // instance documents. jsonld rejects `@context` term values that aren't
+    // strings or objects, so the key must be removed, not set to `undefined`.
     delete context.label
   }
   context.fileName = { '@id': 'http://www.semanticdesktop.org/ontologies/2007/03/22/nfo#fileName' }

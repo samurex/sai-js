@@ -1,0 +1,26 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "useTabs": false,
+  "tabWidth": 2,
+  "printWidth": 100,
+  "singleQuote": true,
+  "jsxSingleQuote": false,
+  "quoteProps": "as-needed",
+  "trailingComma": "es5",
+  "semi": false,
+  "arrowParens": "always",
+  "bracketSameLine": false,
+  "bracketSpacing": true,
+  "sortImports": true,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/src/**/*.d.ts",
+    "**/test/**/*.d.ts",
+    "**/.dagger/sdk/**",
+    ".devbox",
+    ".turbo",
+    "docs/website/.astro",
+    "docs/website/public/likec4-webcomponent.js"
+  ]
+}

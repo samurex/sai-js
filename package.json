@@ -2,7 +2,6 @@
   "name": "interop",
   "private": true,
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
     "@dagger.io/dagger": "^0.19.10",
     "@inrupt/base-rollup-config": "^3.2.4",
     "@solid/community-server": "8.0.0-alpha.2",
@@ -11,6 +10,8 @@
     "jest-rdf": "^2.0.0",
     "likec4": "^1.59.3",
     "lint-staged": "^15.4.3",
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0",
     "rimraf": "^6.0.1",
     "rollup": "npm:@rollup/wasm-node@4.55.2",
     "tslib": "^2.8.1",
@@ -19,21 +20,29 @@
     "vitest": "^3.0.4"
   },
   "scripts": {
-    "prepare": "if [ \"$CI\" != \"true\" ]; then husky install; fi",
+    "prepare": "if [ \"$CI\" != \"true\" ]; then husky; fi",
     "build": "turbo run build",
     "test": "turbo run test --concurrency=1",
     "clean": "turbo run clean",
     "dev": "turbo run dev",
     "watch": "./node_modules/.bin/turbowatch turbowatch.ts",
-    "check": "biome check . --write"
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "check": "oxlint . && oxfmt --check ."
   },
   "packageManager": "npm@11.3.0",
-  "workspaces": ["packages/*", "test", "docs/website"],
+  "workspaces": [
+    "packages/*",
+    "test",
+    "docs/website"
+  ],
   "lint-staged": {
-    "*.{ts,js,vue}": "npm run check"
-  },
-  "optionalDependencies": {
-    "@biomejs/cli-linux-x64": "^2.3.11"
+    "*.{ts,js,vue}": [
+      "oxlint --fix",
+      "oxfmt"
+    ]
   },
   "overrides": {
     "@solid/access-token-verifier": "github:elf-pavlik/access-token-verifier#cid"

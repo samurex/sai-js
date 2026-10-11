@@ -43,7 +43,6 @@ export class SaiAuthorizationManager implements AuthorizationManager {
       `
       )
       const results = await arrayifyStream<IBindings>(bindingsStream)
-      // biome-ignore lint/complexity/useLiteralKeys:
       const grants = results.map((b) => b['s'].value)
 
       let data: Quad[] = []

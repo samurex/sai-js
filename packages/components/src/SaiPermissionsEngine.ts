@@ -332,7 +332,6 @@ export class SaiPermissionsEngine implements PolicyEngine {
     )
     const results = await arrayifyStream<IBindings>(bindingsStream)
     // TODO: ensure only in proper registration
-    // biome-ignore lint/complexity/useLiteralKeys:
     const parentId = results[0]?.['s'].value
     if (!parentId) return
     // check if in parent registration
