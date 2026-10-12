@@ -13,12 +13,12 @@ import {
 } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
 
-import type { ResolvedContext } from './Context.js'
+import type { ResolvedContext } from './Context.ts'
 import {
   getSocialAgentInvitation as getInvitationFromSparql,
   listContained,
   sparqlTransportFor,
-} from './queries/org.js'
+} from './queries/org.ts'
 
 function buildSocialAgentInvitation(
   socialAgentInvitation: SocialAgentInvitationData,

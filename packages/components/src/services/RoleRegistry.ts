@@ -18,8 +18,8 @@ import {
 } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
 
-import type { ResolvedContext } from './Context.js'
-import { getRole, listContained, sparqlTransportFor } from './queries/org.js'
+import type { ResolvedContext } from './Context.ts'
+import { getRole, listContained, sparqlTransportFor } from './queries/org.ts'
 
 /**
  * The context's roles via SPARQL — personal context reads the session's

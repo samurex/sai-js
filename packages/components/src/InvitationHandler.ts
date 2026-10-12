@@ -14,7 +14,7 @@ import type {
 } from '@solid/community-server'
 import { getLoggerFor } from 'global-logger-factory'
 
-import type { SessionManager } from './SessionManager'
+import type { SessionManager } from './SessionManager.ts'
 
 export class InvitationHandler extends OperationHttpHandler {
   protected readonly logger = getLoggerFor(this)

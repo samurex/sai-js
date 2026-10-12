@@ -55,7 +55,7 @@ import {
   withContext,
 } from '@janeirodigital/interop-utils'
 
-import { buildSessionManager } from '../../builders/sessionManager.js'
+import { buildSessionManager } from '../../builders/sessionManager.ts'
 
 export interface FindAffectedAuthorizationsInput {
   webId: SocialAgentId

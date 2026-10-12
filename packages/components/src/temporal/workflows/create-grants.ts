@@ -4,7 +4,7 @@
 // The worker bundles a single module and registers one activities set
 // ({ ...grantsActivities, ...adminActivities, ...invitationActivities }),
 // so no workflow scheduled on this queue is left unclaimed.
-export * from './grants.js'
-export * from './admin.js'
-export * from './invitation.js'
-export * from './access-request.js'
+export * from './grants.ts'
+export * from './admin.ts'
+export * from './invitation.ts'
+export * from './access-request.ts'

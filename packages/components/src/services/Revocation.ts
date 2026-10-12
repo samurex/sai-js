@@ -1,7 +1,7 @@
 import type { IRI } from '@janeirodigital/sai-api-messages'
 
-import { GrantRevocationHandler } from '../GrantRevocationHandler.js'
-import type { ResolvedContext } from './Context.js'
+import { GrantRevocationHandler } from '../GrantRevocationHandler.ts'
+import type { ResolvedContext } from './Context.ts'
 
 /**
  * Revoke grants at the data owner's boundary, from the owner's own UI.

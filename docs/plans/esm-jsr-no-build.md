@@ -95,7 +95,7 @@ Each decision is listed with options, a recommendation, and a placeholder for th
 
 | # | Decision | Recommendation | Status |
 |---|---|---|---|
-| D1 | `@elfpavlik/sai-components` strategy | keep on npm with its build | ✅ **A** — keep on npm with its build |
+| D1 | `@elfpavlik/sai-components` strategy | keep on npm with its build | ✅ **A**, superseded by **D** — TS source; only descriptors are generated (forked `componentsjs-generator` reads `.ts`) |
 | D2 | TypeScript strictness under tsgo | `strict: true` migration (~121 fixes) | ✅ **B** — pin `strict: false` now; **Phase 7** migrates to `strict: true` |
 | D3 | Module/resolution mode + import extensions | `module: preserve` + `moduleResolution: bundler` + explicit `.ts` imports | ✅ **A** — `module: preserve` + `moduleResolution: bundler`; imports stay mixed; normalization deferred to **Phase 8** |
 | D4 | JSR cross-package dependency specifiers | publish-time rewrite to `jsr:` | ↪ moved to [`jsr-publishing.md`](jsr-publishing.md) |
@@ -118,6 +118,35 @@ Each decision is listed with options, a recommendation, and a placeholder for th
 **Recommendation:** A now; C as a possible follow-up if/when the whole server stack runs under Bun.
 
 **Resolution:** ✅ **A** — `@elfpavlik/sai-components` keeps `build:ts` + `build:components`, its `dist/` + `lsd:*` fields, and stays an npm package. It is the sole build-step package. Revisit C only if CSS later runs under Bun.
+
+**Superseded by D — no `tsc` emit, generator reads TS source.** The generator
+limitation above was the only reason for the `tsc` emit:
+`componentsjs-generator` 4.3.0 reads `.d.ts` only. The fork
+[`elf-pavlik/Components-Generator.js`](https://github.com/elf-pavlik/Components-Generator.js)
+(branch `typescript-source`, upstream PR candidate) falls back to `.ts` when no
+`.d.ts` exists and converts source ASTs into the shape `tsc` emits for
+declarations (parameter properties → fields, defaulted params → optional,
+private field types erased, simple initializer types inferred, `any`
+otherwise). `components` installs it from the `buildless` branch (compiled
+`lib/` committed, no `prepare`). Output for `src/*.ts` is byte-identical to the
+same generator run on `tsc`'s `dist/*.d.ts`.
+
+- `components` is `"type": "module"` with `main`/`types`/`exports` →
+  `./src/index.ts`, like the interop libs; `tsconfig.json` is typecheck-only and
+  `components` joins the root `typecheck` gate (still `strict: false`).
+- `build` = `componentsjs-generator -s src -c dist/components …` — the only
+  generated artifact is `dist/components/*.jsonld` (IRIs unchanged). CSS still
+  needs it, so `npm run build` before `dagger call test` stays.
+- Components.js `require()`s the package `main`, i.e. `src/index.ts`. That works
+  under Bun (D5); it never worked under Node, which can't type-strip
+  `node_modules`.
+- Relative imports in `components/src` normalized to `.ts` (as Phase 8 did for
+  the other packages); the Temporal worker runs `src/workers/main.ts`, and its
+  `workflowsPath`s point at the `.ts` workflow sources.
+- npm releases of `components` would now ship TS only; the `services/*` / nix
+  consumers stay pinned to the published `1.0.0-rc.29` until
+  [`production-consumer-cleanup.md`](production-consumer-cleanup.md) moves them
+  to repo source + Bun.
 
 ### D2 — TypeScript strictness under tsgo
 

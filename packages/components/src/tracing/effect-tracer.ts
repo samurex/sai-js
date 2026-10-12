@@ -3,7 +3,7 @@ import { context, trace } from '@opentelemetry/api'
 import { Effect, Layer } from 'effect'
 import type { Effect as EffectType } from 'effect/Effect'
 
-import { temporalPluginConfig } from './otel-state.js'
+import { temporalPluginConfig } from './otel-state.ts'
 
 /**
  * Effect→OpenTelemetry bridge: runs the RPC's Effect program with the SDK's

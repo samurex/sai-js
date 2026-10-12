@@ -12,12 +12,17 @@
     "https://linkedsoftwaredependencies.org/bundles/npm/@elfpavlik/sai-components/^1.0.0/config/": "config/",
     "https://linkedsoftwaredependencies.org/bundles/npm/@elfpavlik/sai-components/^1.0.0/dist/": "dist/"
   },
-  "main": "dist/index.js",
-  "types": "./dist/index.d.ts",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
   "scripts": {
-    "build": "npm run build:ts && npm run build:components",
-    "build:components": "componentsjs-generator -s dist -c dist/components -r sai -i .componentsignore",
-    "build:ts": "tsc",
+    "build": "componentsjs-generator -s src -c dist/components -r sai -i .componentsignore",
     "clean": "rm -rf dist/"
   },
   "files": [
@@ -30,8 +35,8 @@
   "license": "MIT",
   "dependencies": {
     "@comunica/query-sparql-rdfjs": "^4.5.0",
-    "@effect/rpc": "^0.44.13",
     "@effect/opentelemetry": "^0.60.0",
+    "@effect/rpc": "^0.44.13",
     "@janeirodigital/interop-authorization-agent": "1.0.0-rc.26",
     "@janeirodigital/interop-data-model": "^1.0.0-rc.26",
     "@janeirodigital/interop-utils": "^1.0.0-rc.26",
@@ -44,8 +49,8 @@
     "@opentelemetry/resources": "^2.11.0",
     "@opentelemetry/sdk-node": "^0.222.0",
     "@opentelemetry/sdk-trace-base": "^2.11.0",
-    "@opentelemetry/semantic-conventions": "^1.29.0",
     "@opentelemetry/sdk-trace-web": "^2.11.0",
+    "@opentelemetry/semantic-conventions": "^1.29.0",
     "@solid/community-server": "8.0.0-alpha.2",
     "@solidlab/policy-engine": "^0.0.2",
     "@temporalio/client": "^1.24.0",
@@ -68,7 +73,7 @@
   "devDependencies": {
     "@inrupt/solid-client-authn-core": "^2.5.0",
     "@types/web-push": "^3.6.1",
-    "componentsjs-generator": "^4.3.0",
+    "componentsjs-generator": "github:elf-pavlik/Components-Generator.js#buildless",
     "fs-extra": "^10.1.0",
     "set-cookie-parser": "^2.7.2"
   }

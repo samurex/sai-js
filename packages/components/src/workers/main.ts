@@ -4,14 +4,14 @@ import { fileURLToPath } from 'node:url'
 import { OpenTelemetryPlugin } from '@temporalio/interceptors-opentelemetry-v2'
 import { NativeConnection, Worker } from '@temporalio/worker'
 
-import * as accessRequestActivities from '../temporal/activities/access-request.js'
-import * as adminActivities from '../temporal/activities/admin.js'
-import * as forwardActivities from '../temporal/activities/forward-to-push.js'
-import * as grantsActivities from '../temporal/activities/grants.js'
-import * as invitationActivities from '../temporal/activities/invitation.js'
-import * as reciprocalActivities from '../temporal/activities/reciprocal.js'
-import { initNodeTracing } from '../tracing/bootstrap.js'
-import { temporalPluginConfig } from '../tracing/otel-state.js'
+import * as accessRequestActivities from '../temporal/activities/access-request.ts'
+import * as adminActivities from '../temporal/activities/admin.ts'
+import * as forwardActivities from '../temporal/activities/forward-to-push.ts'
+import * as grantsActivities from '../temporal/activities/grants.ts'
+import * as invitationActivities from '../temporal/activities/invitation.ts'
+import * as reciprocalActivities from '../temporal/activities/reciprocal.ts'
+import { initNodeTracing } from '../tracing/bootstrap.ts'
+import { temporalPluginConfig } from '../tracing/otel-state.ts'
 
 async function connectWithRetry() {
   while (true) {
@@ -37,7 +37,7 @@ async function run() {
       connection,
       taskQueue: 'forward-to-push',
       workflowsPath: fileURLToPath(
-        new URL('../temporal/workflows/forward-to-push.js', import.meta.url)
+        new URL('../temporal/workflows/forward-to-push.ts', import.meta.url)
       ),
       activities: forwardActivities,
       plugins,
@@ -46,7 +46,7 @@ async function run() {
     const reciprocal = await Worker.create({
       connection,
       taskQueue: 'reciprocal-registration',
-      workflowsPath: fileURLToPath(new URL('../temporal/workflows/reciprocal.js', import.meta.url)),
+      workflowsPath: fileURLToPath(new URL('../temporal/workflows/reciprocal.ts', import.meta.url)),
       // markActivitiesDone (from grants) is called by establishReciprocal — it
       // must be registered on the queue that workflow runs on
       activities: { ...reciprocalActivities, ...grantsActivities },
@@ -57,7 +57,7 @@ async function run() {
       connection,
       taskQueue: 'create-grants',
       workflowsPath: fileURLToPath(
-        new URL('../temporal/workflows/create-grants.js', import.meta.url)
+        new URL('../temporal/workflows/create-grants.ts', import.meta.url)
       ),
       // grants + org-admin + activity-first invitation activities — the
       // combined workflow module calls names from all three (the admin

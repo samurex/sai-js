@@ -17,7 +17,7 @@ import { type IBindings, SparqlEndpointFetcher } from 'fetch-sparql-endpoint'
 import { getLoggerFor } from 'global-logger-factory'
 import { Store } from 'n3'
 
-import type { SaiAuthorizationManager } from './SaiAuthorizationManager.js'
+import type { SaiAuthorizationManager } from './SaiAuthorizationManager.ts'
 
 enum TargetType {
   Registry = 'Registry',

@@ -19,19 +19,19 @@ import {
 } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
 
-import type { ResolvedContext } from './Context.js'
-import { peerInstanceIris, peerInstanceNode } from './peerProxy.js'
+import type { ResolvedContext } from './Context.ts'
+import { peerInstanceIris, peerInstanceNode } from './peerProxy.ts'
 import {
   getDataGrant as getDataGrantFromSparql,
   getDataRegistration as getDataRegistrationFromSparql,
   getSocialAgentRegistration as getRegistrationFromSparql,
   listContained,
   sparqlTransportFor,
-} from './queries/org.js'
+} from './queries/org.ts'
 import {
   findSocialAgentRegistrationInContext,
   listSocialAgentRegistrations,
-} from './SocialAgentRegistry.js'
+} from './SocialAgentRegistry.ts'
 
 const buildDataRegistry = async (
   registry: { id: string },

@@ -17,7 +17,7 @@ import type {
 } from '@solid/community-server'
 import { getLoggerFor } from 'global-logger-factory'
 
-import type { ActivityEvents } from './ActivityEvents.js'
+import type { ActivityEvents } from './ActivityEvents.ts'
 
 /** Heartbeat cadence — the UI's timeout detection uses a multiple of this. */
 export const EVENTS_HEARTBEAT_INTERVAL_MS = 30_000

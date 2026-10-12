@@ -22,29 +22,29 @@ import { Effect, Layer } from 'effect'
 import { getLoggerFor } from 'global-logger-factory'
 import type { PushSubscription } from 'web-push'
 
-import type { AccountService } from './services/Account.js'
-import { addAdmin, removeAdmin } from './services/Admin.js'
-import { getApplications, getUnregisteredApplication } from './services/ApplicationRegistry.js'
+import type { AccountService } from './services/Account.ts'
+import { addAdmin, removeAdmin } from './services/Admin.ts'
+import { getApplications, getUnregisteredApplication } from './services/ApplicationRegistry.ts'
 import {
   archiveAccessRequest,
   getDescriptions,
   recordAuthorization,
-} from './services/Authorization.js'
-import { resolveContext } from './services/Context.js'
-import { getDataRegistries, listDataInstances } from './services/DataRegistry.js'
-import { createInvitation, getSocialAgentInvitations } from './services/InvitationRegistry.js'
-import { revokeGrants } from './services/Revocation.js'
-import { createRole, deleteRole, getRoles, updateRole } from './services/RoleRegistry.js'
+} from './services/Authorization.ts'
+import { resolveContext } from './services/Context.ts'
+import { getDataRegistries, listDataInstances } from './services/DataRegistry.ts'
+import { createInvitation, getSocialAgentInvitations } from './services/InvitationRegistry.ts'
+import { revokeGrants } from './services/Revocation.ts'
+import { createRole, deleteRole, getRoles, updateRole } from './services/RoleRegistry.ts'
 import {
   getResource,
   requestAccessUsingAccessNeeds,
   requestAccessUsingApplicationNeeds,
   shareResource,
-} from './services/ShareResource.js'
-import { acceptInvitation, getSocialAgents } from './services/SocialAgentRegistry.js'
-import type { SessionManager } from './SessionManager'
-import { withEffectTracing } from './tracing/effect-tracer.js'
-import type { UiPushSubscriptionStore } from './UiPushSubscriptionStore.js'
+} from './services/ShareResource.ts'
+import { acceptInvitation, getSocialAgents } from './services/SocialAgentRegistry.ts'
+import type { SessionManager } from './SessionManager.ts'
+import { withEffectTracing } from './tracing/effect-tracer.ts'
+import type { UiPushSubscriptionStore } from './UiPushSubscriptionStore.ts'
 
 export class ApiHandler extends OperationHttpHandler {
   protected readonly logger = getLoggerFor(this)

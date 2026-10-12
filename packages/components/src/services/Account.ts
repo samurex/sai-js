@@ -6,7 +6,7 @@ import {
 import { cssKv } from '@janeirodigital/interop-utils'
 import postgres from 'postgres'
 
-import { agentId, issuanceUrl } from '../util/uriTemplates.js'
+import { agentId, issuanceUrl } from '../util/uriTemplates.ts'
 
 export class AccountService {
   private sql: any

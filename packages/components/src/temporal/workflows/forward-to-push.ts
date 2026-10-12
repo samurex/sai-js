@@ -1,6 +1,6 @@
 import { proxyActivities } from '@temporalio/workflow'
 
-import type * as activities from '../activities/forward-to-push'
+import type * as activities from '../activities/forward-to-push.ts'
 
 const { forwardToPush } = proxyActivities<typeof activities>({
   startToCloseTimeout: '1 minute',

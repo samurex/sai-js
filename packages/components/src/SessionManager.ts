@@ -2,8 +2,8 @@ import { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
 import type { JwkGenerator } from '@solid/community-server'
 import { generateKeyPair } from 'jose'
 
-import { SelfIssuedSession } from './SelfIssuedSession.js'
-import { agentId, registryId } from './util/uriTemplates.js'
+import { SelfIssuedSession } from './SelfIssuedSession.ts'
+import { agentId, registryId } from './util/uriTemplates.ts'
 
 export class SessionManager {
   public constructor(

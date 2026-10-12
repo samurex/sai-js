@@ -279,7 +279,7 @@ export class SaiJs {
         .withServiceBinding('sparql', this.sparqlService())
         .withExposedPort(9235)
         .asService({
-          args: ['bun', '--inspect=0.0.0.0:9235', '/sai/packages/components/dist/workers/main.js'],
+          args: ['bun', '--inspect=0.0.0.0:9235', '/sai/packages/components/src/workers/main.ts'],
         })
         .withHostname('worker')
     )

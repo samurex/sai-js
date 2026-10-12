@@ -33,19 +33,19 @@ import { WorkflowExecutionAlreadyStartedError } from '@temporalio/client'
 import * as S from 'effect/Schema'
 import { getLoggerFor } from 'global-logger-factory'
 
-import type { ActivityEvents } from './ActivityEvents.js'
-import type { ActivityWebhookStore } from './ActivityWebhookStore.js'
-import type { SessionManager } from './SessionManager'
-import type { CreateGrantsInput } from './temporal/activities/grants.js'
-import { Temporal } from './temporal/client.js'
+import type { ActivityEvents } from './ActivityEvents.ts'
+import type { ActivityWebhookStore } from './ActivityWebhookStore.ts'
+import type { SessionManager } from './SessionManager.ts'
+import type { CreateGrantsInput } from './temporal/activities/grants.ts'
+import { Temporal } from './temporal/client.ts'
 import {
   processNeedBasedAccessRequest,
   processNeedBasedAccessRequestReceived,
-} from './temporal/workflows/access-request.js'
+} from './temporal/workflows/access-request.ts'
 import {
   processAdminAuthorizationGranted,
   processAdminAuthorizationRevoked,
-} from './temporal/workflows/admin.js'
+} from './temporal/workflows/admin.ts'
 import {
   createRole,
   granteeActivitiesSignal,
@@ -54,9 +54,9 @@ import {
   processRoleDeletion,
   processRoleMembershipChange,
   updateDelegatedGrants,
-} from './temporal/workflows/grants.js'
-import { createInvitation } from './temporal/workflows/invitation.js'
-import { acceptInvitation, establishReciprocal } from './temporal/workflows/reciprocal.js'
+} from './temporal/workflows/grants.ts'
+import { createInvitation } from './temporal/workflows/invitation.ts'
+import { acceptInvitation, establishReciprocal } from './temporal/workflows/reciprocal.ts'
 
 /** The webhook channel (owner or admin subscription) for the current topic. */
 type ActivityChannel = NonNullable<Awaited<ReturnType<ActivityWebhookStore['findBySendTo']>>>

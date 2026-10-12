@@ -162,7 +162,7 @@ services:
     command:
       - bun
       - --inspect=0.0.0.0:9235
-      - /sai/packages/components/dist/workers/main.js
+      - /sai/packages/components/src/workers/main.ts
     volumes:
       - ./:/sai
       - ${CAROOT}:/mkcert

@@ -1,6 +1,6 @@
 import type { NodeSDK } from '@opentelemetry/sdk-node'
 
-import { setTemporalPluginConfig } from './otel-state.js'
+import { setTemporalPluginConfig } from './otel-state.ts'
 
 /**
  * Opt-in OpenTelemetry bootstrap.

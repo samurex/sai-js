@@ -6,7 +6,7 @@ import {
 } from '@solid/community-server'
 import type { IndexTypeCollection, LoginStorage, VirtualObject } from '@solid/community-server'
 
-import { PostgresKeyValueStorage } from '../PostgresKeyValueStorage.js'
+import { PostgresKeyValueStorage } from '../PostgresKeyValueStorage.ts'
 
 export async function buildAccountLoginStorage<T extends IndexTypeCollection<T>>(): Promise<
   LoginStorage<T>

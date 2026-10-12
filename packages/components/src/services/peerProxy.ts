@@ -13,7 +13,7 @@ const loadDataRegistration = loader(DataRegistration.fromJsonLd)
 
 import { INTEROP, discoverAuthorizationAgent, loader } from '@janeirodigital/interop-utils'
 
-import type { ResolvedContext } from './Context.js'
+import type { ResolvedContext } from './Context.ts'
 
 /**
  * Raised by `fetchPeerDocument` when the org's AA cannot be discovered,

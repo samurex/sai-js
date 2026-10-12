@@ -1,7 +1,7 @@
 import { Client, Connection } from '@temporalio/client'
 import { OpenTelemetryPlugin } from '@temporalio/interceptors-opentelemetry-v2'
 
-import { temporalPluginConfig } from '../tracing/otel-state.js'
+import { temporalPluginConfig } from '../tracing/otel-state.ts'
 
 // TODO: initialize with CSS
 // TODO: make tempral address a config var

@@ -28,15 +28,15 @@ import {
 import type { CredentialsExtractor, OperationHttpHandlerInput } from '@solid/community-server'
 import { getLoggerFor } from 'global-logger-factory'
 
-import { GrantRevocationHandler } from './GrantRevocationHandler.js'
+import { GrantRevocationHandler } from './GrantRevocationHandler.ts'
 import {
   isAccessRequestMessage,
   isAccessRevocationMessage,
   isNeedBasedAccessRequestMessage,
-} from './messages.js'
-import type { SessionManager } from './SessionManager'
-import { Temporal } from './temporal/client.js'
-import { storeGrant } from './temporal/workflows/grants.js'
+} from './messages.ts'
+import type { SessionManager } from './SessionManager.ts'
+import { Temporal } from './temporal/client.ts'
+import { storeGrant } from './temporal/workflows/grants.ts'
 
 /** The JSON-LD media type the whole endpoint now requires (§6.2). */
 const LD_JSON_MEDIA_TYPE = 'application/ld+json'

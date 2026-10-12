@@ -30,7 +30,7 @@
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
     "check": "oxlint . && oxfmt --check .",
-    "typecheck": "for p in utils data-model application authorization-agent api-messages test-utils repl; do tsgo --noEmit -p packages/$p/tsconfig.json || exit 1; done"
+    "typecheck": "for p in utils data-model application authorization-agent api-messages components test-utils repl; do tsgo --noEmit -p packages/$p/tsconfig.json || exit 1; done"
   },
   "packageManager": "npm@11.3.0",
   "workspaces": [

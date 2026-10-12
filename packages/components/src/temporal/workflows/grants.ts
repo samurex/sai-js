@@ -34,14 +34,14 @@ import {
   workflowInfo,
 } from '@temporalio/workflow'
 
-import type * as activities from '../activities/grants.js'
+import type * as activities from '../activities/grants.ts'
 import {
   detectGrantedRequests,
   processNeedBasedAccessRequest,
   processNeedBasedAccessRequestReceived,
-} from './access-request.js'
-import { processAdminAuthorizationGranted, processAdminAuthorizationRevoked } from './admin.js'
-import { createInvitation } from './invitation.js'
+} from './access-request.ts'
+import { processAdminAuthorizationGranted, processAdminAuthorizationRevoked } from './admin.ts'
+import { createInvitation } from './invitation.ts'
 
 // NOTE: workflow code runs inside the Temporal sandbox — no runtime imports
 // beyond @temporalio/workflow (utils' INTEROP would pull in disallowed Node

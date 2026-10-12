@@ -6,7 +6,7 @@ import {
 import { ForbiddenHttpError } from '@solid/community-server'
 import type { CredentialsExtractor, HttpRequest } from '@solid/community-server'
 
-import type { SessionManager } from '../SessionManager.js'
+import type { SessionManager } from '../SessionManager.ts'
 
 /**
  * Resolve the org webId from the base64url-encoded last path segment — the

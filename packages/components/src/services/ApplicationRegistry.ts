@@ -7,12 +7,12 @@ import { loader } from '@janeirodigital/interop-utils'
 const loadClientIdDocument = loader(ClientIdDocument.fromJsonLd)
 import { Application, IRI, UnregisteredApplication } from '@janeirodigital/sai-api-messages'
 
-import type { ResolvedContext } from './Context.js'
+import type { ResolvedContext } from './Context.ts'
 import {
   getApplicationRegistration as getApplicationRegistrationFromSparql,
   listContained,
   sparqlTransportFor,
-} from './queries/org.js'
+} from './queries/org.ts'
 
 const buildApplicationProfile = async (
   ctx: ResolvedContext,

@@ -11,8 +11,8 @@ import {
 } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
 
-import type { ResolvedContext } from './Context.js'
-import { findSocialAgentRegistrationInContext } from './SocialAgentRegistry.js'
+import type { ResolvedContext } from './Context.ts'
+import { findSocialAgentRegistrationInContext } from './SocialAgentRegistry.ts'
 
 /**
  * Promote a registered social agent to org admin (activity-first step 5 — R1

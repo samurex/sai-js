@@ -18,13 +18,13 @@ import {
   subscribeToNotificationChannel,
 } from '@janeirodigital/interop-utils'
 
-import { buildAccountLoginStorage } from '../../builders/accountLoginStorage.js'
-import { buildSessionManager } from '../../builders/sessionManager.js'
-import { ReciprocalWebhookStore } from '../../ReciprocalWebhookStore.js'
+import { buildAccountLoginStorage } from '../../builders/accountLoginStorage.ts'
+import { buildSessionManager } from '../../builders/sessionManager.ts'
+import { ReciprocalWebhookStore } from '../../ReciprocalWebhookStore.ts'
 import {
   deleteReciprocalMirror as deleteMirror,
   updateReciprocalMirror,
-} from '../../services/ReciprocalMirror.js'
+} from '../../services/ReciprocalMirror.ts'
 
 function webhookTargetUrl(): string {
   return `${process.env.CSS_BASE_URL}.sai/reciprocal-webhook/${crypto.randomUUID()}`

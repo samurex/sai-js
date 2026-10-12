@@ -10,8 +10,8 @@ import {
 import type { CredentialsExtractor, OperationHttpHandlerInput } from '@solid/community-server'
 import { getLoggerFor } from 'global-logger-factory'
 
-import type { ReciprocalWebhookStore } from './ReciprocalWebhookStore.js'
-import type { SessionManager } from './SessionManager'
+import type { ReciprocalWebhookStore } from './ReciprocalWebhookStore.ts'
+import type { SessionManager } from './SessionManager.ts'
 
 export class ReciprocalWebhookHandler extends OperationHttpHandler {
   protected readonly logger = getLoggerFor(this)

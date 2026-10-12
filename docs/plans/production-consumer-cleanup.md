@@ -12,7 +12,9 @@ TypeScript source under Bun**, consistent with the decisions already landed in
 - **D5 = A** — Bun is the runtime everywhere (dev, test, **production OCI
   images**).
 - **D10 = B** — the 5 interop libs have no build/`dist` and npm releases are
-  paused; `@elfpavlik/sai-components` (D1) keeps its build + npm publishing.
+  paused. `@elfpavlik/sai-components` (D1, superseded) is now TS source too —
+  only its Components.js descriptors are generated — so the published
+  `1.0.0-rc.29` (with `dist/`) is the last Node-loadable release.
 - Node cannot type-strip `.ts` in `node_modules`, so any Node process that
   imports the workspace interop packages by name fails — the fix is to run under
   Bun.
@@ -29,7 +31,8 @@ against published npm deps. Rework them to ship the repo source and use Bun:
   under Bun in dagger/compose (Phase 1).
 - `sai-worker.nix` — runs
   `@elfpavlik/sai-components/dist/workers/main.js`. Switch to Bun and the worker
-  entrypoint; note the worker currently lives in `components` — the
+  entrypoint (`packages/components/src/workers/main.ts`, as dagger/compose
+  already do); note the worker currently lives in `components` — the
   `extract-temporal-workflows.md` plan may move it.
 - `sai-id.nix` — runs `http.ts` (already TS).
 - `sai-ui.nix` — builds the Vite UI `dist` (leave as a build unless the UI is

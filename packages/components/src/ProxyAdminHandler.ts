@@ -14,9 +14,9 @@ import type {
 } from '@solid/community-server'
 import { getLoggerFor } from 'global-logger-factory'
 
-import { orgWebIdFromPath, requireOrgAdmin } from './services/adminGate.js'
-import { PeerFetchError, fetchPeerResource, isJsonLdContentType } from './services/peerFetch.js'
-import type { SessionManager } from './SessionManager'
+import { orgWebIdFromPath, requireOrgAdmin } from './services/adminGate.ts'
+import { PeerFetchError, fetchPeerResource, isJsonLdContentType } from './services/peerFetch.ts'
+import type { SessionManager } from './SessionManager.ts'
 
 /**
  * Read-only peer-data proxy for org-context reads (org-context-proxy.md,

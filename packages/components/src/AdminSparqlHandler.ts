@@ -17,8 +17,8 @@ import type {
 import { type IBindings, type IUpdateTypes, SparqlEndpointFetcher } from 'fetch-sparql-endpoint'
 import { getLoggerFor } from 'global-logger-factory'
 
-import { orgWebIdFromPath, requireOrgAdmin } from './services/adminGate.js'
-import type { SessionManager } from './SessionManager'
+import { orgWebIdFromPath, requireOrgAdmin } from './services/adminGate.ts'
+import type { SessionManager } from './SessionManager.ts'
 
 const SPARQL_QUERY_MEDIA_TYPE = 'application/sparql-query'
 

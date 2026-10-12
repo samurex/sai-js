@@ -29,7 +29,7 @@ import {
   withContext,
 } from '@janeirodigital/interop-utils'
 
-import { buildSessionManager } from '../../builders/sessionManager.js'
+import { buildSessionManager } from '../../builders/sessionManager.ts'
 
 /**
  * AdminGrant payload — mirrors the §3.6 seed shapes: one RegistrySet-scoped

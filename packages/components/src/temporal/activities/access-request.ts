@@ -14,8 +14,8 @@ import {
 } from '@janeirodigital/interop-data-model'
 import { INTEROP, putJsonLd, withContext } from '@janeirodigital/interop-utils'
 
-import { buildSessionManager } from '../../builders/sessionManager.js'
-import { issuanceUrl } from '../../util/uriTemplates.js'
+import { buildSessionManager } from '../../builders/sessionManager.ts'
+import { issuanceUrl } from '../../util/uriTemplates.ts'
 
 export interface ForwardNeedBasedAccessRequestInput {
   requester: SocialAgentId

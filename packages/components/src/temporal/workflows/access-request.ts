@@ -6,8 +6,8 @@ import type {
 } from '@janeirodigital/interop-data-model'
 import { proxyActivities } from '@temporalio/workflow'
 
-import type * as accessRequestActivities from '../activities/access-request.js'
-import type * as grantsActivities from '../activities/grants.js'
+import type * as accessRequestActivities from '../activities/access-request.ts'
+import type * as grantsActivities from '../activities/grants.ts'
 
 const { forwardNeedBasedAccessRequest, materializeNeedBasedAccessRequest } = proxyActivities<
   typeof accessRequestActivities

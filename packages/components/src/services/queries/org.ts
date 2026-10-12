@@ -22,7 +22,7 @@ import {
 import type { AuthorizationAgent } from '@janeirodigital/interop-authorization-agent'
 import { discoverAuthorizationAgent, toStore } from '@janeirodigital/interop-utils'
 
-import type { ResolvedContext } from '../Context.js'
+import type { ResolvedContext } from '../Context.ts'
 
 // The transport abstraction + registry queries live in the
 // authorization-agent package (it owns `sparqlEndpoint`); this module adds

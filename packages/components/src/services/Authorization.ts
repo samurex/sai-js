@@ -40,16 +40,16 @@ import {
 import type { Brand } from 'effect/Brand'
 import type * as S from 'effect/Schema'
 
-import type { ResolvedContext } from './Context.js'
-import { dataRegistrationContains } from './peerProxy.js'
+import type { ResolvedContext } from './Context.ts'
+import { dataRegistrationContains } from './peerProxy.ts'
 import {
   getDataGrant as getDataGrantFromSparql,
   getDataRegistration as getDataRegistrationFromSparql,
   getSocialAgentRegistration as getRegistrationFromSparql,
   listRegistrationsByShapeTrees,
   sparqlTransportFor,
-} from './queries/org.js'
-import { listSocialAgentRegistrations } from './SocialAgentRegistry.js'
+} from './queries/org.ts'
+import { listSocialAgentRegistrations } from './SocialAgentRegistry.ts'
 
 const formatAccessNeed = async (
   accessNeed: AccessNeedData,

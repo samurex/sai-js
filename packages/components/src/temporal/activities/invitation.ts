@@ -4,8 +4,8 @@ import { SocialAgentInvitation } from '@janeirodigital/interop-data-model'
 import { loader } from '@janeirodigital/interop-utils'
 const loadSocialAgentInvitation = loader(SocialAgentInvitation.fromJsonLd)
 
-import { buildSessionManager } from '../../builders/sessionManager.js'
-import { invitationUrl } from '../../util/uriTemplates.js'
+import { buildSessionManager } from '../../builders/sessionManager.ts'
+import { invitationUrl } from '../../util/uriTemplates.ts'
 
 /**
  * The activity-first createInvitation leg (step 1): PUT the invitation at the

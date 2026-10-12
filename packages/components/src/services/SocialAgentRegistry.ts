@@ -12,7 +12,7 @@ import { INTEROP, loader, pickLanguage } from '@janeirodigital/interop-utils'
 import { IRI, InvitationAcceptedMessage, SocialAgent } from '@janeirodigital/sai-api-messages'
 import type * as S from 'effect/Schema'
 
-import type { ResolvedContext } from './Context.js'
+import type { ResolvedContext } from './Context.ts'
 import {
   findSocialAgentRegistration as findRegistrationFromSparql,
   getDataGrant as getDataGrantFromSparql,
@@ -21,7 +21,7 @@ import {
   getSocialAgentRegistration as getRegistrationFromSparql,
   listContained,
   sparqlTransportFor,
-} from './queries/org.js'
+} from './queries/org.ts'
 
 /**
  * Resolve the reciprocal registration of `registration` (the peer's

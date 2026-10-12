@@ -1,9 +1,9 @@
 import { generateKeyPair } from 'jose'
 
-import { EnvJwkGenerator } from '../EnvJwkGenerator.js'
-import { SelfIssuedSession } from '../SelfIssuedSession.js'
-import { SessionManager } from '../SessionManager.js'
-import { agentId } from '../util/uriTemplates.js'
+import { EnvJwkGenerator } from '../EnvJwkGenerator.ts'
+import { SelfIssuedSession } from '../SelfIssuedSession.ts'
+import { SessionManager } from '../SessionManager.ts'
+import { agentId } from '../util/uriTemplates.ts'
 
 export function buildSessionManager(): SessionManager {
   const jwkGenerator = new EnvJwkGenerator(process.env.CSS_ENCODED_PRIVATE_JWK)

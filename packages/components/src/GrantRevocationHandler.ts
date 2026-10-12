@@ -28,8 +28,8 @@ export interface SessionAcquirer {
 }
 import { INTEROP } from '@janeirodigital/interop-utils'
 
-import { Temporal } from './temporal/client.js'
-import { revokeGrants } from './temporal/workflows/grants.js'
+import { Temporal } from './temporal/client.ts'
+import { revokeGrants } from './temporal/workflows/grants.ts'
 
 type Credentials = Awaited<ReturnType<CredentialsExtractor['handleSafe']>>
 
