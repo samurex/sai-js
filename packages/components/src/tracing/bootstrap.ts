@@ -1,3 +1,5 @@
+import { createRequire } from 'node:module'
+
 import type { NodeSDK } from '@opentelemetry/sdk-node'
 
 import { setTemporalPluginConfig } from './otel-state.js'
@@ -90,6 +92,7 @@ export async function initNodeTracing(serviceName: string): Promise<NodeSDK | un
     )
     setTemporalPluginConfig({ resource, spanProcessor })
 
+    const isBun = Boolean(process.versions.bun)
     const sdk = new NodeSDK({
       // resource + spanProcessors (not the traceExporter shorthand) — the
       // @temporalio/interceptors-opentelemetry-v2 plugin needs the same
@@ -98,14 +101,32 @@ export async function initNodeTracing(serviceName: string): Promise<NodeSDK | un
       spanProcessors: [spanProcessor],
       instrumentations: [
         new HttpInstrumentation({ headersToSpanAttributes }),
-        new UndiciInstrumentation({
-          headersToSpanAttributes: undiciHeadersToSpanAttributes,
-          // optional: skip long-lived streams (GET /.sai/events)
-          // ignoreRequestHook: (request) => request.path === '/.sai/events',
-        }),
+        // Bun's fetch is native (no undici diagnostics_channel) —
+        // instrumentBunFetch below takes over there
+        ...(isBun
+          ? []
+          : [
+              new UndiciInstrumentation({
+                headersToSpanAttributes: undiciHeadersToSpanAttributes,
+                // optional: skip long-lived streams (GET /.sai/events)
+                // ignoreRequestHook: (request) => request.path === '/.sai/events',
+              }),
+            ]),
       ],
     })
     sdk.start()
+    // require-in-the-middle only patches on a CJS `require` — this ESM module
+    // graph never triggers it, so require the builtins once to patch their
+    // shared exports (Node and Bun)
+    const require = createRequire(import.meta.url)
+    require('node:http')
+    require('node:https')
+    if (isBun) {
+      const { instrumentBunFetch } = await import('./bun-fetch.js')
+      instrumentBunFetch(
+        captureHeaders ? { requestHeaders, responseHeaders } : undefined
+      )
+    }
     return sdk
   } catch (err) {
     // fail-soft: telemetry must never break the application

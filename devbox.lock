@@ -245,6 +245,18 @@
       "last_modified": "2026-06-14T16:21:05Z",
       "resolved": "github:NixOS/nixpkgs/9eac87a12312b8f60dd52e1c6e1a265f6fc7f5fc?lastModified=1781454065&narHash=sha256-d2xfDjnfRuf%2FxYGdu9VVRHiav%2F2w5hDL%2F5cw2TuVAXw%3D"
     },
+    "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.aarch64-darwin.dagger": {
+      "last_modified": "1970-01-01T00:00:00Z",
+      "resolved": "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.aarch64-darwin.dagger"
+    },
+    "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.aarch64-linux.dagger": {
+      "last_modified": "1970-01-01T00:00:00Z",
+      "resolved": "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.aarch64-linux.dagger"
+    },
+    "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.x86_64-darwin.dagger": {
+      "last_modified": "1970-01-01T00:00:00Z",
+      "resolved": "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.x86_64-darwin.dagger"
+    },
     "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.x86_64-linux.dagger": {
       "last_modified": "1970-01-01T00:00:00Z",
       "resolved": "github:dagger/nix/4a39fb35b724a8f85c254fa1513fa0ffc17162e7#packages.x86_64-linux.dagger"

@@ -97,6 +97,13 @@ if (!hardDisabled && (saiEndpoint || otlpEndpoint)) {
     const undiciHeadersToSpanAttributes = captureHeaders
       ? { requestHeaders, responseHeaders }
       : undefined
+    // registry/data/id re-query the SPARQL store for every operation (91% of
+    // sai-registry spans and 50% of sai-id = its own sparql POSTs) — skip
+    // those client spans in those processes only; sai-uas keeps them
+    // (diagram [Data]/[Grant] hops)
+    const skipSparqlStoreSpans = ['sai-registry', 'sai-data', 'sai-id'].includes(
+      process.env.OTEL_SERVICE_NAME
+    )
     // SimpleSpanProcessor (NOT batch): dagger kills the service right after
     // the test exec — batch would lose tail spans. The exporter is handed
     // SAI_OTLP_ENDPOINT explicitly — the dagger engine injects standard OTLP
@@ -112,14 +119,7 @@ if (!hardDisabled && (saiEndpoint || otlpEndpoint)) {
     // cross-realm holder — read by temporal/client.ts in this same process
     globalThis[Symbol.for('sai.otel.temporalPluginConfig')] = { resource, spanProcessor }
 
-    // registry/data/id re-query the SPARQL store for every operation (91% of
-    // sai-registry spans and 50% of sai-id = its own sparql POSTs) — skip
-    // those client spans in those processes only; sai-uas keeps them
-    // (diagram [Data]/[Grant] hops)
-    const skipSparqlStoreSpans = ['sai-registry', 'sai-data', 'sai-id'].includes(
-      process.env.OTEL_SERVICE_NAME
-    )
-
+    const isBun = Boolean(process.versions.bun)
     const sdk = new NodeSDK({
       resource,
       spanProcessors: [spanProcessor],
@@ -129,13 +129,33 @@ if (!hardDisabled && (saiEndpoint || otlpEndpoint)) {
           ignoreOutgoingRequestHook: (options) =>
             skipSparqlStoreSpans && `${options.hostname ?? options.host ?? ''}`.includes('sparql'),
         }),
-        new UndiciInstrumentation({
-          headersToSpanAttributes: undiciHeadersToSpanAttributes,
-          ignoreRequestHook: (request) => skipSparqlStoreSpans && request.origin.includes('sparql'),
-        }),
+        // Bun's fetch is native (no undici diagnostics_channel) — bun-fetch.ts
+        // below takes over there
+        ...(isBun
+          ? []
+          : [
+              new UndiciInstrumentation({
+                headersToSpanAttributes: undiciHeadersToSpanAttributes,
+                ignoreRequestHook: (request) =>
+                  skipSparqlStoreSpans && request.origin.includes('sparql'),
+              }),
+            ]),
       ],
     })
     sdk.start()
+    // require-in-the-middle only patches on a CJS `require` — ESM importers
+    // (services/id via @hono/node-server) never trigger it. Requiring here
+    // patches the shared builtin exports for them too (Node and Bun).
+    require('node:http')
+    require('node:https')
+    if (isBun) {
+      // Bun can require .ts directly; bootstrap.ts uses the same module
+      require('./bun-fetch.ts').instrumentBunFetch({
+        ignore: (url) => skipSparqlStoreSpans && url.hostname.includes('sparql'),
+        requestHeaders: captureHeaders ? requestHeaders : [],
+        responseHeaders: captureHeaders ? responseHeaders : [],
+      })
+    }
   } catch (err) {
     // fail-soft: telemetry must never break the application
     console.warn(
